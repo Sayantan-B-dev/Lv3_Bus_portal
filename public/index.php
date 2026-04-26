@@ -9,6 +9,15 @@ declare(strict_types=1);
 
 require_once dirname(__DIR__) . '/config/config.php';
 
+// ─── API Delegation ──────────────────────────────────────────────────────────
+$uri = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
+$base = parse_url(APP_URL, PHP_URL_PATH) ?? '';
+$uri = '/' . ltrim(substr($uri, strlen($base)), '/');
+if (str_starts_with($uri, '/api')) {
+    require_once dirname(__DIR__) . '/api/index.php';
+    exit;
+}
+
 use App\Core\Router;
 use App\Controllers\HomeController;
 use App\Controllers\RouteController;

@@ -65,3 +65,23 @@ date_default_timezone_set('Asia/Kolkata');
 // ─── Define Root Constants ───────────────────────────────────────────────────
 define('BASE_PATH', dirname(__DIR__));
 define('APP_URL',   rtrim($_ENV['APP_URL'], '/'));
+
+// ─── Error Handling ──────────────────────────────────────────────────────────
+if ($appEnv === 'production') {
+    set_exception_handler(function ($e) {
+        error_log($e->getMessage() . "\n" . $e->getTraceAsString());
+        http_response_code(500);
+        if (str_contains($_SERVER['HTTP_ACCEPT'] ?? '', 'application/json')) {
+            echo json_encode(['status' => 'error', 'message' => 'Internal Server Error']);
+        } else {
+            require BASE_PATH . '/views/errors/500.php';
+        }
+        exit;
+    });
+
+    set_error_handler(function ($level, $message, $file, $line) {
+        if (error_reporting() & $level) {
+            throw new ErrorException($message, 0, $level, $file, $line);
+        }
+    });
+}

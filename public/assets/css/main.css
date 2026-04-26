@@ -1,0 +1,367 @@
+/* public/assets/css/main.css */
+:root {
+  /* Brand — default Kolkata palette */
+  --clr-primary:     #E8B84B;   /* Kolkata tram yellow */
+  --clr-primary-dk:  #B8921E;   /* Hover state */
+  --clr-primary-glow: rgba(232,184,75,0.15);
+  --clr-accent:      #1B6B3A;   /* Howrah green */
+
+  /* Neutrals */
+  --clr-bg:        #0D0D0D;
+  --clr-surface:   #161616;
+  --clr-surface2:  #1F1F1F;
+  --clr-border:    #2A2A2A;
+  --clr-text:      #E8E8E8;
+  --clr-muted:     #6B6B6B;
+  --clr-white:     #FFFFFF;
+
+  /* Status */
+  --clr-green:  #27AE60;
+  --clr-amber:  #F5A623;
+  --clr-blue:   #4A90E2;
+  --clr-gray:   #6B6B6B;
+
+  /* Typography Scale */
+  --fs-xs:   0.65rem;
+  --fs-sm:   0.75rem;
+  --fs-base: 0.875rem;
+  --fs-md:   1rem;
+  --fs-lg:   1.25rem;
+  --fs-xl:   1.5rem;
+  --fs-2xl:  2rem;
+  --fs-3xl:  3rem;
+
+  /* Spacing */
+  --sp-xs: 4px; --sp-sm: 8px; --sp-md: 16px;
+  --sp-lg: 24px; --sp-xl: 48px;
+
+  /* Borders */
+  --radius-none: 0;
+  --radius-sm:   2px;
+
+  /* Shadows */
+  --shadow-primary: 0 4px 30px rgba(232,184,75,0.2);
+  --shadow-card:    0 2px 12px rgba(0,0,0,0.5);
+
+  /* Transitions */
+  --trans-fast: 0.15s ease;
+  --trans-med:  0.3s ease;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    background-color: var(--clr-bg);
+    color: var(--clr-text);
+    font-family: 'Noto Sans', sans-serif;
+    font-size: var(--fs-base);
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+}
+
+/* Custom Scrollbar */
+::-webkit-scrollbar { width: 8px; height: 8px; }
+::-webkit-scrollbar-track { background: var(--clr-bg); }
+::-webkit-scrollbar-thumb { background: var(--clr-border); border-radius: 4px; }
+::-webkit-scrollbar-thumb:hover { background: var(--clr-muted); }
+
+h1, h2, h3, h4, .font-rajdhani {
+    font-family: 'Rajdhani', sans-serif;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+a {
+    color: var(--clr-primary);
+    text-decoration: none;
+    transition: var(--trans-fast);
+}
+
+a:hover {
+    color: var(--clr-primary-dk);
+}
+
+ul {
+    list-style: none;
+}
+
+/* --- Layout --- */
+.container-custom {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 0 var(--sp-md);
+}
+
+/* --- Header --- */
+.site-header {
+    height: 64px;
+    background-color: var(--clr-surface);
+    border-bottom: 2px solid var(--clr-primary);
+    box-shadow: var(--shadow-primary);
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+    display: flex;
+    align-items: center;
+}
+
+.header-inner {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+}
+
+.logo {
+    display: flex;
+    align-items: center;
+    gap: var(--sp-sm);
+}
+
+.logo-text {
+    font-family: 'Rajdhani', sans-serif;
+    font-weight: 700;
+    font-size: var(--fs-xl);
+    color: var(--clr-primary);
+    letter-spacing: 2px;
+}
+
+.nav-links {
+    display: flex;
+    gap: var(--sp-lg);
+}
+
+.nav-link {
+    font-family: 'Rajdhani', sans-serif;
+    font-weight: 600;
+    font-size: var(--fs-sm);
+    color: var(--clr-muted);
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    padding: var(--sp-xs) 0;
+    border-bottom: 2px solid transparent;
+}
+
+.nav-link:hover, .nav-link.active {
+    color: var(--clr-white);
+    border-bottom-color: var(--clr-primary);
+}
+
+/* --- City Selector --- */
+.city-selector {
+    background: var(--clr-surface2);
+    border: 1px solid var(--clr-border);
+    color: var(--clr-white);
+    padding: var(--sp-xs) var(--sp-sm);
+    font-family: 'Rajdhani', sans-serif;
+    font-weight: 600;
+    font-size: var(--fs-sm);
+    cursor: pointer;
+    outline: none;
+}
+
+/* --- Hero / Search --- */
+.hero-section {
+    padding: var(--sp-xl) 0;
+    text-align: center;
+}
+
+.search-container {
+    max-width: 680px;
+    margin: var(--sp-lg) auto;
+    display: flex;
+    border: 1.5px solid var(--clr-border);
+    background: var(--clr-bg);
+}
+
+.search-container:focus-within {
+    border-color: var(--clr-primary);
+}
+
+.search-input {
+    flex: 1;
+    background: transparent;
+    border: none;
+    color: var(--clr-white);
+    padding: var(--sp-md);
+    font-size: var(--fs-md);
+    outline: none;
+}
+
+.search-btn {
+    background-color: var(--clr-primary);
+    color: var(--clr-bg);
+    border: none;
+    padding: 0 var(--sp-lg);
+    font-family: 'Rajdhani', sans-serif;
+    font-weight: 700;
+    cursor: pointer;
+    transition: var(--trans-fast);
+}
+
+.search-btn:hover {
+    background-color: var(--clr-primary-dk);
+}
+
+/* --- Cards --- */
+.route-card {
+    background-color: var(--clr-surface);
+    border: 1px solid var(--clr-border);
+    padding: var(--sp-md);
+    margin-bottom: var(--sp-md);
+    border-left: 3px solid transparent;
+    transition: var(--trans-fast);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: var(--sp-md);
+}
+
+.route-card:hover {
+    background-color: var(--clr-surface2);
+    border-left-color: var(--clr-primary);
+}
+
+.route-number {
+    font-family: 'Rajdhani', sans-serif;
+    font-weight: 700;
+    font-size: var(--fs-2xl);
+    color: var(--clr-white);
+    min-width: 80px;
+}
+
+.route-info {
+    flex: 1;
+}
+
+.route-endpoints {
+    font-weight: 600;
+    font-size: var(--fs-md);
+}
+
+/* --- Badges --- */
+.badge-type {
+    font-family: 'Rajdhani', sans-serif;
+    font-weight: 600;
+    font-size: var(--fs-xs);
+    padding: 2px 8px;
+    letter-spacing: 1px;
+}
+
+.badge-ac { background: rgba(39,174,96,0.15); color: #27AE60; }
+.badge-express { background: rgba(245,166,35,0.15); color: #F5A623; }
+.badge-night { background: rgba(74,144,226,0.15); color: #4A90E2; }
+.badge-normal { background: rgba(107,107,107,0.15); color: #6B6B6B; }
+.badge-mini { background: rgba(232,184,75,0.15); color: var(--clr-primary); }
+
+/* --- Info Grid --- */
+.info-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    border-bottom: 1px solid var(--clr-border);
+}
+
+.info-item {
+    padding: var(--sp-md);
+    border-right: 1px solid var(--clr-border);
+}
+
+.info-item:last-child {
+    border-right: none;
+}
+
+.info-label {
+    font-family: 'Rajdhani', sans-serif;
+    font-weight: 600;
+    font-size: var(--fs-xs);
+    letter-spacing: 2.5px;
+    text-transform: uppercase;
+    color: var(--clr-muted);
+    display: block;
+    margin-bottom: var(--sp-xs);
+}
+
+.info-value {
+    font-family: 'Rajdhani', sans-serif;
+    font-weight: 700;
+    font-size: var(--fs-lg);
+    color: var(--clr-white);
+}
+
+.val-green { color: var(--clr-green); }
+.val-amber { color: var(--clr-amber); }
+
+/* --- Timeline --- */
+.timeline {
+    padding-left: 30px;
+    position: relative;
+    margin-top: var(--sp-lg);
+}
+
+.timeline::before {
+    content: '';
+    position: absolute;
+    left: 9px;
+    top: 0;
+    bottom: 0;
+    width: 2px;
+    background: linear-gradient(to bottom, var(--clr-primary), var(--clr-green));
+}
+
+.timeline-item {
+    position: relative;
+    padding-bottom: var(--sp-lg);
+}
+
+.timeline-dot {
+    position: absolute;
+    left: -26px;
+    top: 6px;
+    width: 14px;
+    height: 14px;
+    background: var(--clr-muted);
+    border: 2px solid var(--clr-bg);
+    z-index: 1;
+}
+
+.timeline-item:first-child .timeline-dot { background: var(--clr-primary); }
+.timeline-item:last-child .timeline-dot { background: var(--clr-green); }
+.timeline-item.major .timeline-dot { background: var(--clr-amber); }
+
+.stop-name {
+    font-weight: 600;
+    color: var(--clr-white);
+}
+
+.stop-meta {
+    font-family: 'Rajdhani', sans-serif;
+    font-weight: 600;
+    font-size: var(--fs-sm);
+    color: var(--clr-muted);
+}
+
+/* --- Footer --- */
+.site-footer {
+    background-color: var(--clr-surface);
+    border-top: 1px solid var(--clr-border);
+    padding: var(--sp-xl) 0 var(--sp-md);
+    margin-top: var(--sp-xl);
+    color: var(--clr-muted);
+}
+
+/* --- Utils --- */
+.text-primary { color: var(--clr-primary); }
+.bg-surface { background-color: var(--clr-surface); }
+.mt-lg { margin-top: var(--sp-lg); }
+
+@media (max-width: 768px) {
+    .info-grid { grid-template-columns: repeat(2, 1fr); }
+    .info-item:nth-child(2n) { border-right: none; }
+    .info-item { border-bottom: 1px solid var(--clr-border); }
+    .nav-links { display: none; }
+}
