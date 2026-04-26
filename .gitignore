@@ -1,0 +1,21 @@
+# Environment
+.env
+*.env
+
+# Composer
+vendor/
+composer.phar
+
+# Logs
+storage/logs/*.log
+storage/logs/rl_*.json
+
+# OS / IDE
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+*.swp
+
+# Cache
+*.cache
