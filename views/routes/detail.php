@@ -6,102 +6,122 @@ $extraScripts = ['map'];
 include dirname(__DIR__) . '/layout/header.php';
 ?>
 
-<div class="container-fluid p-0">
-    <div class="row g-0">
-        <!-- Sidebar Detail Panel -->
-        <div class="col-lg-4 col-xl-3 bg-surface border-end border-dark" style="height: calc(100vh - 64px); overflow-y: auto;">
-            <div class="p-4">
-                <a href="<?= APP_URL ?>/routes" class="text-muted small mb-3 d-inline-block">← BACK TO LIST</a>
+<main style="padding-top: 100px;">
+    <section class="section" style="padding-top:0">
+        <div class="container">
+            <div class="section-header anim-1">
+                <div>
+                    <a href="<?= APP_URL ?>/routes" class="text-muted small text-decoration-none mb-2 d-inline-block">← BACK TO LIST</a>
+                    <div class="section-title">Route <?= htmlspecialchars($route['route_number']) ?> — Detail View</div>
+                    <div class="section-sub">
+                        <?= htmlspecialchars($route['source']) ?> → <?= htmlspecialchars($route['destination']) ?> 
+                        · <?= $route['total_distance_km'] ?> km 
+                        · <?= $route['route_type'] ?>
+                    </div>
+                </div>
+                <span class="route-badge badge-<?= strtolower($route['route_type']) ?>" style="font-size:12px;padding:5px 14px">● Operational</span>
+            </div>
+
+            <!-- MAP SECTION -->
+            <div class="map-card anim-2">
+                <div id="routeMap" style="height: 100%; width: 100%; border-radius: 20px;"></div>
                 
-                <div class="d-flex align-items-center gap-3 mb-4">
-                    <div class="route-number fs-1"><?= htmlspecialchars($route['route_number']) ?></div>
-                    <div>
-                        <span class="badge badge-type badge-<?= strtolower($route['route_type']) ?> mb-1"><?= $route['route_type'] ?></span>
-                        <h1 class="h4 font-rajdhani mb-0"><?= htmlspecialchars($route['source']) ?> <br><span class="text-primary">TO</span> <?= htmlspecialchars($route['destination']) ?></h1>
+                <div class="map-badge-overlay d-none d-md-flex">
+                    <div class="map-overlay-item">
+                        <span class="map-overlay-val"><?= $route['total_distance_km'] ?> km</span>
+                        <span class="map-overlay-key">Total Distance</span>
                     </div>
-                </div>
-
-                <div class="info-grid bg-bg border border-dark mb-4">
-                    <div class="info-item col-6">
-                        <span class="info-label">Freq</span>
-                        <span class="info-value"><?= $route['frequency_mins'] ?>m</span>
+                    <div class="map-overlay-divider"></div>
+                    <div class="map-overlay-item">
+                        <span class="map-overlay-val">~<?= round($route['total_distance_km'] * 2.5) ?> min</span>
+                        <span class="map-overlay-key">Est. Duration</span>
                     </div>
-                    <div class="info-item col-6">
-                        <span class="info-label">Dist</span>
-                        <span class="info-value"><?= $route['total_distance_km'] ?>k</span>
-                    </div>
-                    <div class="info-item col-6">
-                        <span class="info-label">Start</span>
-                        <span class="info-value val-green"><?= date('H:i', strtotime($route['first_bus_time'])) ?></span>
-                    </div>
-                    <div class="info-item col-6">
-                        <span class="info-label">Last</span>
-                        <span class="info-value val-amber"><?= date('H:i', strtotime($route['last_bus_time'])) ?></span>
-                    </div>
-                </div>
-
-                <div class="tabs-container">
-                    <ul class="nav nav-pills nav-fill bg-bg border border-dark p-1 mb-4">
-                        <li class="nav-item">
-                            <button class="nav-link active font-rajdhani py-1" data-bs-toggle="pill" data-bs-target="#tab-stops">STOPS</button>
-                        </li>
-                        <li class="nav-item">
-                            <button class="nav-link font-rajdhani py-1" data-bs-toggle="pill" data-bs-target="#tab-fares">FARES</button>
-                        </li>
-                    </ul>
-
-                    <div class="tab-content">
-                        <!-- Stops Tab -->
-                        <div class="tab-pane fade show active" id="tab-stops">
-                            <div class="timeline">
-                                <?php foreach ($route['stops'] as $s): ?>
-                                    <div class="timeline-item <?= $s['is_major_stop'] ? 'major' : '' ?>">
-                                        <div class="timeline-dot"></div>
-                                        <div class="stop-name"><?= htmlspecialchars($s['stop_name']) ?></div>
-                                        <div class="stop-meta">
-                                            <?= $s['distance_from_start_km'] ?> km • <?= $s['arrival_time_offset_mins'] ?> mins
-                                            <?php if ($s['landmark']): ?>
-                                                <br><span class="text-muted fs-xs font-noto fw-light">Near: <?= htmlspecialchars($s['landmark']) ?></span>
-                                            <?php endif; ?>
-                                        </div>
-                                    </div>
-                                <?php endforeach; ?>
-                            </div>
-                        </div>
-
-                        <!-- Fares Tab -->
-                        <div class="tab-pane fade" id="tab-fares">
-                            <table class="table table-dark table-sm small">
-                                <thead class="text-muted font-rajdhani">
-                                    <tr>
-                                        <th>DISTANCE (KM)</th>
-                                        <th>TYPE</th>
-                                        <th class="text-end">FARE</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    <?php foreach ($route['fares'] as $f): ?>
-                                        <tr>
-                                            <td><?= $f['min_km'] ?> - <?= $f['max_km'] ?></td>
-                                            <td><?= $f['passenger_type'] ?></td>
-                                            <td class="text-end text-primary fw-bold"><?= $city['currency'] ?> <?= $f['fare_amount'] ?></td>
-                                        </tr>
-                                    <?php endforeach; ?>
-                                </tbody>
-                            </table>
-                            <p class="text-muted xsmall mt-3">Fares are subject to change by transit authority.</p>
-                        </div>
+                    <div class="map-overlay-divider"></div>
+                    <div class="map-overlay-item">
+                        <span class="map-overlay-val"><?= count($route['stops']) ?> stops</span>
+                        <span class="map-overlay-key">Total Stops</span>
                     </div>
                 </div>
             </div>
-        </div>
 
-        <!-- Map Panel -->
-        <div class="col-lg-8 col-xl-9">
-            <div id="routeMap" style="height: calc(100vh - 64px); background: #000;"></div>
+            <!-- TABS -->
+            <div class="tabs anim-3 mt-24">
+                <button class="tab active" data-target="tab-stops">Stop Sequence</button>
+                <button class="tab" data-target="tab-fares">Fare Table</button>
+                <button class="tab">Schedule</button>
+                <button class="tab">API Reference</button>
+            </div>
+
+            <!-- STOPS + FARE SIDE BY SIDE -->
+            <div style="display:grid;grid-template-columns:repeat(auto-fit, minmax(350px, 1fr));gap:20px" class="anim-4">
+
+                <!-- STOP TIMELINE -->
+                <div class="stop-detail-card tab-content" id="tab-stops">
+                    <div style="margin-bottom:20px;display:flex;align-items:center;justify-content:space-between">
+                        <span style="font-family:var(--font-display);font-size:15px;font-weight:700">Stop Sequence</span>
+                        <span style="color:var(--muted);font-size:12px"><?= count($route['stops']) ?> stops total</span>
+                    </div>
+                    <div class="stop-timeline">
+                        <?php foreach ($route['stops'] as $index => $s): ?>
+                            <?php 
+                                $class = '';
+                                if ($index === 0 || $index === count($route['stops']) - 1) $class = 'terminal';
+                                elseif ($s['is_major_stop']) $class = 'major';
+                            ?>
+                            <div class="stop-item <?= $class ?>">
+                                <div class="stop-name">
+                                    <?= htmlspecialchars($s['stop_name']) ?>
+                                    <small>
+                                        <?= $index === 0 ? 'Start Terminal' : ($index === count($route['stops']) - 1 ? 'End Terminal' : $s['distance_from_start_km'] . ' km from start') ?>
+                                        <?= $s['landmark'] ? ' · ' . htmlspecialchars($s['landmark']) : '' ?>
+                                    </small>
+                                </div>
+                                <span class="stop-time"><?= $index === 0 ? date('H:i', strtotime($route['first_bus_time'])) : '+' . $s['arrival_time_offset_mins'] . 'm' ?></span>
+                            </div>
+                        <?php endforeach; ?>
+                    </div>
+                </div>
+
+                <!-- FARE TABLE -->
+                <div class="fare-table-wrap tab-content" id="tab-fares">
+                    <div style="padding:20px 20px 16px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between">
+                        <span style="font-family:var(--font-display);font-size:15px;font-weight:700">Fare Slabs</span>
+                        <span style="color:var(--muted);font-size:12px">Route <?= htmlspecialchars($route['route_number']) ?> · <?= $route['route_type'] ?></span>
+                    </div>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Distance Slab</th>
+                                <th>Passenger Type</th>
+                                <th>Fare</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <?php foreach ($route['fares'] as $f): ?>
+                                <tr>
+                                    <td><?= $f['min_km'] ?> – <?= $f['max_km'] ?> km</td>
+                                    <td><?= htmlspecialchars($f['passenger_type']) ?></td>
+                                    <td class="fare-price"><?= $city['currency'] ?> <?= $f['fare_amount'] ?></td>
+                                </tr>
+                            <?php endforeach; ?>
+                        </tbody>
+                    </table>
+                    <div style="padding:16px 20px;border-top:1px solid var(--border);display:flex;gap:20px; flex-wrap: wrap;">
+                        <div style="display:flex;align-items:center;gap:6px;font-size:12px;color:var(--muted)">
+                            <span style="width:10px;height:10px;border-radius:50%;background:#60a5fa;display:inline-block"></span>
+                            Concessional rates apply
+                        </div>
+                        <div style="display:flex;align-items:center;gap:6px;font-size:12px;color:var(--muted)">
+                            <span style="width:10px;height:10px;border-radius:50%;background:var(--accent);display:inline-block"></span>
+                            Exact fare may vary
+                        </div>
+                    </div>
+                </div>
+
+            </div>
         </div>
-    </div>
-</div>
+    </section>
+</main>
 
 <!-- Map Data Injection -->
 <script>

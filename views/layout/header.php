@@ -9,17 +9,16 @@ use App\Middleware\CsrfMiddleware;
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="Universal City Bus Route Portal — Real-time routes, stops, and journey planning for Kolkata and major cities.">
+    <meta name="description" content="Universal City Bus Route Portal — Real-time routes, stops, and journey planning.">
     <link rel="icon" type="image/svg+xml" href="<?= APP_URL ?>/assets/img/logo.svg">
-    <title><?= htmlspecialchars($pageTitle ?? 'Bus Route Portal') ?> — Universal City Bus Portal</title>
+    <title><?= htmlspecialchars($pageTitle ?? 'Bus Route Portal') ?> — DTC Route Information Portal</title>
     
     <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;500;600;700&family=Noto+Sans:ital,wght@0,300;0,400;0,600;1,300&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;1,9..40,300&display=swap" rel="stylesheet">
     
     <!-- CSS -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin=""/>
     <link href="<?= APP_URL ?>/assets/css/main.css" rel="stylesheet">
     <link href="<?= APP_URL ?>/assets/css/map.css" rel="stylesheet">
@@ -30,28 +29,45 @@ use App\Middleware\CsrfMiddleware;
     </script>
 </head>
 <body>
-    <header class="site-header">
-        <div class="container-custom header-inner">
-            <div class="d-flex align-items-center gap-4">
-                <a href="<?= APP_URL ?>/" class="logo">
-                    <span class="logo-text">BUS PORTAL</span>
-                </a>
+    <!-- Ambient Glow -->
+    <div class="ambient amb1"></div>
+    <div class="ambient amb2"></div>
+    <div class="ambient amb3"></div>
 
-                <select class="city-selector" id="globalCitySelector">
-                    <?php foreach ($cities ?? [] as $c): ?>
-                        <option value="<?= $c['id'] ?>" <?= ($city['id'] ?? 0) == $c['id'] ? 'selected' : '' ?>>
-                            <?= htmlspecialchars($c['city_name']) ?>
-                        </option>
-                    <?php endforeach; ?>
-                </select>
+    <!-- NAV -->
+    <nav>
+        <a href="<?= APP_URL ?>/" class="nav-logo">
+            <div class="logo-badge"><?= strtoupper(substr($city['city_name'] ?? 'DTC', 0, 3)) ?></div>
+            <div>
+                <span class="logo-text">Route Portal</span>
+                <span class="logo-sub"><?= htmlspecialchars($city['city_name'] ?? 'Delhi') ?> Transport System</span>
             </div>
+        </a>
 
-            <nav class="nav-links">
-                <a href="<?= APP_URL ?>/" class="nav-link <?= ($view ?? '') == 'home/index' ? 'active' : '' ?>">Home</a>
-                <a href="<?= APP_URL ?>/routes" class="nav-link <?= ($view ?? '') == 'routes/list' ? 'active' : '' ?>">Routes</a>
-                <a href="<?= APP_URL ?>/planner" class="nav-link <?= ($view ?? '') == 'planner/index' ? 'active' : '' ?>">Planner</a>
-                <a href="<?= APP_URL ?>/admin" class="nav-link">Admin</a>
-            </nav>
+        <div class="nav-links">
+            <a href="<?= APP_URL ?>/" class="<?= ($view ?? '') == 'home/index' ? 'active' : '' ?>">Home</a>
+            <a href="<?= APP_URL ?>/routes" class="<?= ($view ?? '') == 'routes/list' ? 'active' : '' ?>">Routes</a>
+            <a href="<?= APP_URL ?>/planner" class="<?= ($view ?? '') == 'planner/index' ? 'active' : '' ?>">Planner</a>
+            <a href="<?= APP_URL ?>/cities" class="<?= ($view ?? '') == 'cities/index' ? 'active' : '' ?>">Cities</a>
         </div>
-    </header>
+
+        <div class="nav-right">
+            <?php if (\App\Core\Session::isLoggedIn()): $u = \App\Core\Session::getUser(); ?>
+                <?php if (in_array($u['role'] ?? '', ['admin', 'super_admin'], true)): ?>
+                    <a href="<?= APP_URL ?>/admin" class="btn-ghost">Dashboard</a>
+                <?php endif; ?>
+                <div class="user-pill d-none d-md-flex" style="display:flex; align-items:center; gap:8px; margin-right:10px; background:rgba(255,255,255,0.05); padding:4px 12px; border-radius:20px; border:1px solid var(--border)">
+                    <img src="<?= $u['avatar_url'] ?? '' ?>" width="20" height="20" style="border-radius:50%">
+                    <span style="font-size:12px; color:var(--text)"><?= htmlspecialchars($u['name'] ?? 'Admin') ?></span>
+                </div>
+                <form action="<?= APP_URL ?>/auth/logout" method="POST" style="display:inline;">
+                    <button type="submit" class="btn-primary" style="padding:6px 16px; font-size:12px">Logout</button>
+                </form>
+            <?php else: ?>
+                <a href="<?= APP_URL ?>/auth/login" class="btn-ghost">Sign In</a>
+                <a href="<?= APP_URL ?>/auth/adminLogin" class="btn-primary">Admin Access</a>
+            <?php endif; ?>
+        </div>
+    </nav>
+
     <main>

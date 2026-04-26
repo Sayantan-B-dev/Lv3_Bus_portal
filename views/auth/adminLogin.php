@@ -8,7 +8,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login — DTC Route Information Portal</title>
+    <title>Admin Login — DTC Route Information Portal</title>
     <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;1,9..40,300&display=swap" rel="stylesheet">
     <link href="<?= APP_URL ?>/assets/css/main.css" rel="stylesheet">
     
@@ -72,9 +72,9 @@
 
             <div class="logo-badge" style="margin: 0 auto 20px;">DTC</div>
 
-            <h1 style="font-size: 28px; margin-bottom: 8px;">Login</h1>
+            <h1 style="font-size: 28px; margin-bottom: 8px;">Admin Login</h1>
 
-            <p class="text-muted small mb-4">Sign in to continue</p>
+            <p class="text-muted small mb-4">Restricted Access Only</p>
 
             <?php if ($error = \App\Core\Session::getFlash('error')): ?>
                 <div style="background: rgba(232,64,37,0.1); color: var(--accent2); padding: 12px; border-radius: 12px; border: 1px solid rgba(232,64,37,0.2); font-size: 13px; margin-bottom: 20px;">
@@ -83,7 +83,9 @@
             <?php endif; ?>
 
             <p class="text-muted" style="font-size: 14px; line-height: 1.6;">
-                Access your saved routes, travel preferences, and personalized features by signing in with your Google account.
+                This portal is reserved for authorized administrators only. 
+                Sign in using your official Google account to access route management tools,
+                analytics dashboards, and system controls.
             </p>
 
             <a href="<?= APP_URL ?>/auth/google" class="btn-google">
@@ -93,7 +95,7 @@
                     height="20" 
                     alt="G"
                 >
-                Continue with Google
+                Sign in as Administrator
             </a>
 
             <div class="mt-24">
@@ -102,7 +104,7 @@
                     class="see-all justify-content-center" 
                     style="justify-content: center;"
                 >
-                    ← Back to Home
+                    ← Back to Public Portal
                 </a>
             </div>
 

@@ -6,87 +6,101 @@ $extraScripts = ['dijkstra', 'map'];
 include dirname(__DIR__) . '/layout/header.php';
 ?>
 
-<div class="container-fluid p-0">
-    <div class="row g-0">
-        <!-- Sidebar Planner Panel -->
-        <div class="col-lg-4 col-xl-3 bg-surface border-end border-dark" style="height: calc(100vh - 64px); overflow-y: auto;">
-            <div class="p-4">
-                <h1 class="h3 font-rajdhani mb-1">Journey <span class="text-primary">Planner</span></h1>
-                <p class="text-muted small mb-4">Find the shortest bus path between two points.</p>
+<main style="padding-top: 100px;">
+    <section class="section" style="padding-top:0">
+        <div class="container">
+            <div class="section-header anim-1">
+                <div>
+                    <h1 class="section-title">Journey <span class="text-primary">Planner</span></h1>
+                    <p class="section-sub">Find the shortest bus path between two points in <?= htmlspecialchars($city['city_name']) ?></p>
+                </div>
+            </div>
 
-                <div class="bg-bg border border-dark p-3 mb-4">
-                    <div class="mb-3">
-                        <label class="info-label">From Stop</label>
-                        <select id="plannerFrom" class="city-selector w-100 p-2">
-                            <option value="">Select Origin...</option>
-                            <?php foreach ($stops as $s): ?>
-                                <option value="<?= $s['id'] ?>"><?= htmlspecialchars($s['stop_name']) ?></option>
-                            <?php endforeach; ?>
-                        </select>
+            <div style="display:grid; grid-template-columns: 350px 1fr; gap: 30px;" class="anim-2">
+                <!-- Sidebar Planner Panel -->
+                <div class="stop-detail-card" style="margin-top:0; height: fit-content;">
+                    <div style="margin-bottom:20px; border-bottom: 1px solid var(--border); padding-bottom: 15px;">
+                        <span style="font-family:var(--font-display);font-size:15px;font-weight:700">Set Journey</span>
                     </div>
-                    <div class="mb-3 text-center">
-                        <button id="swapPlanner" class="btn btn-outline-secondary btn-sm font-rajdhani py-0 px-2">⇅ SWAP</button>
+
+                    <div class="flex flex-direction-column gap-12" style="flex-direction:column; display:flex;">
+                        <div>
+                            <label class="meta-key" style="margin-bottom:5px; display:block">From Stop</label>
+                            <select id="plannerFrom" class="search-type" style="width:100%; background: var(--surface2); border: 1px solid var(--border); padding: 10px; border-radius: 8px; color: var(--text);">
+                                <option value="">Select Origin...</option>
+                                <?php foreach ($stops as $s): ?>
+                                    <option value="<?= $s['id'] ?>"><?= htmlspecialchars($s['stop_name']) ?></option>
+                                <?php endforeach; ?>
+                            </select>
+                        </div>
+                        
+                        <div style="text-align:center;">
+                            <button id="swapPlanner" class="btn-ghost" style="padding: 4px 12px; font-size: 11px;">⇅ SWAP</button>
+                        </div>
+
+                        <div>
+                            <label class="meta-key" style="margin-bottom:5px; display:block">To Stop</label>
+                            <select id="plannerTo" class="search-type" style="width:100%; background: var(--surface2); border: 1px solid var(--border); padding: 10px; border-radius: 8px; color: var(--text);">
+                                <option value="">Select Destination...</option>
+                                <?php foreach ($stops as $s): ?>
+                                    <option value="<?= $s['id'] ?>"><?= htmlspecialchars($s['stop_name']) ?></option>
+                                <?php endforeach; ?>
+                            </select>
+                        </div>
+
+                        <div>
+                            <label class="meta-key" style="margin-bottom:5px; display:block">Passenger Type</label>
+                            <select id="plannerType" class="search-type" style="width:100%; background: var(--surface2); border: 1px solid var(--border); padding: 10px; border-radius: 8px; color: var(--text);">
+                                <option value="General">General</option>
+                                <option value="Student">Student</option>
+                                <option value="Senior">Senior</option>
+                            </select>
+                        </div>
+
+                        <button id="findPathBtn" class="search-btn mt-16" style="width:100%">FIND BEST ROUTE</button>
                     </div>
-                    <div class="mb-3">
-                        <label class="info-label">To Stop</label>
-                        <select id="plannerTo" class="city-selector w-100 p-2">
-                            <option value="">Select Destination...</option>
-                            <?php foreach ($stops as $s): ?>
-                                <option value="<?= $s['id'] ?>"><?= htmlspecialchars($s['stop_name']) ?></option>
-                            <?php endforeach; ?>
-                        </select>
+
+                    <div id="plannerLoading" class="text-center py-4 d-none">
+                        <div class="skeleton" style="height: 100px; width: 100%;"></div>
+                        <p class="text-muted small mt-2">Calculating path...</p>
                     </div>
-                    <div class="mb-3">
-                        <label class="info-label">Passenger Type</label>
-                        <select id="plannerType" class="city-selector w-100 p-2">
-                            <option value="General">General</option>
-                            <option value="Student">Student</option>
-                            <option value="Senior">Senior</option>
-                        </select>
+
+                    <div id="plannerResults" class="d-none mt-24" style="border-top: 1px solid var(--border); padding-top: 20px;">
+                        <div style="display:grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 20px;">
+                            <div class="meta-item" style="background: var(--surface2); padding: 10px; border-radius: 8px;">
+                                <span class="meta-val" id="resDist" style="font-size: 16px;">--</span>
+                                <span class="meta-key">Distance</span>
+                            </div>
+                            <div class="meta-item" style="background: var(--surface2); padding: 10px; border-radius: 8px;">
+                                <span class="meta-val" id="resTime" style="font-size: 16px;">--</span>
+                                <span class="meta-key">Est. Time</span>
+                            </div>
+                            <div class="meta-item" style="background: var(--surface2); padding: 10px; border-radius: 8px;">
+                                <span class="meta-val" id="resTrans" style="font-size: 16px;">--</span>
+                                <span class="meta-key">Transfers</span>
+                            </div>
+                            <div class="meta-item" style="background: var(--surface2); padding: 10px; border-radius: 8px; border: 1px solid var(--accent);">
+                                <span class="meta-val text-accent" id="resFare" style="font-size: 16px;">--</span>
+                                <span class="meta-key">Total Fare</span>
+                            </div>
+                        </div>
+
+                        <div id="pathLegs" class="stop-timeline">
+                            <!-- Leg elements injected via JS -->
+                        </div>
                     </div>
-                    <button id="findPathBtn" class="search-btn w-100 py-2 font-rajdhani mt-2">FIND BEST ROUTE</button>
+
+                    <div id="plannerError" class="mt-16 text-accent small d-none" style="background: rgba(232,64,37,0.1); padding: 10px; border-radius: 8px; border: 1px solid rgba(232,64,37,0.2);"></div>
                 </div>
 
-                <div id="plannerLoading" class="text-center py-4 d-none">
-                    <div class="spinner-border text-primary" role="status"></div>
-                    <p class="text-muted small mt-2">Calculating path...</p>
+                <!-- Map Panel -->
+                <div class="map-card anim-3">
+                    <div id="plannerMap" style="height: 100%; background: #000; border-radius: 20px;"></div>
                 </div>
-
-                <div id="plannerResults" class="d-none">
-                    <div class="info-grid bg-bg border border-dark mb-4">
-                        <div class="info-item col-6">
-                            <span class="info-label">Dist</span>
-                            <span class="info-value" id="resDist">--</span>
-                        </div>
-                        <div class="info-item col-6">
-                            <span class="info-label">Time</span>
-                            <span class="info-value" id="resTime">--</span>
-                        </div>
-                        <div class="info-item col-6">
-                            <span class="info-label">Transfers</span>
-                            <span class="info-value" id="resTrans">--</span>
-                        </div>
-                        <div class="info-item col-6">
-                            <span class="info-label">Fare</span>
-                            <span class="info-value text-primary" id="resFare">--</span>
-                        </div>
-                    </div>
-
-                    <div id="pathLegs" class="timeline">
-                        <!-- Leg elements injected via JS -->
-                    </div>
-                </div>
-
-                <div id="plannerError" class="alert alert-danger d-none small"></div>
             </div>
         </div>
-
-        <!-- Map Panel -->
-        <div class="col-lg-8 col-xl-9">
-            <div id="plannerMap" style="height: calc(100vh - 64px); background: #000;"></div>
-        </div>
-    </div>
-</div>
+    </section>
+</main>
 
 <script>
     window.CITY_DATA = <?= json_encode([

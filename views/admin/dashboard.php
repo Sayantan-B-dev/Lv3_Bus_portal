@@ -5,48 +5,40 @@
 ob_start();
 ?>
 
-<div class="row g-4 mb-4">
+<div class="row g-4 mb-5">
     <div class="col-md-3">
-        <div class="card card-stat p-3 border-start border-4 border-primary">
-            <div class="d-flex align-items-center">
-                <div class="stat-icon bg-light text-primary me-3">🚌</div>
-                <div>
-                    <h6 class="text-muted small mb-1">TOTAL ROUTES</h6>
-                    <span class="h4 font-rajdhani mb-0"><?= $global['total_routes'] ?></span>
-                </div>
+        <div class="card card-stat">
+            <div class="stat-label">Total Routes</div>
+            <div class="d-flex align-items-end justify-content-between">
+                <div class="stat-value"><?= $global['total_routes'] ?></div>
+                <div class="stat-icon">🚌</div>
             </div>
         </div>
     </div>
     <div class="col-md-3">
-        <div class="card card-stat p-3 border-start border-4 border-success">
-            <div class="d-flex align-items-center">
-                <div class="stat-icon bg-light text-success me-3">📍</div>
-                <div>
-                    <h6 class="text-muted small mb-1">TOTAL STOPS</h6>
-                    <span class="h4 font-rajdhani mb-0"><?= $global['total_stops'] ?></span>
-                </div>
+        <div class="card card-stat">
+            <div class="stat-label">Total Stops</div>
+            <div class="d-flex align-items-end justify-content-between">
+                <div class="stat-value"><?= $global['total_stops'] ?></div>
+                <div class="stat-icon">📍</div>
             </div>
         </div>
     </div>
     <div class="col-md-3">
-        <div class="card card-stat p-3 border-start border-4 border-info">
-            <div class="d-flex align-items-center">
-                <div class="stat-icon bg-light text-info me-3">🏙️</div>
-                <div>
-                    <h6 class="text-muted small mb-1">CITIES</h6>
-                    <span class="h4 font-rajdhani mb-0"><?= $global['total_cities'] ?></span>
-                </div>
+        <div class="card card-stat">
+            <div class="stat-label">Cities Covered</div>
+            <div class="d-flex align-items-end justify-content-between">
+                <div class="stat-value"><?= $global['total_cities'] ?></div>
+                <div class="stat-icon">🏙️</div>
             </div>
         </div>
     </div>
     <div class="col-md-3">
-        <div class="card card-stat p-3 border-start border-4 border-warning">
-            <div class="d-flex align-items-center">
-                <div class="stat-icon bg-light text-warning me-3">👤</div>
-                <div>
-                    <h6 class="text-muted small mb-1">ADMINS</h6>
-                    <span class="h4 font-rajdhani mb-0"><?= count($users) ?></span>
-                </div>
+        <div class="card card-stat">
+            <div class="stat-label">System Admins</div>
+            <div class="d-flex align-items-end justify-content-between">
+                <div class="stat-value"><?= count($users) ?></div>
+                <div class="stat-icon">👤</div>
             </div>
         </div>
     </div>
@@ -54,41 +46,64 @@ ob_start();
 
 <div class="row">
     <div class="col-lg-8">
-        <div class="card border-0 shadow-sm mb-4">
-            <div class="card-header bg-white font-rajdhani py-3">CITY OVERVIEW</div>
-            <div class="card-body">
-                <table class="table table-hover align-middle">
-                    <thead class="table-light">
-                        <tr class="small text-muted">
-                            <th>CITY NAME</th>
-                            <th>REGION</th>
-                            <th>ROUTES</th>
-                            <th>ACTIONS</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <?php foreach ($cities as $c): ?>
+        <div class="card mb-4">
+            <div class="card-header">CITY OVERVIEW</div>
+            <div class="card-body p-0">
+                <div class="table-responsive">
+                    <table class="table table-hover">
+                        <thead>
                             <tr>
-                                <td class="fw-bold"><?= htmlspecialchars($c['city_name']) ?></td>
-                                <td class="text-muted"><?= htmlspecialchars($c['state_region']) ?></td>
-                                <td><span class="badge bg-secondary">...</span></td>
-                                <td>
-                                    <a href="<?= APP_URL ?>/admin/routes?city_id=<?= $c['id'] ?>" class="btn btn-sm btn-outline-primary">Manage</a>
-                                </td>
+                                <th>CITY NAME</th>
+                                <th>REGION</th>
+                                <th>ROUTES</th>
+                                <th>ACTIONS</th>
                             </tr>
-                        <?php endforeach; ?>
-                    </tbody>
-                </table>
+                        </thead>
+                        <tbody>
+                            <?php foreach ($cities as $c): ?>
+                                <tr>
+                                    <td>
+                                        <div class="fw-bold" style="color:black"><?= htmlspecialchars($c['city_name']) ?></div>
+                                        <div class="small text-muted"><?= htmlspecialchars($c['country'] ?? 'India') ?></div>
+                                    </td>
+                                    <td><span class="badge-outline"><?= htmlspecialchars($c['state_region']) ?></span></td>
+                                    <td>
+                                        <span style="color:var(--admin-accent); font-weight:700">Active</span>
+                                    </td>
+                                    <td>
+                                        <a href="<?= APP_URL ?>/admin/routes?city_id=<?= $c['id'] ?>" class="btn btn-sm btn-outline-primary action-btn">Manage</a>
+                                    </td>
+                                </tr>
+                            <?php endforeach; ?>
+                        </tbody>
+                    </table>
+                </div>
             </div>
         </div>
     </div>
     <div class="col-lg-4">
-        <div class="card border-0 shadow-sm">
-            <div class="card-header bg-white font-rajdhani py-3">SYSTEM ACTIONS</div>
+        <div class="card">
+            <div class="card-header">SYSTEM ACTIONS</div>
             <div class="card-body">
-                <div class="d-grid gap-2">
-                    <a href="<?= APP_URL ?>/admin/cities" class="btn btn-primary">Add New City</a>
-                    <a href="<?= APP_URL ?>/admin/stops/import-osm" class="btn btn-outline-secondary">Import OSM Data</a>
+                <p class=" small mb-4">Quickly manage global entities and data imports.</p>
+                <div class="d-grid gap-3">
+                    <a href="<?= APP_URL ?>/admin/cities" class="btn btn-primary">
+                        <span class="me-2">+</span> Add New City
+                    </a>
+                    <a href="<?= APP_URL ?>/admin/stops/import-osm" class="btn btn-outline-secondary" style="border-color:var(--admin-border); color:var(--admin-text)">
+                        <span class="me-2">📥</span> Import OSM Data
+                    </a>
+                    <div class="mt-4 pt-4 border-top border-secondary opacity-25">
+                        <h6 class="font-display fw-bold mb-3">Recent Users</h6>
+                        <?php foreach (array_slice($users, 0, 3) as $u): ?>
+                            <div class="d-flex align-items-center gap-2 mb-2">
+                                <div style="width:24px; height:24px; background:var(--admin-surface); border-radius:50%; font-size:10px; display:flex; align-items:center; justify-content:center; border:1px solid var(--admin-border)">
+                                    <?= substr($u['name'], 0, 1) ?>
+                                </div>
+                                <div class="small"><?= htmlspecialchars($u['name']) ?></div>
+                            </div>
+                        <?php endforeach; ?>
+                    </div>
                 </div>
             </div>
         </div>

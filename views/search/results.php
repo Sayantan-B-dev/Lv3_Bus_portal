@@ -5,69 +5,74 @@
 include dirname(__DIR__) . '/layout/header.php';
 ?>
 
-<div class="container-custom py-5">
-    <div class="mb-5">
-        <h1 class="h2 font-rajdhani">Search <span class="text-primary">Results</span></h1>
-        <p class="text-muted">Showing results for "<?= htmlspecialchars($query) ?>" in <?= htmlspecialchars($city['city_name']) ?></p>
-        
-        <form action="<?= APP_URL ?>/search" method="GET" class="search-container mt-4" style="margin: 0; max-width: 500px;">
-            <input type="hidden" name="city_id" value="<?= $city['id'] ?>">
-            <input type="text" name="q" class="search-input" value="<?= htmlspecialchars($query) ?>" placeholder="Search again..." required>
-            <button type="submit" class="search-btn">SEARCH</button>
-        </form>
-    </div>
+<main style="padding-top: 100px;">
+    <section class="section">
+        <div class="container">
+            <div class="section-header anim-1">
+                <div>
+                    <h1 class="section-title">Search <span class="text-primary">Results</span></h1>
+                    <p class="section-sub">Showing results for "<?= htmlspecialchars($query) ?>" in <?= htmlspecialchars($city['city_name']) ?></p>
+                </div>
+                
+                <form action="<?= APP_URL ?>/search" method="GET" class="search-wrap" style="margin-bottom:0; max-width: 400px;">
+                    <input type="hidden" name="city_id" value="<?= $city['id'] ?>">
+                    <div class="search-icon">🔍</div>
+                    <input class="search-input" type="text" name="q" value="<?= htmlspecialchars($query) ?>" placeholder="Search again..." required>
+                    <button type="submit" class="search-btn">Search</button>
+                </form>
+            </div>
 
-    <div class="row">
-        <!-- Routes Column -->
-        <div class="col-lg-8">
-            <h3 class="h5 font-rajdhani text-white mb-4 border-bottom border-dark pb-2">Matching Routes (<?= count($results['routes'] ?? []) ?>)</h3>
-            
-            <?php if (empty($results['routes'])): ?>
-                <p class="text-muted py-3">No matching routes found.</p>
-            <?php else: ?>
-                <div class="row">
-                    <?php foreach ($results['routes'] as $r): ?>
-                        <div class="col-md-6">
-                            <a href="<?= APP_URL ?>/routes/<?= $r['id'] ?>" class="route-card text-decoration-none">
-                                <div class="route-number"><?= htmlspecialchars($r['route_number']) ?></div>
-                                <div class="route-info">
-                                    <div class="route-endpoints small">
-                                        <?= htmlspecialchars($r['source']) ?> → <?= htmlspecialchars($r['destination']) ?>
+            <div style="display:grid; grid-template-columns: 2fr 1fr; gap: 40px;" class="mt-24">
+                <!-- Routes Column -->
+                <div>
+                    <h3 class="font-display mb-4" style="font-size:18px; border-bottom: 1px solid var(--border); padding-bottom: 10px;">Matching Routes (<?= count($results['routes'] ?? []) ?>)</h3>
+                    
+                    <?php if (empty($results['routes'])): ?>
+                        <p class="text-muted py-3">No matching routes found.</p>
+                    <?php else: ?>
+                        <div class="routes-grid" style="grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));">
+                            <?php foreach ($results['routes'] as $r): ?>
+                                <a class="route-card" href="<?= APP_URL ?>/routes/<?= $r['id'] ?>">
+                                    <div class="route-card-top" style="margin-bottom:12px">
+                                        <span class="route-num" style="font-size:22px"><?= htmlspecialchars($r['route_number']) ?></span>
+                                        <span class="route-badge badge-<?= strtolower($r['route_type']) ?>"><?= $r['route_type'] ?></span>
                                     </div>
-                                    <span class="badge badge-type badge-<?= strtolower($r['route_type']) ?> mt-1"><?= $r['route_type'] ?></span>
-                                </div>
-                            </a>
+                                    <div class="route-path" style="margin-bottom:0">
+                                        <div class="route-from" style="font-size:13px"><?= htmlspecialchars($r['source']) ?> → <?= htmlspecialchars($r['destination']) ?></div>
+                                    </div>
+                                </a>
+                            <?php endforeach; ?>
                         </div>
-                    <?php endforeach; ?>
+                    <?php endif; ?>
                 </div>
-            <?php endif; ?>
-        </div>
 
-        <!-- Stops Column -->
-        <div class="col-lg-4">
-            <h3 class="h5 font-rajdhani text-white mb-4 border-bottom border-dark pb-2">Matching Stops (<?= count($results['stops'] ?? []) ?>)</h3>
-            
-            <?php if (empty($results['stops'])): ?>
-                <p class="text-muted py-3">No matching stops found.</p>
-            <?php else: ?>
-                <div class="list-group list-group-flush bg-surface border border-dark">
-                    <?php foreach ($results['stops'] as $s): ?>
-                        <div class="list-group-item bg-transparent border-dark p-3">
-                            <div class="d-flex justify-content-between align-items-start">
-                                <div>
-                                    <div class="stop-name text-primary"><?= htmlspecialchars($s['stop_name']) ?></div>
-                                    <div class="small text-muted"><?= htmlspecialchars($s['landmark'] ?? 'No landmark') ?></div>
+                <!-- Stops Column -->
+                <div>
+                    <h3 class="font-display mb-4" style="font-size:18px; border-bottom: 1px solid var(--border); padding-bottom: 10px;">Matching Stops (<?= count($results['stops'] ?? []) ?>)</h3>
+                    
+                    <?php if (empty($results['stops'])): ?>
+                        <p class="text-muted py-3">No matching stops found.</p>
+                    <?php else: ?>
+                        <div style="display: flex; flex-direction: column; gap: 12px;">
+                            <?php foreach ($results['stops'] as $s): ?>
+                                <div class="route-card" style="padding: 16px; cursor: default;">
+                                    <div class="flex items-center justify-between">
+                                        <div>
+                                            <div class="fw-700" style="color:var(--accent2); font-size:14px;"><?= htmlspecialchars($s['stop_name']) ?></div>
+                                            <div class="small text-muted" style="font-size:11px;"><?= htmlspecialchars($s['landmark'] ?? 'No landmark') ?></div>
+                                        </div>
+                                        <?php if ($s['latitude']): ?>
+                                            <a href="https://www.openstreetmap.org/?mlat=<?= $s['latitude'] ?>&mlon=<?= $s['longitude'] ?>" target="_blank" class="tag" style="padding:4px 8px">📍 Map</a>
+                                        <?php endif; ?>
+                                    </div>
                                 </div>
-                                <?php if ($s['latitude']): ?>
-                                    <a href="https://www.openstreetmap.org/?mlat=<?= $s['latitude'] ?>&mlon=<?= $s['longitude'] ?>" target="_blank" class="text-muted">📍</a>
-                                <?php endif; ?>
-                            </div>
+                            <?php endforeach; ?>
                         </div>
-                    <?php endforeach; ?>
+                    <?php endif; ?>
                 </div>
-            <?php endif; ?>
+            </div>
         </div>
-    </div>
-</div>
+    </section>
+</main>
 
 <?php include dirname(__DIR__) . '/layout/footer.php'; ?>

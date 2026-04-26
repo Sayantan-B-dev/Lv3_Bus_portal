@@ -1,0 +1,1165 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DTC Route Information Portal</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;1,9..40,300&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #09090f;
+    --surface: #0f0f1a;
+    --surface2: #151528;
+    --border: rgba(255,255,255,0.06);
+    --border-hover: rgba(255,255,255,0.14);
+    --accent: #e84025;
+    --accent2: #ff6b35;
+    --accent-glow: rgba(232,64,37,0.18);
+    --gold: #f5c518;
+    --blue: #3b82f6;
+    --green: #22c55e;
+    --purple: #a855f7;
+    --text: #f0f0f5;
+    --muted: #6b6b80;
+    --muted2: #9090a8;
+    --card-bg: rgba(255,255,255,0.035);
+    --font-display: 'Syne', sans-serif;
+    --font-body: 'DM Sans', sans-serif;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--font-body);
+    font-size: 15px;
+    line-height: 1.6;
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* ─── NOISE TEXTURE OVERLAY ─── */
+  body::before {
+    content: '';
+    position: fixed; inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.045'/%3E%3C/svg%3E");
+    pointer-events: none;
+    z-index: 999;
+    opacity: .5;
+  }
+
+  /* ─── AMBIENT GLOW ─── */
+  .ambient {
+    position: fixed; pointer-events: none; z-index: 0;
+    border-radius: 50%;
+    filter: blur(120px);
+    opacity: .12;
+  }
+  .amb1 { width: 600px; height: 600px; background: var(--accent); top: -200px; left: -200px; }
+  .amb2 { width: 500px; height: 500px; background: #3b82f6; bottom: 100px; right: -200px; }
+  .amb3 { width: 300px; height: 300px; background: var(--gold); top: 50%; left: 50%; transform: translate(-50%,-50%); }
+
+  /* ─── NAV ─── */
+  nav {
+    position: fixed; top: 0; left: 0; right: 0;
+    z-index: 100;
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 0 40px;
+    height: 64px;
+    background: rgba(9,9,15,.72);
+    backdrop-filter: blur(20px) saturate(180%);
+    border-bottom: 1px solid var(--border);
+  }
+
+  .nav-logo {
+    display: flex; align-items: center; gap: 12px;
+    font-family: var(--font-display);
+    font-weight: 800;
+    font-size: 18px;
+    letter-spacing: -.5px;
+  }
+  .logo-badge {
+    background: var(--accent);
+    color: white;
+    width: 36px; height: 36px;
+    border-radius: 10px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 13px;
+    font-weight: 800;
+    box-shadow: 0 0 20px var(--accent-glow);
+  }
+  .logo-text { color: var(--text); }
+  .logo-sub { color: var(--muted); font-size: 11px; font-weight: 400; display: block; margin-top: -2px; font-family: var(--font-body); letter-spacing: .5px; text-transform: uppercase; }
+
+  .nav-links { display: flex; gap: 4px; }
+  .nav-links a {
+    color: var(--muted2);
+    text-decoration: none;
+    padding: 6px 14px;
+    border-radius: 8px;
+    font-size: 13.5px;
+    font-weight: 500;
+    transition: all .2s;
+  }
+  .nav-links a:hover { color: var(--text); background: rgba(255,255,255,.06); }
+  .nav-links a.active { color: var(--text); }
+
+  .nav-right { display: flex; gap: 10px; align-items: center; }
+  .btn-ghost {
+    padding: 7px 16px; border-radius: 8px;
+    border: 1px solid var(--border);
+    background: transparent;
+    color: var(--muted2);
+    font-size: 13px; font-weight: 500;
+    cursor: pointer; transition: all .2s;
+    font-family: var(--font-body);
+  }
+  .btn-ghost:hover { border-color: var(--border-hover); color: var(--text); }
+
+  .btn-primary {
+    padding: 7px 18px; border-radius: 8px;
+    border: none;
+    background: var(--accent);
+    color: white;
+    font-size: 13px; font-weight: 600;
+    cursor: pointer; transition: all .2s;
+    font-family: var(--font-display);
+    letter-spacing: .3px;
+    box-shadow: 0 0 16px var(--accent-glow);
+  }
+  .btn-primary:hover { background: #f04a2e; transform: translateY(-1px); box-shadow: 0 4px 24px rgba(232,64,37,.4); }
+
+  /* ─── LAYOUT ─── */
+  main { position: relative; z-index: 1; }
+
+  .container { max-width: 1200px; margin: 0 auto; padding: 0 40px; }
+
+  /* ─── HERO ─── */
+  .hero {
+    padding: 140px 0 80px;
+    position: relative;
+    overflow: hidden;
+  }
+  .hero-label {
+    display: inline-flex; align-items: center; gap: 8px;
+    background: rgba(232,64,37,.1);
+    border: 1px solid rgba(232,64,37,.25);
+    color: var(--accent2);
+    padding: 5px 14px; border-radius: 100px;
+    font-size: 12px; font-weight: 600;
+    letter-spacing: .8px; text-transform: uppercase;
+    margin-bottom: 28px;
+    animation: fadeSlideUp .6s ease both;
+  }
+  .hero-label::before { content: '●'; font-size: 8px; animation: pulse 2s infinite; }
+  @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.3} }
+
+  h1 {
+    font-family: var(--font-display);
+    font-size: clamp(42px, 5vw, 72px);
+    font-weight: 800;
+    line-height: 1.06;
+    letter-spacing: -2.5px;
+    margin-bottom: 24px;
+    animation: fadeSlideUp .6s .1s ease both;
+  }
+  h1 .accent { color: var(--accent); }
+  h1 .dim { color: var(--muted); }
+
+  .hero-desc {
+    color: var(--muted2);
+    font-size: 17px;
+    line-height: 1.7;
+    max-width: 560px;
+    margin-bottom: 40px;
+    font-weight: 300;
+    animation: fadeSlideUp .6s .2s ease both;
+  }
+
+  @keyframes fadeSlideUp {
+    from { opacity: 0; transform: translateY(22px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  /* ─── SEARCH BOX ─── */
+  .search-wrap {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 18px;
+    padding: 10px;
+    display: flex; align-items: center; gap: 10px;
+    max-width: 680px;
+    margin-bottom: 40px;
+    transition: border-color .2s, box-shadow .2s;
+    animation: fadeSlideUp .6s .3s ease both;
+  }
+  .search-wrap:focus-within {
+    border-color: rgba(232,64,37,.4);
+    box-shadow: 0 0 0 4px rgba(232,64,37,.08), 0 8px 40px rgba(0,0,0,.4);
+  }
+  .search-icon { color: var(--muted); padding: 0 8px; font-size: 18px; flex-shrink: 0; }
+  .search-input {
+    flex: 1; background: transparent; border: none; outline: none;
+    color: var(--text); font-family: var(--font-body);
+    font-size: 15px; font-weight: 400;
+  }
+  .search-input::placeholder { color: var(--muted); }
+  .search-divider { width: 1px; height: 28px; background: var(--border); }
+  .search-type {
+    background: transparent; border: none; outline: none;
+    color: var(--muted2); font-family: var(--font-body);
+    font-size: 13px; padding: 0 8px; cursor: pointer;
+  }
+  .search-type option { background: var(--surface2); }
+  .search-btn {
+    background: var(--accent); color: white;
+    border: none; border-radius: 10px;
+    padding: 10px 22px;
+    font-family: var(--font-display); font-size: 14px; font-weight: 600;
+    cursor: pointer; transition: all .2s;
+    white-space: nowrap;
+    box-shadow: 0 0 16px var(--accent-glow);
+  }
+  .search-btn:hover { background: #f04a2e; }
+
+  .hero-tags {
+    display: flex; flex-wrap: wrap; gap: 8px;
+    animation: fadeSlideUp .6s .4s ease both;
+  }
+  .tag {
+    padding: 5px 14px; border-radius: 100px;
+    border: 1px solid var(--border);
+    color: var(--muted2); font-size: 12.5px;
+    cursor: pointer; transition: all .2s;
+  }
+  .tag:hover { border-color: var(--border-hover); color: var(--text); }
+
+  /* ─── STATS BAR ─── */
+  .stats-bar {
+    border-top: 1px solid var(--border);
+    border-bottom: 1px solid var(--border);
+    padding: 28px 0;
+    display: grid; grid-template-columns: repeat(4,1fr);
+    gap: 0;
+    margin: 60px 0;
+    animation: fadeSlideUp .6s .5s ease both;
+  }
+  .stat-item {
+    text-align: center;
+    padding: 12px 0;
+    border-right: 1px solid var(--border);
+    position: relative;
+  }
+  .stat-item:last-child { border-right: none; }
+  .stat-num {
+    font-family: var(--font-display);
+    font-size: 38px; font-weight: 800;
+    letter-spacing: -2px;
+    background: linear-gradient(135deg, var(--text) 30%, var(--muted) 100%);
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+    background-clip: text;
+    display: block; line-height: 1;
+  }
+  .stat-label { color: var(--muted); font-size: 12px; letter-spacing: .6px; text-transform: uppercase; margin-top: 6px; display: block; }
+
+  /* ─── SECTION ─── */
+  .section { padding: 60px 0; }
+  .section-header { display: flex; align-items: flex-end; justify-content: space-between; margin-bottom: 32px; }
+  .section-title {
+    font-family: var(--font-display);
+    font-size: 26px; font-weight: 700;
+    letter-spacing: -1px;
+  }
+  .section-sub { color: var(--muted); font-size: 13px; margin-top: 4px; }
+  .see-all {
+    color: var(--muted2); font-size: 13px; text-decoration: none;
+    display: flex; align-items: center; gap: 4px;
+    transition: color .2s;
+  }
+  .see-all:hover { color: var(--accent); }
+
+  /* ─── ROUTE CARDS ─── */
+  .routes-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 16px; }
+
+  .route-card {
+    background: var(--card-bg);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 24px;
+    cursor: pointer;
+    transition: all .25s cubic-bezier(.4,0,.2,1);
+    position: relative;
+    overflow: hidden;
+    text-decoration: none;
+    display: block;
+    color: var(--text);
+  }
+  .route-card::before {
+    content: '';
+    position: absolute; top: 0; left: 0; right: 0; height: 1px;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,.1), transparent);
+    opacity: 0; transition: opacity .25s;
+  }
+  .route-card:hover {
+    border-color: var(--border-hover);
+    background: rgba(255,255,255,.055);
+    transform: translateY(-3px);
+    box-shadow: 0 12px 40px rgba(0,0,0,.4), 0 0 0 1px rgba(255,255,255,.06);
+  }
+  .route-card:hover::before { opacity: 1; }
+
+  .route-card-top { display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px; }
+
+  .route-num {
+    font-family: var(--font-display);
+    font-size: 28px; font-weight: 800;
+    letter-spacing: -1.5px;
+  }
+
+  .route-badge {
+    padding: 3px 10px; border-radius: 100px;
+    font-size: 11px; font-weight: 600; letter-spacing: .4px;
+    text-transform: uppercase;
+  }
+  .badge-ac { background: rgba(59,130,246,.15); color: #60a5fa; border: 1px solid rgba(59,130,246,.25); }
+  .badge-express { background: rgba(245,197,24,.12); color: #f5c518; border: 1px solid rgba(245,197,24,.2); }
+  .badge-normal { background: rgba(34,197,94,.12); color: #4ade80; border: 1px solid rgba(34,197,94,.2); }
+  .badge-night { background: rgba(168,85,247,.12); color: #c084fc; border: 1px solid rgba(168,85,247,.2); }
+
+  .route-path {
+    margin-bottom: 18px;
+  }
+  .route-from, .route-to {
+    font-size: 14px; font-weight: 500;
+  }
+  .route-from { margin-bottom: 4px; }
+  .route-connector {
+    display: flex; align-items: center; gap: 8px;
+    padding: 4px 0;
+  }
+  .route-line {
+    flex: 1; height: 1px;
+    background: linear-gradient(90deg, var(--accent), transparent);
+  }
+  .route-arrow { color: var(--muted); font-size: 10px; }
+  .route-from-label, .route-to-label {
+    color: var(--muted); font-size: 11px; text-transform: uppercase; letter-spacing: .5px;
+  }
+
+  .route-meta { display: flex; gap: 16px; }
+  .meta-item { display: flex; flex-direction: column; }
+  .meta-val { font-size: 14px; font-weight: 600; }
+  .meta-key { color: var(--muted); font-size: 10.5px; text-transform: uppercase; letter-spacing: .5px; }
+
+  /* ─── STOP TIMELINE ─── */
+  .stop-detail-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    padding: 32px;
+    margin-top: 20px;
+  }
+  .stop-timeline { position: relative; padding-left: 28px; }
+  .stop-timeline::before {
+    content: '';
+    position: absolute; left: 7px; top: 12px; bottom: 12px; width: 2px;
+    background: linear-gradient(180deg, var(--accent), transparent);
+  }
+  .stop-item {
+    position: relative;
+    padding: 12px 0 12px 20px;
+    display: flex; align-items: center; justify-content: space-between;
+    border-bottom: 1px solid var(--border);
+  }
+  .stop-item:last-child { border-bottom: none; }
+  .stop-item::before {
+    content: '';
+    position: absolute; left: -24px; top: 50%; transform: translateY(-50%);
+    width: 10px; height: 10px; border-radius: 50%;
+    background: var(--surface2); border: 2px solid var(--muted);
+  }
+  .stop-item.major::before { background: var(--accent); border-color: var(--accent); box-shadow: 0 0 8px var(--accent-glow); }
+  .stop-item.terminal::before { background: var(--accent); border-color: var(--accent); width: 14px; height: 14px; left: -26px; box-shadow: 0 0 12px var(--accent-glow); }
+  .stop-name { font-size: 14px; font-weight: 500; }
+  .stop-name small { display: block; color: var(--muted); font-size: 11px; font-weight: 400; }
+  .stop-time { font-size: 13px; font-weight: 600; color: var(--muted2); font-variant-numeric: tabular-nums; }
+
+  /* ─── FARE TABLE ─── */
+  .fare-table-wrap {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    overflow: hidden;
+  }
+  table { width: 100%; border-collapse: collapse; }
+  thead tr { background: rgba(255,255,255,.03); }
+  th {
+    padding: 14px 20px;
+    font-size: 11px; font-weight: 600; letter-spacing: .8px; text-transform: uppercase;
+    color: var(--muted);
+    text-align: left;
+    border-bottom: 1px solid var(--border);
+  }
+  td {
+    padding: 14px 20px;
+    font-size: 14px;
+    border-bottom: 1px solid var(--border);
+    color: var(--text);
+  }
+  tr:last-child td { border-bottom: none; }
+  tr:hover td { background: rgba(255,255,255,.02); }
+  .fare-price { font-weight: 700; color: var(--accent2); font-variant-numeric: tabular-nums; }
+  .fare-badge { padding: 2px 9px; border-radius: 100px; font-size: 11px; font-weight: 600; }
+
+  /* ─── FILTER BAR ─── */
+  .filter-bar {
+    display: flex; gap: 8px; margin-bottom: 24px; flex-wrap: wrap;
+  }
+  .filter-chip {
+    padding: 7px 16px; border-radius: 100px;
+    border: 1px solid var(--border);
+    background: transparent;
+    color: var(--muted2); font-size: 13px; font-weight: 500;
+    cursor: pointer; transition: all .18s;
+    font-family: var(--font-body);
+  }
+  .filter-chip:hover { border-color: var(--border-hover); color: var(--text); }
+  .filter-chip.active {
+    background: var(--accent);
+    border-color: var(--accent);
+    color: white;
+    box-shadow: 0 0 12px var(--accent-glow);
+  }
+
+  /* ─── MAP PLACEHOLDER ─── */
+  .map-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    height: 320px;
+    position: relative;
+    overflow: hidden;
+  }
+  .map-bg {
+    position: absolute; inset: 0;
+    background:
+      linear-gradient(rgba(9,9,15,.0) 0%, rgba(9,9,15,.7) 100%),
+      repeating-linear-gradient(0deg, transparent, transparent 39px, rgba(255,255,255,.025) 40px),
+      repeating-linear-gradient(90deg, transparent, transparent 39px, rgba(255,255,255,.025) 40px);
+    background-size: auto, 40px 40px, 40px 40px;
+  }
+  .map-route-line {
+    position: absolute; top: 50%; left: 50%; transform: translate(-50%,-50%);
+    width: 70%; height: 3px;
+    background: linear-gradient(90deg, var(--accent), var(--blue));
+    border-radius: 4px;
+    box-shadow: 0 0 20px rgba(232,64,37,.4);
+  }
+  .map-dot {
+    position: absolute; top: 50%; transform: translateY(-50%);
+    width: 14px; height: 14px; border-radius: 50%;
+    border: 2px solid white;
+  }
+  .map-dot.start { left: 15%; background: var(--accent); box-shadow: 0 0 12px var(--accent-glow); }
+  .map-dot.end { right: 15%; background: var(--blue); box-shadow: 0 0 12px rgba(59,130,246,.4); }
+  .map-pip {
+    position: absolute; background: rgba(255,255,255,.8);
+    border-radius: 4px; padding: 4px 10px; font-size: 11px;
+    font-weight: 600; color: #09090f;
+  }
+  .map-pip.a { top: 38%; left: 13%; }
+  .map-pip.b { top: 55%; right: 13%; }
+  .map-badge-overlay {
+    position: absolute; bottom: 24px; left: 24px;
+    background: rgba(15,15,26,.85); backdrop-filter: blur(12px);
+    border: 1px solid var(--border);
+    border-radius: 12px; padding: 14px 20px;
+    display: flex; align-items: center; gap: 16px;
+  }
+  .map-overlay-item { display: flex; flex-direction: column; }
+  .map-overlay-val { font-size: 16px; font-weight: 700; }
+  .map-overlay-key { font-size: 10px; color: var(--muted); text-transform: uppercase; letter-spacing: .5px; }
+  .map-overlay-divider { width: 1px; height: 32px; background: var(--border); }
+  .map-open-btn {
+    position: absolute; bottom: 24px; right: 24px;
+    background: var(--accent); color: white;
+    border: none; border-radius: 10px;
+    padding: 10px 20px;
+    font-family: var(--font-display); font-size: 13px; font-weight: 600;
+    cursor: pointer;
+    box-shadow: 0 0 16px var(--accent-glow);
+  }
+
+  /* ─── ADMIN STRIP ─── */
+  .admin-strip {
+    background: linear-gradient(135deg, rgba(232,64,37,.08), rgba(59,130,246,.06));
+    border: 1px solid rgba(232,64,37,.2);
+    border-radius: 16px;
+    padding: 24px 28px;
+    display: flex; align-items: center; justify-content: space-between;
+    margin-top: 60px;
+    gap: 20px;
+  }
+  .admin-strip-text h3 {
+    font-family: var(--font-display); font-size: 18px; font-weight: 700; margin-bottom: 4px;
+  }
+  .admin-strip-text p { color: var(--muted2); font-size: 14px; }
+  .admin-strip-btns { display: flex; gap: 10px; flex-shrink: 0; }
+
+  /* ─── FOOTER ─── */
+  footer {
+    border-top: 1px solid var(--border);
+    padding: 40px 0;
+    margin-top: 80px;
+    position: relative; z-index: 1;
+  }
+  .footer-inner { display: flex; align-items: center; justify-content: space-between; }
+  .footer-logo { opacity: .6; font-family: var(--font-display); font-size: 15px; font-weight: 700; }
+  .footer-copy { color: var(--muted); font-size: 12.5px; }
+  .footer-links { display: flex; gap: 20px; }
+  .footer-links a { color: var(--muted); font-size: 12.5px; text-decoration: none; transition: color .2s; }
+  .footer-links a:hover { color: var(--text); }
+
+  /* ─── SKELETON LOADER (for vibe) ─── */
+  .skeleton {
+    background: linear-gradient(90deg, rgba(255,255,255,.04) 25%, rgba(255,255,255,.08) 50%, rgba(255,255,255,.04) 75%);
+    background-size: 200% 100%;
+    animation: shimmer 1.5s infinite;
+    border-radius: 6px;
+  }
+  @keyframes shimmer { to { background-position: -200% 0; } }
+
+  /* ─── TABS ─── */
+  .tabs { display: flex; gap: 4px; border-bottom: 1px solid var(--border); margin-bottom: 28px; }
+  .tab {
+    padding: 10px 20px;
+    color: var(--muted);
+    font-size: 14px; font-weight: 500;
+    cursor: pointer;
+    position: relative;
+    border: none; background: none;
+    font-family: var(--font-body);
+    transition: color .2s;
+  }
+  .tab::after {
+    content: '';
+    position: absolute; bottom: -1px; left: 0; right: 0; height: 2px;
+    background: var(--accent);
+    transform: scaleX(0); transition: transform .2s;
+  }
+  .tab.active { color: var(--text); }
+  .tab.active::after { transform: scaleX(1); }
+  .tab:hover { color: var(--muted2); }
+
+  /* ─── ANIMATIONS ─── */
+  .anim-1 { animation: fadeSlideUp .6s .1s ease both; }
+  .anim-2 { animation: fadeSlideUp .6s .2s ease both; }
+  .anim-3 { animation: fadeSlideUp .6s .3s ease both; }
+  .anim-4 { animation: fadeSlideUp .6s .4s ease both; }
+  .anim-5 { animation: fadeSlideUp .6s .5s ease both; }
+  .anim-6 { animation: fadeSlideUp .6s .6s ease both; }
+
+  /* ─── STATUS DOT ─── */
+  .status-dot {
+    width: 7px; height: 7px; border-radius: 50%; display: inline-block;
+    margin-right: 5px; flex-shrink: 0;
+  }
+  .dot-green { background: var(--green); box-shadow: 0 0 6px var(--green); }
+  .dot-red { background: var(--accent); }
+  .dot-yellow { background: var(--gold); }
+
+  /* ─── SCROLLBAR ─── */
+  ::-webkit-scrollbar { width: 6px; }
+  ::-webkit-scrollbar-track { background: transparent; }
+  ::-webkit-scrollbar-thumb { background: var(--surface2); border-radius: 3px; }
+
+  /* ─── UTILITY ─── */
+  .flex { display: flex; }
+  .items-center { align-items: center; }
+  .gap-8 { gap: 8px; }
+  .gap-12 { gap: 12px; }
+  .mt-8 { margin-top: 8px; }
+  .mt-16 { margin-top: 16px; }
+  .mt-24 { margin-top: 24px; }
+  .text-muted { color: var(--muted2); }
+  .text-accent { color: var(--accent2); }
+  .font-display { font-family: var(--font-display); }
+  .fw-700 { font-weight: 700; }
+</style>
+</head>
+<body>
+
+<!-- Ambient Glow -->
+<div class="ambient amb1"></div>
+<div class="ambient amb2"></div>
+<div class="ambient amb3"></div>
+
+<!-- NAV -->
+<nav>
+  <div class="nav-logo">
+    <div class="logo-badge">DTC</div>
+    <div>
+      <span class="logo-text">Route Portal</span>
+      <span class="logo-sub">Delhi Transport Corporation</span>
+    </div>
+  </div>
+  <div class="nav-links">
+    <a href="#" class="active">Routes</a>
+    <a href="#">Stops</a>
+    <a href="#">Fares</a>
+    <a href="#">API</a>
+    <a href="#">About</a>
+  </div>
+  <div class="nav-right">
+    <button class="btn-ghost">Sign In</button>
+    <button class="btn-primary">Admin Panel →</button>
+  </div>
+</nav>
+
+<!-- MAIN -->
+<main>
+
+  <!-- HERO -->
+  <section class="hero">
+    <div class="container">
+      <div class="hero-label">v1.0 — Live in Delhi</div>
+      <h1>
+        Find your <span class="accent">bus route</span><br>
+        across <span class="dim">Delhi</span> instantly.
+      </h1>
+      <p class="hero-desc">
+        Search 600+ DTC bus routes by number, source, or destination.
+        Get real-time stop sequences, fare slabs, timings, and map views — all in one place.
+      </p>
+
+      <div class="search-wrap">
+        <div class="search-icon">🔍</div>
+        <input class="search-input" type="text" placeholder="Search by route number, stop or area…" id="searchInput">
+        <div class="search-divider"></div>
+        <select class="search-type">
+          <option>All Types</option>
+          <option>AC</option>
+          <option>Express</option>
+          <option>Normal</option>
+          <option>Night</option>
+        </select>
+        <button class="search-btn">Search Routes</button>
+      </div>
+
+      <div class="hero-tags">
+        <span class="tag">🚌 Route 401</span>
+        <span class="tag">🌙 Night Services</span>
+        <span class="tag">❄️ AC Buses</span>
+        <span class="tag">⚡ Express Routes</span>
+        <span class="tag">🏛️ ISBT Terminals</span>
+        <span class="tag">📍 Near Me</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- STATS -->
+  <div class="container">
+    <div class="stats-bar anim-5">
+      <div class="stat-item">
+        <span class="stat-num">648</span>
+        <span class="stat-label">Active Routes</span>
+      </div>
+      <div class="stat-item">
+        <span class="stat-num">3,200+</span>
+        <span class="stat-label">Bus Stops</span>
+      </div>
+      <div class="stat-item">
+        <span class="stat-num">99.2%</span>
+        <span class="stat-label">Data Accuracy</span>
+      </div>
+      <div class="stat-item">
+        <span class="stat-num">4</span>
+        <span class="stat-label">Route Categories</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ROUTE CARDS -->
+  <section class="section">
+    <div class="container">
+      <div class="section-header anim-1">
+        <div>
+          <div class="section-title">Popular Routes</div>
+          <div class="section-sub">High-frequency routes across Delhi</div>
+        </div>
+        <a href="#" class="see-all">View all routes →</a>
+      </div>
+
+      <div class="filter-bar anim-2">
+        <button class="filter-chip active">All</button>
+        <button class="filter-chip">AC ❄️</button>
+        <button class="filter-chip">Express ⚡</button>
+        <button class="filter-chip">Normal</button>
+        <button class="filter-chip">Night 🌙</button>
+      </div>
+
+      <div class="routes-grid anim-3">
+
+        <!-- Card 1 -->
+        <a class="route-card" href="#">
+          <div class="route-card-top">
+            <span class="route-num">401</span>
+            <span class="route-badge badge-ac">AC</span>
+          </div>
+          <div class="route-path">
+            <div class="route-from-label">From</div>
+            <div class="route-from">ISBT Kashmere Gate</div>
+            <div class="route-connector">
+              <div class="route-line"></div>
+              <div class="route-arrow">▶</div>
+            </div>
+            <div class="route-to-label">To</div>
+            <div class="route-to">Dwarka Sector 9</div>
+          </div>
+          <div class="route-meta">
+            <div class="meta-item">
+              <span class="meta-val">34.2 km</span>
+              <span class="meta-key">Distance</span>
+            </div>
+            <div class="meta-item">
+              <span class="meta-val">Every 12 min</span>
+              <span class="meta-key">Frequency</span>
+            </div>
+            <div class="meta-item">
+              <span class="meta-val flex items-center gap-8"><span class="status-dot dot-green"></span>Active</span>
+              <span class="meta-key">Status</span>
+            </div>
+          </div>
+        </a>
+
+        <!-- Card 2 -->
+        <a class="route-card" href="#">
+          <div class="route-card-top">
+            <span class="route-num">522</span>
+            <span class="route-badge badge-express">Express</span>
+          </div>
+          <div class="route-path">
+            <div class="route-from-label">From</div>
+            <div class="route-from">Nehru Place Terminal</div>
+            <div class="route-connector">
+              <div class="route-line"></div>
+              <div class="route-arrow">▶</div>
+            </div>
+            <div class="route-to-label">To</div>
+            <div class="route-to">IGI Airport T3</div>
+          </div>
+          <div class="route-meta">
+            <div class="meta-item">
+              <span class="meta-val">22.8 km</span>
+              <span class="meta-key">Distance</span>
+            </div>
+            <div class="meta-item">
+              <span class="meta-val">Every 20 min</span>
+              <span class="meta-key">Frequency</span>
+            </div>
+            <div class="meta-item">
+              <span class="meta-val flex items-center gap-8"><span class="status-dot dot-green"></span>Active</span>
+              <span class="meta-key">Status</span>
+            </div>
+          </div>
+        </a>
+
+        <!-- Card 3 -->
+        <a class="route-card" href="#">
+          <div class="route-card-top">
+            <span class="route-num">N-11</span>
+            <span class="route-badge badge-night">Night</span>
+          </div>
+          <div class="route-path">
+            <div class="route-from-label">From</div>
+            <div class="route-from">Connaught Place</div>
+            <div class="route-connector">
+              <div class="route-line"></div>
+              <div class="route-arrow">▶</div>
+            </div>
+            <div class="route-to-label">To</div>
+            <div class="route-to">Rohini Sector 11</div>
+          </div>
+          <div class="route-meta">
+            <div class="meta-item">
+              <span class="meta-val">28.5 km</span>
+              <span class="meta-key">Distance</span>
+            </div>
+            <div class="meta-item">
+              <span class="meta-val">Every 45 min</span>
+              <span class="meta-key">Frequency</span>
+            </div>
+            <div class="meta-item">
+              <span class="meta-val flex items-center gap-8"><span class="status-dot dot-yellow"></span>Limited</span>
+              <span class="meta-key">Status</span>
+            </div>
+          </div>
+        </a>
+
+        <!-- Card 4 -->
+        <a class="route-card" href="#">
+          <div class="route-card-top">
+            <span class="route-num">615</span>
+            <span class="route-badge badge-normal">Normal</span>
+          </div>
+          <div class="route-path">
+            <div class="route-from-label">From</div>
+            <div class="route-from">Lajpat Nagar</div>
+            <div class="route-connector">
+              <div class="route-line"></div>
+              <div class="route-arrow">▶</div>
+            </div>
+            <div class="route-to-label">To</div>
+            <div class="route-to">Janakpuri West</div>
+          </div>
+          <div class="route-meta">
+            <div class="meta-item">
+              <span class="meta-val">18.3 km</span>
+              <span class="meta-key">Distance</span>
+            </div>
+            <div class="meta-item">
+              <span class="meta-val">Every 15 min</span>
+              <span class="meta-key">Frequency</span>
+            </div>
+            <div class="meta-item">
+              <span class="meta-val flex items-center gap-8"><span class="status-dot dot-green"></span>Active</span>
+              <span class="meta-key">Status</span>
+            </div>
+          </div>
+        </a>
+
+        <!-- Card 5 -->
+        <a class="route-card" href="#">
+          <div class="route-card-top">
+            <span class="route-num">303</span>
+            <span class="route-badge badge-ac">AC</span>
+          </div>
+          <div class="route-path">
+            <div class="route-from-label">From</div>
+            <div class="route-from">Shahdara ISBT</div>
+            <div class="route-connector">
+              <div class="route-line"></div>
+              <div class="route-arrow">▶</div>
+            </div>
+            <div class="route-to-label">To</div>
+            <div class="route-to">Noida Sector 62</div>
+          </div>
+          <div class="route-meta">
+            <div class="meta-item">
+              <span class="meta-val">31.0 km</span>
+              <span class="meta-key">Distance</span>
+            </div>
+            <div class="meta-item">
+              <span class="meta-val">Every 10 min</span>
+              <span class="meta-key">Frequency</span>
+            </div>
+            <div class="meta-item">
+              <span class="meta-val flex items-center gap-8"><span class="status-dot dot-green"></span>Active</span>
+              <span class="meta-key">Status</span>
+            </div>
+          </div>
+        </a>
+
+        <!-- Card 6 -->
+        <a class="route-card" href="#">
+          <div class="route-card-top">
+            <span class="route-num">757</span>
+            <span class="route-badge badge-express">Express</span>
+          </div>
+          <div class="route-path">
+            <div class="route-from-label">From</div>
+            <div class="route-from">Anand Vihar ISBT</div>
+            <div class="route-connector">
+              <div class="route-line"></div>
+              <div class="route-arrow">▶</div>
+            </div>
+            <div class="route-to-label">To</div>
+            <div class="route-to">Gurgaon Bus Stand</div>
+          </div>
+          <div class="route-meta">
+            <div class="meta-item">
+              <span class="meta-val">47.6 km</span>
+              <span class="meta-key">Distance</span>
+            </div>
+            <div class="meta-item">
+              <span class="meta-val">Every 30 min</span>
+              <span class="meta-key">Frequency</span>
+            </div>
+            <div class="meta-item">
+              <span class="meta-val flex items-center gap-8"><span class="status-dot dot-red"></span>Reduced</span>
+              <span class="meta-key">Status</span>
+            </div>
+          </div>
+        </a>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- ROUTE DETAIL SECTION -->
+  <section class="section" style="padding-top:0">
+    <div class="container">
+      <div class="section-header anim-1">
+        <div>
+          <div class="section-title">Route 401 — Detail View</div>
+          <div class="section-sub">ISBT Kashmere Gate → Dwarka Sector 9  ·  34.2 km  ·  AC</div>
+        </div>
+        <span class="route-badge badge-ac" style="font-size:12px;padding:5px 14px">● Operational</span>
+      </div>
+
+      <!-- MAP -->
+      <div class="map-card anim-2">
+        <div class="map-bg"></div>
+        <div class="map-route-line"></div>
+        <div class="map-dot start"></div>
+        <div class="map-dot end"></div>
+        <div class="map-pip a">ISBT Kashmere Gate</div>
+        <div class="map-pip b">Dwarka Sec 9</div>
+        <div class="map-badge-overlay">
+          <div class="map-overlay-item">
+            <span class="map-overlay-val">34.2 km</span>
+            <span class="map-overlay-key">Total Distance</span>
+          </div>
+          <div class="map-overlay-divider"></div>
+          <div class="map-overlay-item">
+            <span class="map-overlay-val">~55 min</span>
+            <span class="map-overlay-key">Est. Duration</span>
+          </div>
+          <div class="map-overlay-divider"></div>
+          <div class="map-overlay-item">
+            <span class="map-overlay-val">18 stops</span>
+            <span class="map-overlay-key">Total Stops</span>
+          </div>
+        </div>
+        <button class="map-open-btn">Open in Maps 🗺</button>
+      </div>
+
+      <!-- TABS -->
+      <div class="tabs anim-3 mt-24">
+        <button class="tab active">Stop Sequence</button>
+        <button class="tab">Fare Table</button>
+        <button class="tab">Schedule</button>
+        <button class="tab">API Reference</button>
+      </div>
+
+      <!-- STOPS + FARE SIDE BY SIDE -->
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px" class="anim-4">
+
+        <!-- STOP TIMELINE -->
+        <div class="stop-detail-card">
+          <div style="margin-bottom:20px;display:flex;align-items:center;justify-content:space-between">
+            <span style="font-family:var(--font-display);font-size:15px;font-weight:700">Stop Sequence</span>
+            <span style="color:var(--muted);font-size:12px">18 stops total</span>
+          </div>
+          <div class="stop-timeline">
+            <div class="stop-item terminal">
+              <div class="stop-name">ISBT Kashmere Gate<small>Terminal · Code: ISBT01</small></div>
+              <span class="stop-time">05:30</span>
+            </div>
+            <div class="stop-item major">
+              <div class="stop-name">Kashmere Gate Metro<small>1.2 km from start</small></div>
+              <span class="stop-time">+04 min</span>
+            </div>
+            <div class="stop-item">
+              <div class="stop-name">Mori Gate<small>3.1 km from start</small></div>
+              <span class="stop-time">+09 min</span>
+            </div>
+            <div class="stop-item major">
+              <div class="stop-name">Connaught Place<small>6.8 km from start</small></div>
+              <span class="stop-time">+16 min</span>
+            </div>
+            <div class="stop-item">
+              <div class="stop-name">Patel Chowk<small>8.2 km from start</small></div>
+              <span class="stop-time">+20 min</span>
+            </div>
+            <div class="stop-item major">
+              <div class="stop-name">Dilli Haat / INA<small>13.5 km from start</small></div>
+              <span class="stop-time">+31 min</span>
+            </div>
+            <div class="stop-item">
+              <div class="stop-name">Vasant Vihar<small>21.0 km from start</small></div>
+              <span class="stop-time">+44 min</span>
+            </div>
+            <div class="stop-item terminal">
+              <div class="stop-name">Dwarka Sector 9<small>Terminal · 34.2 km</small></div>
+              <span class="stop-time">+55 min</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- FARE TABLE -->
+        <div class="fare-table-wrap">
+          <div style="padding:20px 20px 16px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between">
+            <span style="font-family:var(--font-display);font-size:15px;font-weight:700">Fare Slabs</span>
+            <span style="color:var(--muted);font-size:12px">Route 401 · AC</span>
+          </div>
+          <table>
+            <thead>
+              <tr>
+                <th>Distance Slab</th>
+                <th>General</th>
+                <th>Student</th>
+                <th>Senior</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>0 – 5 km</td>
+                <td class="fare-price">₹ 15</td>
+                <td class="fare-price" style="color:#60a5fa">₹ 10</td>
+                <td class="fare-price" style="color:#4ade80">₹ 10</td>
+              </tr>
+              <tr>
+                <td>5 – 10 km</td>
+                <td class="fare-price">₹ 20</td>
+                <td class="fare-price" style="color:#60a5fa">₹ 14</td>
+                <td class="fare-price" style="color:#4ade80">₹ 14</td>
+              </tr>
+              <tr>
+                <td>10 – 20 km</td>
+                <td class="fare-price">₹ 30</td>
+                <td class="fare-price" style="color:#60a5fa">₹ 20</td>
+                <td class="fare-price" style="color:#4ade80">₹ 20</td>
+              </tr>
+              <tr>
+                <td>20 – 30 km</td>
+                <td class="fare-price">₹ 40</td>
+                <td class="fare-price" style="color:#60a5fa">₹ 28</td>
+                <td class="fare-price" style="color:#4ade80">₹ 28</td>
+              </tr>
+              <tr>
+                <td>30+ km</td>
+                <td class="fare-price">₹ 50</td>
+                <td class="fare-price" style="color:#60a5fa">₹ 35</td>
+                <td class="fare-price" style="color:#4ade80">₹ 35</td>
+              </tr>
+            </tbody>
+          </table>
+          <div style="padding:16px 20px;border-top:1px solid var(--border);display:flex;gap:20px">
+            <div style="display:flex;align-items:center;gap:6px;font-size:12px;color:var(--muted)">
+              <span style="width:10px;height:10px;border-radius:50%;background:#60a5fa;display:inline-block"></span>
+              Student concessional fare
+            </div>
+            <div style="display:flex;align-items:center;gap:6px;font-size:12px;color:var(--muted)">
+              <span style="width:10px;height:10px;border-radius:50%;background:#4ade80;display:inline-block"></span>
+              Senior citizen concession
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ADMIN STRIP -->
+  <div class="container">
+    <div class="admin-strip anim-5">
+      <div class="admin-strip-text">
+        <h3>🔒 Admin Dashboard</h3>
+        <p>Manage routes, stops, fares, and users. Login required via Google OAuth 2.0.</p>
+      </div>
+      <div class="admin-strip-btns">
+        <button class="btn-ghost">View API Docs</button>
+        <button class="btn-primary">Login with Google →</button>
+      </div>
+    </div>
+  </div>
+
+</main>
+
+<!-- FOOTER -->
+<footer>
+  <div class="container">
+    <div class="footer-inner">
+      <div class="footer-logo">DTC Route Portal v1.0</div>
+      <div class="footer-copy">© 2025 Delhi Transport Corporation. Open Source — Internal.</div>
+      <div class="footer-links">
+        <a href="#">API</a>
+        <a href="#">SRS Docs</a>
+        <a href="#">GitHub</a>
+        <a href="#">Privacy</a>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<script>
+  // Filter chips
+  document.querySelectorAll('.filter-chip').forEach(chip => {
+    chip.addEventListener('click', () => {
+      document.querySelectorAll('.filter-chip').forEach(c => c.classList.remove('active'));
+      chip.classList.add('active');
+    });
+  });
+
+  // Tabs
+  document.querySelectorAll('.tab').forEach(tab => {
+    tab.addEventListener('click', () => {
+      document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+      tab.classList.add('active');
+    });
+  });
+
+  // Route card hover accent
+  document.querySelectorAll('.route-card').forEach(card => {
+    card.addEventListener('mouseenter', function() {
+      this.style.setProperty('--local-accent', 'rgba(232,64,37,0.08)');
+    });
+  });
+
+  // Search input interaction
+  const input = document.getElementById('searchInput');
+  if (input) {
+    input.addEventListener('focus', () => {
+      input.parentElement.style.boxShadow = '0 0 0 4px rgba(232,64,37,.1), 0 8px 40px rgba(0,0,0,.5)';
+    });
+    input.addEventListener('blur', () => {
+      input.parentElement.style.boxShadow = '';
+    });
+  }
+
+  // Animate stat numbers on load
+  function animateNumber(el, target, duration = 1200) {
+    const isFloat = target.includes('.');
+    const isPercent = target.includes('%');
+    const isPlus = target.includes('+');
+    const num = parseFloat(target.replace(/[^0-9.]/g, ''));
+    let start = null;
+    const step = (ts) => {
+      if (!start) start = ts;
+      const progress = Math.min((ts - start) / duration, 1);
+      const eased = 1 - Math.pow(1 - progress, 3);
+      const current = num * eased;
+      const formatted = isFloat ? current.toFixed(1) : Math.floor(current).toLocaleString();
+      el.textContent = formatted + (isPercent ? '%' : '') + (isPlus ? '+' : '');
+      if (progress < 1) requestAnimationFrame(step);
+    };
+    requestAnimationFrame(step);
+  }
+
+  const statNums = document.querySelectorAll('.stat-num');
+  const originals = ['648', '3,200+', '99.2%', '4'];
+  setTimeout(() => {
+    statNums.forEach((el, i) => {
+      el.textContent = '0';
+      animateNumber(el, originals[i]);
+    });
+  }, 600);
+
+  // Stagger route cards on load
+  document.querySelectorAll('.route-card').forEach((card, i) => {
+    card.style.opacity = '0';
+    card.style.transform = 'translateY(24px)';
+    card.style.transition = 'opacity .5s ease, transform .5s ease';
+    setTimeout(() => {
+      card.style.opacity = '1';
+      card.style.transform = 'translateY(0)';
+    }, 400 + i * 90);
+  });
+</script>
+</body>
+</html>

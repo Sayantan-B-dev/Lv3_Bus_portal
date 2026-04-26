@@ -5,88 +5,144 @@
 include dirname(__DIR__) . '/layout/header.php';
 ?>
 
-<section class="hero-section">
-    <div class="container-custom">
-        <h1 class="display-3 mb-2 font-rajdhani">Find Your <span class="text-primary">Route</span></h1>
-        <p class="text-muted mb-4 fs-5">Universal Information Portal for <?= htmlspecialchars($city['city_name'] ?? 'City') ?> Bus Services</p>
+<!-- HERO -->
+<section class="hero">
+    <div class="container">
+        <div class="hero-label">v1.0 — Live in <?= htmlspecialchars($city['city_name'] ?? 'Delhi') ?></div>
+        <h1>
+            Find your <span class="accent">bus route</span><br>
+            across <span class="dim"><?= htmlspecialchars($city['city_name'] ?? 'Delhi') ?></span> instantly.
+        </h1>
+        <p class="hero-desc">
+            Search hundreds of bus routes by number, source, or destination.
+            Get real-time stop sequences, fare slabs, timings, and map views — all in one place.
+        </p>
 
-        <form action="<?= APP_URL ?>/search" method="GET" class="search-container">
+        <form action="<?= APP_URL ?>/search" method="GET" class="search-wrap">
             <input type="hidden" name="city_id" value="<?= $city['id'] ?? 1 ?>">
-            <input type="text" name="q" class="search-input" placeholder="Search by route number, stop, or landmark..." required autocomplete="off">
-            <button type="submit" class="search-btn">SEARCH</button>
+            <div class="search-icon">🔍</div>
+            <input class="search-input" type="text" name="q" placeholder="Search by route number, stop or area…" id="searchInput" required autocomplete="off">
+            <div class="search-divider"></div>
+            <select class="search-type" name="type">
+                <option value="">All Types</option>
+                <option value="AC">AC ❄️</option>
+                <option value="Express">Express ⚡</option>
+                <option value="Normal">Normal</option>
+                <option value="Night">Night 🌙</option>
+            </select>
+            <button type="submit" class="search-btn">Search Routes</button>
         </form>
 
-        <div class="d-flex justify-content-center gap-3 mt-3">
-            <span class="text-muted small">Popular:</span>
-            <?php foreach (array_slice($routes ?? [], 0, 4) as $r): ?>
-                <a href="<?= APP_URL ?>/routes/<?= $r['id'] ?>" class="badge badge-type badge-mini text-decoration-none">
-                    <?= htmlspecialchars($r['route_number']) ?>
-                </a>
+        <div class="hero-tags">
+            <span class="text-muted small" style="margin-right:8px; margin-top:8px">Popular:</span>
+            <?php foreach (array_slice($routes ?? [], 0, 5) as $r): ?>
+                <a href="<?= APP_URL ?>/routes/<?= $r['id'] ?>" class="tag">🚌 <?= htmlspecialchars($r['route_number']) ?></a>
             <?php endforeach; ?>
+            <a href="<?= APP_URL ?>/planner" class="tag">📍 Route Planner</a>
         </div>
     </div>
 </section>
 
-<section class="stats-bar bg-surface py-4 mb-5">
-    <div class="container-custom">
-        <div class="row text-center">
-            <div class="col-6 col-md-3 border-end border-dark">
-                <div class="info-value text-primary fs-2"><?= $stats['route_count'] ?? 0 ?></div>
-                <div class="info-label">Active Routes</div>
-            </div>
-            <div class="col-6 col-md-3 border-end border-dark">
-                <div class="info-value text-primary fs-2"><?= $stats['stop_count'] ?? 0 ?></div>
-                <div class="info-label">Bus Stops</div>
-            </div>
-            <div class="col-6 col-md-3 border-end border-dark">
-                <div class="info-value text-primary fs-2"><?= $globalStats['total_cities'] ?? 1 ?></div>
-                <div class="info-label">Cities Covered</div>
-            </div>
-            <div class="col-6 col-md-3">
-                <div class="info-value text-primary fs-2"><?= $stats['avg_frequency'] ?? 0 ?>m</div>
-                <div class="info-label">Avg Frequency</div>
-            </div>
+<!-- STATS -->
+<div class="container">
+    <div class="stats-bar">
+        <div class="stat-item">
+            <span class="stat-num" data-target="<?= $stats['route_count'] ?? 0 ?>"><?= $stats['route_count'] ?? 0 ?></span>
+            <span class="stat-label">Active Routes</span>
+        </div>
+        <div class="stat-item">
+            <span class="stat-num" data-target="<?= $stats['stop_count'] ?? 0 ?>"><?= $stats['stop_count'] ?? 0 ?></span>
+            <span class="stat-label">Bus Stops</span>
+        </div>
+        <div class="stat-item">
+            <span class="stat-num" data-target="<?= $globalStats['total_cities'] ?? 1 ?>"><?= $globalStats['total_cities'] ?? 1 ?></span>
+            <span class="stat-label">Cities Covered</span>
+        </div>
+        <div class="stat-item">
+            <span class="stat-num" data-target="<?= $stats['avg_frequency'] ?? 15 ?>m"><?= $stats['avg_frequency'] ?? 15 ?>m</span>
+            <span class="stat-label">Avg Frequency</span>
         </div>
     </div>
-</section>
+</div>
 
-<section class="routes-preview pb-5">
-    <div class="container-custom">
-        <div class="d-flex justify-content-between align-items-end mb-4">
+<!-- ROUTE CARDS -->
+<section class="section">
+    <div class="container">
+        <div class="section-header anim-1">
             <div>
-                <h2 class="h3 font-rajdhani mb-0">Browse <span class="text-primary">Routes</span></h2>
-                <p class="text-muted small mb-0">Most searched bus routes in <?= htmlspecialchars($city['city_name'] ?? 'City') ?></p>
+                <div class="section-title">Popular Routes</div>
+                <div class="section-sub">High-frequency routes across <?= htmlspecialchars($city['city_name'] ?? 'the city') ?></div>
             </div>
-            <a href="<?= APP_URL ?>/routes" class="btn btn-outline-warning btn-sm font-rajdhani">VIEW ALL ROUTES</a>
+            <a href="<?= APP_URL ?>/routes" class="see-all">View all routes →</a>
         </div>
 
-        <div class="row">
+        <div class="filter-bar anim-2">
+            <button class="filter-chip active">All</button>
+            <button class="filter-chip">AC ❄️</button>
+            <button class="filter-chip">Express ⚡</button>
+            <button class="filter-chip">Normal</button>
+            <button class="filter-chip">Night 🌙</button>
+        </div>
+
+        <div class="routes-grid anim-3">
             <?php if (empty($routes)): ?>
-                <div class="col-12 text-center py-5">
+                <div style="grid-column: span 3; text-align: center; padding: 60px 0;">
                     <p class="text-muted">No routes found for this city yet.</p>
                 </div>
             <?php else: ?>
-                <?php foreach (array_slice($routes, 0, 8) as $r): ?>
-                    <div class="col-md-6 col-lg-4">
-                        <a href="<?= APP_URL ?>/routes/<?= $r['id'] ?>" class="route-card text-decoration-none">
-                            <div class="route-number"><?= htmlspecialchars($r['route_number']) ?></div>
-                            <div class="route-info">
-                                <div class="route-endpoints">
-                                    <?= htmlspecialchars($r['source']) ?> 
-                                    <span class="text-primary mx-1">→</span> 
-                                    <?= htmlspecialchars($r['destination']) ?>
-                                </div>
-                                <div class="d-flex align-items-center gap-2 mt-1">
-                                    <span class="badge badge-type badge-<?= strtolower($r['route_type']) ?>"><?= $r['route_type'] ?></span>
-                                    <span class="text-muted small"><?= $r['frequency_mins'] ?> mins freq.</span>
-                                </div>
+                <?php foreach (array_slice($routes, 0, 9) as $r): ?>
+                    <a class="route-card" href="<?= APP_URL ?>/routes/<?= $r['id'] ?>">
+                        <div class="route-card-top">
+                            <span class="route-num"><?= htmlspecialchars($r['route_number']) ?></span>
+                            <span class="route-badge badge-<?= strtolower($r['route_type']) ?>"><?= $r['route_type'] ?></span>
+                        </div>
+                        <div class="route-path">
+                            <div class="route-from-label">From</div>
+                            <div class="route-from"><?= htmlspecialchars($r['source']) ?></div>
+                            <div class="route-connector">
+                                <div class="route-line"></div>
+                                <div class="route-arrow">▶</div>
                             </div>
-                        </a>
-                    </div>
+                            <div class="route-to-label">To</div>
+                            <div class="route-to"><?= htmlspecialchars($r['destination']) ?></div>
+                        </div>
+                        <div class="route-meta">
+                            <div class="meta-item">
+                                <span class="meta-val"><?= $r['distance_km'] ?? '??' ?> km</span>
+                                <span class="meta-key">Distance</span>
+                            </div>
+                            <div class="meta-item">
+                                <span class="meta-val"><?= $r['frequency_mins'] ?? '??' ?> min</span>
+                                <span class="meta-key">Freq</span>
+                            </div>
+                            <div class="meta-item">
+                                <span class="meta-val flex items-center gap-8"><span class="status-dot dot-green"></span>Active</span>
+                                <span class="meta-key">Status</span>
+                            </div>
+                        </div>
+                    </a>
                 <?php endforeach; ?>
             <?php endif; ?>
         </div>
     </div>
 </section>
+
+<!-- ADMIN STRIP -->
+<div class="container">
+    <div class="admin-strip anim-5">
+        <div class="admin-strip-text">
+            <h3>🔒 Admin Dashboard</h3>
+            <p>Manage routes, stops, fares, and users. Secure access via Google OAuth.</p>
+        </div>
+        <div class="admin-strip-btns">
+            <a href="<?= APP_URL ?>/api" class="btn-ghost">View API Docs</a>
+            <?php if (isset($_SESSION['user_id'])): ?>
+                <a href="<?= APP_URL ?>/admin" class="btn-primary">Dashboard →</a>
+            <?php else: ?>
+                <a href="<?= APP_URL ?>/auth/login" class="btn-primary">Login with Google →</a>
+            <?php endif; ?>
+        </div>
+    </div>
+</div>
 
 <?php include dirname(__DIR__) . '/layout/footer.php'; ?>

@@ -45,9 +45,11 @@ $router->post('/cities/switch',       [CityController::class,     'switchCity'])
 
 // ─── Auth Routes ──────────────────────────────────────────────────────────────
 $router->get('/auth/login',           [AuthController::class, 'login']);
+$router->get('/auth/adminLogin',      [AuthController::class, 'adminLogin']);
 $router->get('/auth/google',          [AuthController::class, 'googleRedirect']);
 $router->get('/auth/google/callback', [AuthController::class, 'googleCallback']);
 $router->post('/auth/logout',         [AuthController::class, 'logout']);
+$router->get('/auth/logout',          [AuthController::class, 'logout']);
 
 // ─── Admin Routes ─────────────────────────────────────────────────────────────
 $router->get('/admin',                       [DashboardController::class,   'index']);

@@ -17,9 +17,25 @@ class AuthController
     public function login(array $params = []): void
     {
         if (Session::isLoggedIn()) {
-            Response::redirect(APP_URL . '/admin');
+            $user = Session::getUser();
+            if (in_array($user['role'] ?? '', ['admin', 'super_admin'], true)) {
+                Response::redirect(APP_URL . '/admin');
+            }
+            Response::redirect(APP_URL . '/');
         }
         Response::view('auth/login', ['pageTitle' => 'Admin Login']);
+    }
+
+    public function adminLogin(array $params = []): void
+    {
+        if (Session::isLoggedIn()) {
+            $user = Session::getUser();
+            if (in_array($user['role'] ?? '', ['admin', 'super_admin'], true)) {
+                Response::redirect(APP_URL . '/admin');
+            }
+            Response::redirect(APP_URL . '/');
+        }
+        Response::view('auth/adminLogin', ['pageTitle' => 'Administrator Access']);
     }
 
     public function googleRedirect(array $params = []): void
@@ -57,7 +73,11 @@ class AuthController
         $user['_jwt'] = $jwt;
         Session::setUser($user);
 
-        Response::redirect(APP_URL . '/admin');
+        if (in_array($user['role'] ?? '', ['admin', 'super_admin'], true)) {
+            Response::redirect(APP_URL . '/admin');
+        }
+
+        Response::redirect(APP_URL . '/');
     }
 
     public function logout(array $params = []): void

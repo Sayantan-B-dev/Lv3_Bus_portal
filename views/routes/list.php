@@ -5,63 +5,72 @@
 include dirname(__DIR__) . '/layout/header.php';
 ?>
 
-<div class="container-custom py-5">
-    <div class="d-flex justify-content-between align-items-center mb-4">
-        <div>
-            <h1 class="h2 font-rajdhani">All <span class="text-primary">Routes</span></h1>
-            <p class="text-muted small"><?= $total ?> routes available in <?= htmlspecialchars($city['city_name']) ?></p>
-        </div>
+<main style="padding-top: 100px;">
+    <section class="section">
+        <div class="container">
+            <div class="section-header anim-1">
+                <div>
+                    <h1 class="section-title">All <span class="text-primary">Routes</span></h1>
+                    <p class="section-sub"><?= $total ?> routes available in <?= htmlspecialchars($city['city_name']) ?></p>
+                </div>
 
-        <div class="d-flex gap-2">
-            <div class="dropdown">
-                <button class="city-selector dropdown-toggle" type="button" data-bs-toggle="dropdown">
-                    TYPE: <?= $type ?: 'ALL' ?>
-                </button>
-                <ul class="dropdown-menu dropdown-menu-dark">
-                    <li><a class="dropdown-item" href="?city_id=<?= $city['id'] ?>">All Types</a></li>
-                    <li><a class="dropdown-item" href="?city_id=<?= $city['id'] ?>&type=AC">AC</a></li>
-                    <li><a class="dropdown-item" href="?city_id=<?= $city['id'] ?>&type=Express">Express</a></li>
-                    <li><a class="dropdown-item" href="?city_id=<?= $city['id'] ?>&type=Normal">Normal</a></li>
-                    <li><a class="dropdown-item" href="?city_id=<?= $city['id'] ?>&type=Night">Night</a></li>
-                </ul>
+                <div class="filter-bar">
+                    <a href="?city_id=<?= $city['id'] ?>" class="filter-chip <?= !$type ? 'active' : '' ?>">All</a>
+                    <a href="?city_id=<?= $city['id'] ?>&type=AC" class="filter-chip <?= $type == 'AC' ? 'active' : '' ?>">AC ❄️</a>
+                    <a href="?city_id=<?= $city['id'] ?>&type=Express" class="filter-chip <?= $type == 'Express' ? 'active' : '' ?>">Express ⚡</a>
+                    <a href="?city_id=<?= $city['id'] ?>&type=Normal" class="filter-chip <?= $type == 'Normal' ? 'active' : '' ?>">Normal</a>
+                    <a href="?city_id=<?= $city['id'] ?>&type=Night" class="filter-chip <?= $type == 'Night' ? 'active' : '' ?>">Night 🌙</a>
+                </div>
             </div>
-        </div>
-    </div>
 
-    <div class="row">
-        <?php foreach ($routes as $r): ?>
-            <div class="col-md-6 col-lg-4">
-                <a href="<?= APP_URL ?>/routes/<?= $r['id'] ?>" class="route-card text-decoration-none">
-                    <div class="route-number"><?= htmlspecialchars($r['route_number']) ?></div>
-                    <div class="route-info">
-                        <div class="route-endpoints">
-                            <?= htmlspecialchars($r['source']) ?> 
-                            <span class="text-primary mx-1">→</span> 
-                            <?= htmlspecialchars($r['destination']) ?>
+            <div class="routes-grid anim-3">
+                <?php foreach ($routes as $r): ?>
+                    <a class="route-card" href="<?= APP_URL ?>/routes/<?= $r['id'] ?>">
+                        <div class="route-card-top">
+                            <span class="route-num"><?= htmlspecialchars($r['route_number']) ?></span>
+                            <span class="route-badge badge-<?= strtolower($r['route_type']) ?>"><?= $r['route_type'] ?></span>
                         </div>
-                        <div class="d-flex align-items-center gap-2 mt-1">
-                            <span class="badge badge-type badge-<?= strtolower($r['route_type']) ?>"><?= $r['route_type'] ?></span>
-                            <span class="text-muted small"><?= $r['frequency_mins'] ?> mins</span>
+                        <div class="route-path">
+                            <div class="route-from-label">From</div>
+                            <div class="route-from"><?= htmlspecialchars($r['source']) ?></div>
+                            <div class="route-connector">
+                                <div class="route-line"></div>
+                                <div class="route-arrow">▶</div>
+                            </div>
+                            <div class="route-to-label">To</div>
+                            <div class="route-to"><?= htmlspecialchars($r['destination']) ?></div>
                         </div>
-                    </div>
-                </a>
-            </div>
-        <?php endforeach; ?>
-    </div>
-
-    <?php if ($totalPages > 1): ?>
-    <nav class="mt-4">
-        <ul class="pagination pagination-sm justify-content-center">
-            <?php for ($i = 1; $i <= $totalPages; $i++): ?>
-                <li class="page-item <?= $page == $i ? 'active' : '' ?>">
-                    <a class="page-link bg-surface border-secondary text-white" href="?city_id=<?= $city['id'] ?>&type=<?= $type ?>&page=<?= $i ?>">
-                        <?= $i ?>
+                        <div class="route-meta">
+                            <div class="meta-item">
+                                <span class="meta-val"><?= $r['distance_km'] ?? '??' ?> km</span>
+                                <span class="meta-key">Distance</span>
+                            </div>
+                            <div class="meta-item">
+                                <span class="meta-val"><?= $r['frequency_mins'] ?? '??' ?> min</span>
+                                <span class="meta-key">Freq</span>
+                            </div>
+                            <div class="meta-item">
+                                <span class="meta-val flex items-center gap-8"><span class="status-dot dot-green"></span>Active</span>
+                                <span class="meta-key">Status</span>
+                            </div>
+                        </div>
                     </a>
-                </li>
-            <?php endfor; ?>
-        </ul>
-    </nav>
-    <?php endif; ?>
-</div>
+                <?php endforeach; ?>
+            </div>
+
+            <?php if ($totalPages > 1): ?>
+            <div class="d-flex justify-content-center mt-5 anim-5">
+                <div class="nav-links" style="background: var(--surface); padding: 5px; border-radius: 12px; border: 1px solid var(--border);">
+                    <?php for ($i = 1; $i <= $totalPages; $i++): ?>
+                        <a href="?city_id=<?= $city['id'] ?>&type=<?= $type ?>&page=<?= $i ?>" class="<?= $page == $i ? 'active' : '' ?>" style="padding: 8px 16px;">
+                            <?= $i ?>
+                        </a>
+                    <?php endfor; ?>
+                </div>
+            </div>
+            <?php endif; ?>
+        </div>
+    </section>
+</main>
 
 <?php include dirname(__DIR__) . '/layout/footer.php'; ?>
