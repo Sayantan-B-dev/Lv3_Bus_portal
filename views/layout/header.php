@@ -24,8 +24,8 @@ use App\Middleware\CsrfMiddleware;
     <link href="<?= APP_URL ?>/assets/css/map.css" rel="stylesheet">
 
     <script>
-        const APP_URL = "<?= APP_URL ?>";
-        const CSRF_TOKEN = "<?= CsrfMiddleware::generateToken() ?>";
+        window.APP_URL = "<?= APP_URL ?>";
+        window.CSRF_TOKEN = "<?= \App\Middleware\CsrfMiddleware::generateToken() ?>";
     </script>
 </head>
 <body>
@@ -41,6 +41,18 @@ use App\Middleware\CsrfMiddleware;
             <div>
                 <span class="logo-text">Route Portal</span>
                 <span class="logo-sub"><?= htmlspecialchars($city['city_name'] ?? 'Delhi') ?> Transport System</span>
+            </div>
+            <div class="nav-links d-none d-lg-flex" style="margin-left: 20px; border-left: 1px solid var(--border); padding-left: 20px;">
+                <select id="globalCitySelector" class="search-type" style="background: rgba(255,255,255,0.05); border: 1px solid var(--border); padding: 5px 12px; border-radius: 20px; color: var(--text); font-size: 12px; cursor: pointer;">
+                    <?php 
+                    $allCities = (new \App\Models\City())->allActive();
+                    foreach ($allCities as $ac): 
+                    ?>
+                        <option value="<?= $ac['id'] ?>" <?= ($city['id'] ?? 0) == $ac['id'] ? 'selected' : '' ?>>
+                            <?= htmlspecialchars($ac['city_name']) ?>
+                        </option>
+                    <?php endforeach; ?>
+                </select>
             </div>
         </a>
 

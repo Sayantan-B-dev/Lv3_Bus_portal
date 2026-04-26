@@ -35,7 +35,7 @@ class BusMap {
 
         // Draw Polyline
         this.polyline = L.polyline(coords, {
-            color: getComputedStyle(document.documentElement).getPropertyValue('--clr-primary').trim() || '#E8B84B',
+            color: getComputedStyle(document.documentElement).getPropertyValue('--accent').trim() || '#e84025',
             weight: 5,
             opacity: 0.8,
             className: 'route-draw-animation'

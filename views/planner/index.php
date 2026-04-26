@@ -13,6 +13,11 @@ include dirname(__DIR__) . '/layout/header.php';
                 <div>
                     <h1 class="section-title">Journey <span class="text-primary">Planner</span></h1>
                     <p class="section-sub">Find the shortest bus path between two points in <?= htmlspecialchars($city['city_name']) ?></p>
+                    <?php if (empty($stops)): ?>
+                        <div class="alert alert-warning mt-3" style="background: rgba(232,184,75,0.1); color: #e8b84b; border: 1px solid rgba(232,184,75,0.2); padding: 12px; border-radius: 12px; font-size: 13px;">
+                            <strong>No stops found:</strong> Please switch to a different city (e.g., Kolkata) or add stops in the Admin panel.
+                        </div>
+                    <?php endif; ?>
                 </div>
             </div>
 

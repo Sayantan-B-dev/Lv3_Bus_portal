@@ -25,6 +25,10 @@ class CityController
             $city = (new City())->findById($cityId);
             Response::json($city ?: []);
         }
-        Response::redirect(APP_URL . '/?city_id=' . $cityId);
+        $referer = $_SERVER['HTTP_REFERER'] ?? (APP_URL . '/');
+        // Strip existing city_id from referer if present to avoid confusion
+        $referer = preg_replace('/(\?|&)city_id=\d+/', '', $referer);
+        $separator = str_contains($referer, '?') ? '&' : '?';
+        Response::redirect($referer . $separator . 'city_id=' . $cityId);
     }
 }

@@ -153,6 +153,10 @@ class Router
     {
         $accept = $_SERVER['HTTP_ACCEPT'] ?? '';
         $uri    = $_SERVER['REQUEST_URI'] ?? '';
-        return str_contains($accept, 'application/json') || str_starts_with($uri, '/api/');
+        $base   = parse_url(APP_URL, PHP_URL_PATH) ?? '';
+        $cleanUri = '/' . ltrim(substr($uri, strlen($base)), '/');
+        
+        return str_contains($accept, 'application/json') || 
+               str_starts_with($cleanUri, '/api');
     }
 }

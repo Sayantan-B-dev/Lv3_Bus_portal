@@ -29,7 +29,9 @@ document.addEventListener('DOMContentLoaded', () => {
         const to = toSelect.value;
         const type = typeSelect.value;
 
-        if (!from || !to) {
+        console.log('Planner Input:', { from, to, type });
+
+        if (from === "" || to === "" || from === null || to === null) {
             showError('Please select both origin and destination stops.');
             return;
         }
@@ -48,7 +50,10 @@ document.addEventListener('DOMContentLoaded', () => {
         try {
             const response = await fetch(`${window.APP_URL}/api/planner`, {
                 method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
+                headers: { 
+                    'Content-Type': 'application/json',
+                    'Accept': 'application/json'
+                },
                 body: JSON.stringify({
                     city_id: window.CITY_DATA.id,
                     from_stop_id: from,
@@ -56,6 +61,16 @@ document.addEventListener('DOMContentLoaded', () => {
                     passenger_type: type
                 })
             });
+
+            if (!response.ok) {
+                const text = await response.text();
+                try {
+                    const errJson = JSON.parse(text);
+                    throw new Error(errJson.message || 'Server error');
+                } catch(e) {
+                    throw new Error('Server returned an invalid response (HTML). Check your APP_URL in .env.');
+                }
+            }
 
             const result = await response.json();
             
@@ -109,8 +124,11 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function showError(msg) {
+        console.error('Planner Error:', msg);
         errorDiv.textContent = msg;
         errorDiv.classList.remove('d-none');
         loadingDiv.classList.add('d-none');
+        resultsDiv.classList.add('d-none');
+        legsDiv.innerHTML = '';
     }
 });
