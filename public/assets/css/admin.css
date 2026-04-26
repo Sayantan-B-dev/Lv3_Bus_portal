@@ -139,24 +139,33 @@ h1, h2, h3, h4, h5, h6, .font-display {
 .btn-primary {
     background: var(--admin-accent);
     border: none;
-    padding: 8px 20px;
-    border-radius: 8px;
+    padding: 10px 24px;
+    border-radius: 10px;
     font-weight: 600;
+    color: white;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: 0 4px 12px rgba(232,64,37,0.2);
 }
 
 .btn-primary:hover {
     background: #f04a2e;
-    transform: translateY(-1px);
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(232,64,37,0.4);
 }
 
 .btn-outline-primary {
-    border-color: var(--admin-accent);
+    border: 1px solid var(--admin-accent);
     color: var(--admin-accent);
+    padding: 8px 20px;
+    border-radius: 10px;
+    background: transparent;
+    transition: all 0.3s ease;
 }
 
 .btn-outline-primary:hover {
     background: var(--admin-accent);
-    border-color: var(--admin-accent);
+    color: white;
+    transform: translateY(-1px);
 }
 
 .stat-label {

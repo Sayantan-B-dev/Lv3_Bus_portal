@@ -35,7 +35,7 @@ include dirname(__DIR__) . '/layout/header.php';
                         </div>
                         
                         <div style="text-align:center;">
-                            <button id="swapPlanner" class="btn-ghost" style="padding: 4px 12px; font-size: 11px;">⇅ SWAP</button>
+                            <button id="swapPlanner" class="btn-ghost" style="padding: 4px 12px; font-size: 11px;">SWAP</button>
                         </div>
 
                         <div>

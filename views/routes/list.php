@@ -16,10 +16,10 @@ include dirname(__DIR__) . '/layout/header.php';
 
                 <div class="filter-bar">
                     <a href="?city_id=<?= $city['id'] ?>" class="filter-chip <?= !$type ? 'active' : '' ?>">All</a>
-                    <a href="?city_id=<?= $city['id'] ?>&type=AC" class="filter-chip <?= $type == 'AC' ? 'active' : '' ?>">AC ❄️</a>
-                    <a href="?city_id=<?= $city['id'] ?>&type=Express" class="filter-chip <?= $type == 'Express' ? 'active' : '' ?>">Express ⚡</a>
+                    <a href="?city_id=<?= $city['id'] ?>&type=AC" class="filter-chip <?= $type == 'AC' ? 'active' : '' ?>">AC</a>
+                    <a href="?city_id=<?= $city['id'] ?>&type=Express" class="filter-chip <?= $type == 'Express' ? 'active' : '' ?>">Express</a>
                     <a href="?city_id=<?= $city['id'] ?>&type=Normal" class="filter-chip <?= $type == 'Normal' ? 'active' : '' ?>">Normal</a>
-                    <a href="?city_id=<?= $city['id'] ?>&type=Night" class="filter-chip <?= $type == 'Night' ? 'active' : '' ?>">Night 🌙</a>
+                    <a href="?city_id=<?= $city['id'] ?>&type=Night" class="filter-chip <?= $type == 'Night' ? 'active' : '' ?>">Night</a>
                 </div>
             </div>
 
@@ -35,7 +35,7 @@ include dirname(__DIR__) . '/layout/header.php';
                             <div class="route-from"><?= htmlspecialchars($r['source']) ?></div>
                             <div class="route-connector">
                                 <div class="route-line"></div>
-                                <div class="route-arrow">▶</div>
+                                <div class="route-arrow"></div>
                             </div>
                             <div class="route-to-label">To</div>
                             <div class="route-to"><?= htmlspecialchars($r['destination']) ?></div>

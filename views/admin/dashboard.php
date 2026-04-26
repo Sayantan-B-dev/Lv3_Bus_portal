@@ -11,7 +11,7 @@ ob_start();
             <div class="stat-label">Total Routes</div>
             <div class="d-flex align-items-end justify-content-between">
                 <div class="stat-value"><?= $global['total_routes'] ?></div>
-                <div class="stat-icon">🚌</div>
+                <div class="stat-icon">R</div>
             </div>
         </div>
     </div>
@@ -20,7 +20,7 @@ ob_start();
             <div class="stat-label">Total Stops</div>
             <div class="d-flex align-items-end justify-content-between">
                 <div class="stat-value"><?= $global['total_stops'] ?></div>
-                <div class="stat-icon">📍</div>
+                <div class="stat-icon">S</div>
             </div>
         </div>
     </div>
@@ -29,7 +29,7 @@ ob_start();
             <div class="stat-label">Cities Covered</div>
             <div class="d-flex align-items-end justify-content-between">
                 <div class="stat-value"><?= $global['total_cities'] ?></div>
-                <div class="stat-icon">🏙️</div>
+                <div class="stat-icon">C</div>
             </div>
         </div>
     </div>
@@ -38,7 +38,7 @@ ob_start();
             <div class="stat-label">System Admins</div>
             <div class="d-flex align-items-end justify-content-between">
                 <div class="stat-value"><?= count($users) ?></div>
-                <div class="stat-icon">👤</div>
+                <div class="stat-icon">A</div>
             </div>
         </div>
     </div>
@@ -91,7 +91,7 @@ ob_start();
                         <span class="me-2">+</span> Add New City
                     </a>
                     <a href="<?= APP_URL ?>/admin/stops/import-osm" class="btn btn-outline-secondary" style="border-color:var(--admin-border); color:var(--admin-text)">
-                        <span class="me-2">📥</span> Import OSM Data
+                        Import OSM Data
                     </a>
                     <div class="mt-4 pt-4 border-top border-secondary opacity-25">
                         <h6 class="font-display fw-bold mb-3">Recent Users</h6>

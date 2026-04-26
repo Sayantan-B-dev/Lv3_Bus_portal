@@ -20,15 +20,15 @@ include dirname(__DIR__) . '/layout/header.php';
 
         <form action="<?= APP_URL ?>/search" method="GET" class="search-wrap">
             <input type="hidden" name="city_id" value="<?= $city['id'] ?? 1 ?>">
-            <div class="search-icon">🔍</div>
+            <div class="search-icon"></div>
             <input class="search-input" type="text" name="q" placeholder="Search by route number, stop or area…" id="searchInput" required autocomplete="off">
             <div class="search-divider"></div>
             <select class="search-type" name="type">
                 <option value="">All Types</option>
-                <option value="AC">AC ❄️</option>
-                <option value="Express">Express ⚡</option>
+                <option value="AC">AC</option>
+                <option value="Express">Express</option>
                 <option value="Normal">Normal</option>
-                <option value="Night">Night 🌙</option>
+                <option value="Night">Night</option>
             </select>
             <button type="submit" class="search-btn">Search Routes</button>
         </form>
@@ -36,9 +36,9 @@ include dirname(__DIR__) . '/layout/header.php';
         <div class="hero-tags">
             <span class="text-muted small" style="margin-right:8px; margin-top:8px">Popular:</span>
             <?php foreach (array_slice($routes ?? [], 0, 5) as $r): ?>
-                <a href="<?= APP_URL ?>/routes/<?= $r['id'] ?>" class="tag">🚌 <?= htmlspecialchars($r['route_number']) ?></a>
+                <a href="<?= APP_URL ?>/routes/<?= $r['id'] ?>" class="tag"><?= htmlspecialchars($r['route_number']) ?></a>
             <?php endforeach; ?>
-            <a href="<?= APP_URL ?>/planner" class="tag">📍 Route Planner</a>
+            <a href="<?= APP_URL ?>/planner" class="tag">Route Planner</a>
         </div>
     </div>
 </section>
@@ -73,15 +73,15 @@ include dirname(__DIR__) . '/layout/header.php';
                 <div class="section-title">Popular Routes</div>
                 <div class="section-sub">High-frequency routes across <?= htmlspecialchars($city['city_name'] ?? 'the city') ?></div>
             </div>
-            <a href="<?= APP_URL ?>/routes" class="see-all">View all routes →</a>
+            <a href="<?= APP_URL ?>/routes" class="see-all">View all routes</a>
         </div>
 
         <div class="filter-bar anim-2">
             <button class="filter-chip active">All</button>
-            <button class="filter-chip">AC ❄️</button>
-            <button class="filter-chip">Express ⚡</button>
+            <button class="filter-chip">AC</button>
+            <button class="filter-chip">Express</button>
             <button class="filter-chip">Normal</button>
-            <button class="filter-chip">Night 🌙</button>
+            <button class="filter-chip">Night</button>
         </div>
 
         <div class="routes-grid anim-3">
@@ -101,7 +101,7 @@ include dirname(__DIR__) . '/layout/header.php';
                             <div class="route-from"><?= htmlspecialchars($r['source']) ?></div>
                             <div class="route-connector">
                                 <div class="route-line"></div>
-                                <div class="route-arrow">▶</div>
+                                <div class="route-arrow"></div>
                             </div>
                             <div class="route-to-label">To</div>
                             <div class="route-to"><?= htmlspecialchars($r['destination']) ?></div>
@@ -131,15 +131,15 @@ include dirname(__DIR__) . '/layout/header.php';
 <div class="container">
     <div class="admin-strip anim-5">
         <div class="admin-strip-text">
-            <h3>🔒 Admin Dashboard</h3>
+            <h3>Admin Dashboard</h3>
             <p>Manage routes, stops, fares, and users. Secure access via Google OAuth.</p>
         </div>
         <div class="admin-strip-btns">
             <a href="<?= APP_URL ?>/api" class="btn-ghost">View API Docs</a>
             <?php if (isset($_SESSION['user_id'])): ?>
-                <a href="<?= APP_URL ?>/admin" class="btn-primary">Dashboard →</a>
+                <a href="<?= APP_URL ?>/admin" class="btn-primary">Dashboard</a>
             <?php else: ?>
-                <a href="<?= APP_URL ?>/auth/login" class="btn-primary">Login with Google →</a>
+                <a href="<?= APP_URL ?>/auth/login" class="btn-primary">Login with Google</a>
             <?php endif; ?>
         </div>
     </div>

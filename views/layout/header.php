@@ -56,12 +56,12 @@ use App\Middleware\CsrfMiddleware;
                 <?php if (in_array($u['role'] ?? '', ['admin', 'super_admin'], true)): ?>
                     <a href="<?= APP_URL ?>/admin" class="btn-ghost">Dashboard</a>
                 <?php endif; ?>
-                <div class="user-pill d-none d-md-flex" style="display:flex; align-items:center; gap:8px; margin-right:10px; background:rgba(255,255,255,0.05); padding:4px 12px; border-radius:20px; border:1px solid var(--border)">
-                    <img src="<?= $u['avatar_url'] ?? '' ?>" width="20" height="20" style="border-radius:50%">
-                    <span style="font-size:12px; color:var(--text)"><?= htmlspecialchars($u['name'] ?? 'Admin') ?></span>
+                <div class="user-pill d-none d-md-flex" style="display:flex; align-items:center; gap:8px; margin-right:10px; background:rgba(255,255,255,0.08); padding:5px 14px; border-radius:20px; border:1px solid var(--border); box-shadow: 0 2px 10px rgba(0,0,0,0.1);">
+                    <img src="<?= $u['avatar_url'] ?? '' ?>" width="22" height="22" style="border-radius:50%; border: 1px solid rgba(255,255,255,0.2);">
+                    <span style="font-size:12px; font-weight: 500; color:var(--text)"><?= htmlspecialchars($u['name'] ?? 'Admin') ?></span>
                 </div>
                 <form action="<?= APP_URL ?>/auth/logout" method="POST" style="display:inline;">
-                    <button type="submit" class="btn-primary" style="padding:6px 16px; font-size:12px">Logout</button>
+                    <button type="submit" class="btn-primary" style="padding:7px 18px; font-size:12px">Logout</button>
                 </form>
             <?php else: ?>
                 <a href="<?= APP_URL ?>/auth/login" class="btn-ghost">Sign In</a>

@@ -31,7 +31,7 @@ use App\Core\Session;
                 <a class="nav-link <?= str_starts_with($view ?? '', 'admin/routes') ? 'active' : '' ?>" href="<?= APP_URL ?>/admin/routes">Routes</a>
                 <a class="nav-link <?= str_starts_with($view ?? '', 'admin/stops') ? 'active' : '' ?>" href="<?= APP_URL ?>/admin/stops">Stops</a>
                 <a class="nav-link <?= str_starts_with($view ?? '', 'admin/cities') ? 'active' : '' ?>" href="<?= APP_URL ?>/admin/cities">Cities</a>
-                <a class="nav-link" href="<?= APP_URL ?>/" target="_blank">View Portal ↗</a>
+                <a class="nav-link" href="<?= APP_URL ?>/" target="_blank">View Portal</a>
                 <div class="mt-auto p-4">
                     <hr class="border-secondary opacity-25">
                     <a class="nav-link text-danger m-0 p-2" href="javascript:void(0)" onclick="document.getElementById('logoutForm').submit()">Logout</a>

@@ -16,7 +16,7 @@ include dirname(__DIR__) . '/layout/header.php';
                 
                 <form action="<?= APP_URL ?>/search" method="GET" class="search-wrap" style="margin-bottom:0; max-width: 400px;">
                     <input type="hidden" name="city_id" value="<?= $city['id'] ?>">
-                    <div class="search-icon">🔍</div>
+                    <div class="search-icon"></div>
                     <input class="search-input" type="text" name="q" value="<?= htmlspecialchars($query) ?>" placeholder="Search again..." required>
                     <button type="submit" class="search-btn">Search</button>
                 </form>
@@ -62,7 +62,7 @@ include dirname(__DIR__) . '/layout/header.php';
                                             <div class="small text-muted" style="font-size:11px;"><?= htmlspecialchars($s['landmark'] ?? 'No landmark') ?></div>
                                         </div>
                                         <?php if ($s['latitude']): ?>
-                                            <a href="https://www.openstreetmap.org/?mlat=<?= $s['latitude'] ?>&mlon=<?= $s['longitude'] ?>" target="_blank" class="tag" style="padding:4px 8px">📍 Map</a>
+                                            <a href="https://www.openstreetmap.org/?mlat=<?= $s['latitude'] ?>&mlon=<?= $s['longitude'] ?>" target="_blank" class="tag" style="padding:4px 8px">Map</a>
                                         <?php endif; ?>
                                     </div>
                                 </div>
