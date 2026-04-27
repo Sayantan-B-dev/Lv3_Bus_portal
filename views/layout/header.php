@@ -130,10 +130,14 @@ use App\Middleware\CsrfMiddleware;
                     <label>Occupation</label>
                     <span><?= htmlspecialchars($u['occupation'] ?? 'N/A') ?></span>
                 </div>
-                <div class="card-item">
+                <!-- <div class="card-item">
                     <label>Location</label>
-                    <span><?= htmlspecialchars(($u['city'] ?? '') . ($u['country'] ? ', ' . $u['country'] : '')) ?: 'N/A' ?></span>
-                </div>
+                    <?php if ($u['latitude']): ?>
+                        <span>Lat: <?= round($u['latitude'], 4) ?>, Lng: <?= round($u['longitude'], 4) ?></span>
+                    <?php else: ?>
+                        <span><?= htmlspecialchars(($u['city'] ?? '') . ($u['country'] ? ', ' . $u['country'] : '')) ?: 'N/A' ?></span>
+                    <?php endif; ?>
+                </div> -->
 
                 <?php if ($u['is_student']): ?>
                 <div class="card-item full-width">
@@ -144,6 +148,7 @@ use App\Middleware\CsrfMiddleware;
                         <div class="card-item"><label>Roll No</label><span><?= htmlspecialchars($u['roll_number'] ?? 'N/A') ?></span></div>
                         <div class="card-item"><label>Branch</label><span><?= htmlspecialchars($u['branch'] ?? 'N/A') ?></span></div>
                         <div class="card-item"><label>Year</label><span><?= htmlspecialchars($u['year_of_study'] ?? 'N/A') ?></span></div>
+                        <div class="card-item"><label>Semester</label><span><?= htmlspecialchars($u['semester'] ?? 'N/A') ?> Semester</span></div>
                     </div>
                 </div>
                 <?php endif; ?>

@@ -1,5 +1,7 @@
 <?php include dirname(__DIR__) . '/layout/header.php'; ?>
 
+<link rel="stylesheet" href="<?= APP_URL ?>/public/assets/css/profile.css">
+
 <section class="page profile-page">
     <div class="profile-header">
         <div class="profile-cover" style="background-image: url('<?= htmlspecialchars($user['cover_image'] ?? 'https://images.unsplash.com/photo-1544620347-c4fd4a3d5957?q=80&w=2069') ?>');">
@@ -33,40 +35,43 @@
 
     <div class="container profile-content">
         <div class="profile-grid">
-            <!-- Sidebar -->
-            <div class="profile-side">
-                <div class="glass-card info-card">
-                    <h3>Contact Information</h3>
-                    <div class="info-list">
-                        <div class="info-row"><label>Email</label><span><?= htmlspecialchars($user['email']) ?></span></div>
-                        <div class="info-row"><label>Phone</label><span><?= htmlspecialchars($user['phone'] ?? 'N/A') ?></span></div>
-                        <div class="info-row"><label>Address</label><span><?= htmlspecialchars($user['address'] ?? 'N/A') ?></span></div>
-                    </div>
+            <!-- Row 1: Contact & Academic -->
+            <div class="glass-card info-card <?= !$user['is_student'] ? 'full-width' : '' ?>">
+                <h3>Contact Information</h3>
+                <div class="info-list">
+                    <div class="info-row"><label>Email</label><span><?= htmlspecialchars($user['email']) ?></span></div>
+                    <div class="info-row"><label>Phone</label><span><?= htmlspecialchars($user['phone'] ?? 'N/A') ?></span></div>
+                    <div class="info-row"><label>Address</label><span><?= htmlspecialchars($user['address'] ?? 'N/A') ?></span></div>
+                    <div class="info-row"><label>Occupation</label><span><?= htmlspecialchars($user['occupation'] ?? 'N/A') ?></span></div>
                 </div>
-
-                <?php if ($user['is_student']): ?>
-                <div class="glass-card info-card student-info">
-                    <h3>Academic Info</h3>
-                    <div class="info-list">
-                        <div class="info-row"><label>College</label><span><?= htmlspecialchars($user['college_name'] ?? 'N/A') ?></span></div>
-                        <div class="info-row"><label>Reg No</label><span><?= htmlspecialchars($user['college_registration_number'] ?? 'N/A') ?></span></div>
-                        <div class="info-row"><label>Roll No</label><span><?= htmlspecialchars($user['roll_number'] ?? 'N/A') ?></span></div>
-                        <div class="info-row"><label>Branch</label><span><?= htmlspecialchars($user['branch'] ?? 'N/A') ?></span></div>
-                        <div class="info-row"><label>Year</label><span><?= htmlspecialchars($user['year_of_study'] ?? 'N/A') ?></span></div>
-                    </div>
-                </div>
-                <?php endif; ?>
             </div>
 
-            <!-- Main Content -->
-            <div class="profile-main">
-                <div class="glass-card bio-card">
-                    <h3>About Me</h3>
-                    <p><?= nl2br(htmlspecialchars($user['bio'] ?? 'This user hasn\'t written a bio yet.')) ?></p>
+            <?php if ($user['is_student']): ?>
+            <div class="glass-card info-card student-info">
+                <h3>Academic Info</h3>
+                <div class="info-list">
+                    <div class="info-row"><label>College</label><span><?= htmlspecialchars($user['college_name'] ?? 'N/A') ?></span></div>
+                    <div class="info-row"><label>Reg No</label><span><?= htmlspecialchars($user['college_registration_number'] ?? 'N/A') ?></span></div>
+                    <div class="info-row"><label>Roll No</label><span><?= htmlspecialchars($user['roll_number'] ?? 'N/A') ?></span></div>
+                    <div class="info-row"><label>Branch</label><span><?= htmlspecialchars($user['branch'] ?? 'N/A') ?></span></div>
+                    <div class="info-row"><label>Year</label><span><?= htmlspecialchars($user['year_of_study'] ?? 'N/A') ?></span></div>
+                    <div class="info-row"><label>Semester</label><span><?= htmlspecialchars($user['semester'] ?? 'N/A') ?> Semester</span></div>
+                </div>
+            </div>
+            <?php endif; ?>
+
+            <!-- Row 3: Bio & Links -->
+            <div class="glass-card bio-card">
+                <h3>About Me</h3>
+                <div class="bio-content-wrap">
+                    <div class="bio-section">
+                        <label class="section-sublabel">Biography</label>
+                        <p class="bio-text"><?= nl2br(htmlspecialchars($user['bio'] ?? 'This user hasn\'t written a bio yet.')) ?></p>
+                    </div>
                     
                     <?php if (!empty($user['skills'])): ?>
-                    <div class="skills-wrap">
-                        <h4>Skills</h4>
+                    <div class="skills-section">
+                        <label class="section-sublabel">Expertise & Skills</label>
                         <div class="skills-list">
                             <?php foreach (explode(',', $user['skills']) as $skill): ?>
                                 <span class="skill-tag"><?= trim(htmlspecialchars($skill)) ?></span>
@@ -75,58 +80,50 @@
                     </div>
                     <?php endif; ?>
                 </div>
+            </div>
 
-                <div class="glass-card social-card">
-                    <h3>Professional Links</h3>
-                    <div class="social-links-grid">
-                        <?php if ($user['linkedin_url']): ?>
-                            <a href="<?= $user['linkedin_url'] ?>" target="_blank" class="social-link-item">LinkedIn</a>
-                        <?php endif; ?>
-                        <?php if ($user['github_url']): ?>
-                            <a href="<?= $user['github_url'] ?>" target="_blank" class="social-link-item">GitHub</a>
-                        <?php endif; ?>
-                        <?php if ($user['portfolio_url']): ?>
-                            <a href="<?= $user['portfolio_url'] ?>" target="_blank" class="social-link-item">Portfolio</a>
-                        <?php endif; ?>
-                    </div>
+            <div class="glass-card social-card">
+                <h3>Professional Links</h3>
+                <div class="social-links-grid">
+                    <?php if ($user['linkedin_url']): ?>
+                        <a href="<?= $user['linkedin_url'] ?>" target="_blank" class="social-link-item">LinkedIn</a>
+                    <?php endif; ?>
+                    <?php if ($user['github_url']): ?>
+                        <a href="<?= $user['github_url'] ?>" target="_blank" class="social-link-item">GitHub</a>
+                    <?php endif; ?>
+                    <?php if ($user['portfolio_url']): ?>
+                        <a href="<?= $user['portfolio_url'] ?>" target="_blank" class="social-link-item">Portfolio</a>
+                    <?php endif; ?>
                 </div>
             </div>
+
+
+            <!-- Row 4: Location (Bottom) -->
+            <?php if ($user['latitude']): ?>
+            <div class="glass-card map-card full-width">
+                <h3>Pinned Location</h3>
+                <div id="viewLocationMap" class="view-map-container"></div>
+            </div>
+            <?php endif; ?>
         </div>
     </div>
 </section>
 
-<style>
-.profile-page { padding-top: 62px; background: var(--bg); min-height: 100vh; }
-.profile-header { position: relative; margin-bottom: 40px; }
-.profile-cover { height: 320px; background-size: cover; background-position: center; position: relative; }
-.cover-overlay { position: absolute; inset: 0; background: linear-gradient(to bottom, transparent, var(--bg)); }
-.profile-nav-container { display: flex; align-items: flex-end; justify-content: space-between; margin-top: -100px; position: relative; z-index: 5; }
-.profile-info-main { display: flex; align-items: flex-end; gap: 30px; }
-.profile-avatar-wrap { position: relative; }
-.profile-avatar-lg { width: 180px; height: 180px; border-radius: 40px; border: 6px solid var(--bg); object-fit: cover; box-shadow: 0 20px 40px rgba(0,0,0,.4); }
-.status-badge { position: absolute; bottom: 15px; right: 15px; width: 24px; height: 24px; border-radius: 50%; border: 4px solid var(--bg); background: var(--green); }
-.profile-text-main h1 { font-family: var(--font-display); font-size: 48px; letter-spacing: -1px; margin-bottom: 5px; }
-.profile-text-main h1 span { font-size: 20px; color: var(--muted); font-weight: 300; }
-.profile-bio { color: var(--muted2); max-width: 500px; margin-bottom: 15px; }
-.profile-meta-badges { display: flex; gap: 15px; }
-.badge-item { font-size: 13px; color: var(--muted); display: flex; align-items: center; gap: 5px; }
-.student-badge { color: var(--accent2); background: var(--accent-dim); padding: 2px 10px; border-radius: 100px; }
-.profile-content { margin-bottom: 100px; }
-.profile-grid { display: grid; grid-template-columns: 350px 1fr; gap: 40px; }
-.glass-card { background: rgba(255,255,255,.03); border: 1px solid var(--border); border-radius: 24px; padding: 30px; margin-bottom: 30px; backdrop-filter: blur(20px); }
-.glass-card h3 { font-family: var(--font-display); font-size: 24px; letter-spacing: 1px; margin-bottom: 20px; color: var(--accent); }
-.info-list { display: grid; gap: 15px; }
-.info-row { display: flex; flex-direction: column; }
-.info-row label { font-size: 10px; text-transform: uppercase; color: var(--muted); letter-spacing: 1px; margin-bottom: 3px; }
-.info-row span { font-size: 14px; color: var(--text); }
-.skill-tag { display: inline-block; padding: 5px 12px; background: rgba(255,255,255,.05); border-radius: 8px; font-size: 12px; margin: 0 8px 8px 0; }
-.social-links-grid { display: flex; gap: 15px; }
-.social-link-item { padding: 10px 20px; background: var(--accent-dim); color: var(--accent2); border-radius: 12px; font-size: 14px; font-weight: 600; }
-@media (max-width: 992px) {
-    .profile-grid { grid-template-columns: 1fr; }
-    .profile-nav-container { flex-direction: column; align-items: center; text-align: center; }
-    .profile-info-main { flex-direction: column; align-items: center; }
-}
-</style>
+
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+    <?php if ($user['latitude']): ?>
+    const lat = <?= $user['latitude'] ?>;
+    const lng = <?= $user['longitude'] ?>;
+    const map = L.map('viewLocationMap', { zoomControl: false, dragging: false, scrollWheelZoom: false }).setView([lat, lng], 14);
+    
+    L.tileLayer('https://api.maptiler.com/maps/dataviz-dark/256/{z}/{x}/{y}.png?key=<?= $_ENV['MAPTILER_API_KEY'] ?? 'get_your_key_at_maptiler_com' ?>', {
+        attribution: '&copy; MapTiler'
+    }).addTo(map);
+
+    L.marker([lat, lng]).addTo(map);
+    <?php endif; ?>
+});
+</script>
 
 <?php include dirname(__DIR__) . '/layout/footer.php'; ?>

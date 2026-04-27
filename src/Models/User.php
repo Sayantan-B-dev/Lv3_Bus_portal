@@ -73,9 +73,9 @@ class User
             'address', 'city', 'state', 'country', 'pincode', 'bio', 
             'profile_image', 'cover_image', 'occupation', 'is_student', 
             'college_name', 'college_registration_number', 'roll_number', 
-            'branch', 'year_of_study', 'graduation_year', 'linkedin_url', 
+            'branch', 'year_of_study', 'semester', 'graduation_year', 'linkedin_url', 
             'github_url', 'portfolio_url', 'skills', 'emergency_contact_name', 
-            'emergency_contact_phone'
+            'emergency_contact_phone', 'latitude', 'longitude'
         ];
 
         foreach ($data as $key => $value) {

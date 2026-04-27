@@ -37,6 +37,7 @@
                     </div>
                 </div>
 
+                
                 <!-- Personal Info -->
                 <div class="form-section">
                     <h3>Personal Details</h3>
@@ -84,6 +85,19 @@
                     </div>
                 </div>
 
+                <!-- Location Picker -->
+                <div class="form-section full-width location-picker-section">
+                    <h3>Set Your Location</h3>
+                    <div class="map-search-wrapper">
+                        <input type="text" id="mapSearchInput" placeholder="Search for your area..." class="map-search-input">
+                        <button type="button" id="mapSearchBtn" class="btn-g search-map-btn">Search</button>
+                    </div>
+                    <div id="userLocationMap" class="stylish-map-container"></div>
+                    <p class="small-text">Drag the marker or click to refine your location</p>
+                    <input type="hidden" name="latitude" id="latInput" value="<?= htmlspecialchars($user['latitude'] ?? '') ?>">
+                    <input type="hidden" name="longitude" id="lngInput" value="<?= htmlspecialchars($user['longitude'] ?? '') ?>">
+                </div>
+
                 <!-- Student Info Toggle -->
                 <div class="form-section full-width student-toggle-wrap">
                     <label class="custom-checkbox">
@@ -116,6 +130,15 @@
                         <div class="input-group">
                             <label>Year of Study</label>
                             <input type="text" name="year_of_study" value="<?= htmlspecialchars($user['year_of_study'] ?? '') ?>" placeholder="e.g. 3rd Year">
+                        </div>
+                        <div class="input-group">
+                            <label>Semester</label>
+                            <select name="semester">
+                                <option value="">Select Semester</option>
+                                <?php for($i=1; $i<=8; $i++): ?>
+                                    <option value="<?= $i ?>" <?= ($user['semester'] ?? '') == $i ? 'selected' : '' ?>><?= $i ?> Semester</option>
+                                <?php endfor; ?>
+                            </select>
                         </div>
                     </div>
                 </div>
@@ -152,6 +175,64 @@ document.getElementById('isStudentCheckbox')?.addEventListener('change', functio
     document.getElementById('studentInfoFields').style.display = this.checked ? 'block' : 'none';
 });
 
+// Location Picker Map
+document.addEventListener('DOMContentLoaded', () => {
+    const defaultLat = <?= $user['latitude'] ?: 22.5726 ?>;
+    const defaultLng = <?= $user['longitude'] ?: 88.3639 ?>;
+    
+    const map = L.map('userLocationMap', { zoomControl: false }).setView([defaultLat, defaultLng], 13);
+    
+    L.tileLayer('https://api.maptiler.com/maps/dataviz-dark/256/{z}/{x}/{y}.png?key=<?= $_ENV['MAPTILER_API_KEY'] ?? 'get_your_key_at_maptiler_com' ?>', {
+        attribution: '<a href="https://www.maptiler.com/copyright/" target="_blank">&copy; MapTiler</a> <a href="https://www.openstreetmap.org/copyright" target="_blank">&copy; OpenStreetMap contributors</a>'
+    }).addTo(map);
+
+    let marker = L.marker([defaultLat, defaultLng], { draggable: true }).addTo(map);
+
+    map.on('click', function(e) {
+        const { lat, lng } = e.latlng;
+        marker.setLatLng([lat, lng]);
+        document.getElementById('latInput').value = lat;
+        document.getElementById('lngInput').value = lng;
+    });
+
+    marker.on('dragend', function(e) {
+        const { lat, lng } = marker.getLatLng();
+        document.getElementById('latInput').value = lat;
+        document.getElementById('lngInput').value = lng;
+    });
+
+    // Map Search Handler
+    const searchInput = document.getElementById('mapSearchInput');
+    const searchBtn = document.getElementById('mapSearchBtn');
+
+    const performSearch = async () => {
+        const query = searchInput.value;
+        if (!query) return;
+        
+        searchBtn.textContent = '...';
+        try {
+            const response = await fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(query)}`);
+            const data = await response.json();
+            if (data && data.length > 0) {
+                const { lat, lon } = data[0];
+                const newLat = parseFloat(lat);
+                const newLon = parseFloat(lon);
+                map.setView([newLat, newLon], 15);
+                marker.setLatLng([newLat, newLon]);
+                document.getElementById('latInput').value = newLat;
+                document.getElementById('lngInput').value = newLon;
+            }
+        } catch (err) {
+            console.error('Search failed:', err);
+        } finally {
+            searchBtn.textContent = 'Search';
+        }
+    };
+
+    searchBtn.addEventListener('click', performSearch);
+    searchInput.addEventListener('keypress', (e) => { if (e.key === 'Enter') { e.preventDefault(); performSearch(); } });
+});
+
 // File input handler
 document.querySelectorAll('.file-input-hidden').forEach(input => {
     input.addEventListener('change', function() {
@@ -170,8 +251,8 @@ document.querySelectorAll('.file-btn').forEach(btn => {
 .profile-edit-page { padding-bottom: 100px; }
 .back-btn { font-size: 13px; padding: 10px 20px; border-radius: 12px; }
 .edit-form { background: var(--surface); border: 1px solid var(--border); border-radius: 32px; padding: 50px; margin-top: 40px; }
-.form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 40px; }
-.form-section { display: grid; gap: 20px; align-content: start; }
+.form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 40px; align-items: stretch; }
+.form-section { display: flex; flex-direction: column; gap: 20px; }
 .full-width { grid-column: span 2; }
 .form-section h3 { font-family: var(--font-display); font-size: 20px; letter-spacing: 1px; color: var(--accent); margin-bottom: 10px; border-bottom: 1px solid var(--border); padding-bottom: 10px; }
 .input-group { display: flex; flex-direction: column; gap: 8px; }
@@ -244,11 +325,31 @@ document.querySelectorAll('.file-btn').forEach(btn => {
 .file-input-hidden { display: none; }
 .file-name { font-size: 12px; color: var(--muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 150px; }
 
+.small-text { font-size: 11px; color: var(--muted); margin-top: 5px; }
+
+/* Stylish Map */
+.location-picker-section { background: var(--surface2); padding: 30px; border-radius: 24px; border: 1px solid var(--border); margin-top: 20px; }
+.stylish-map-container { height: 350px; border-radius: 18px; border: 1px solid var(--border); box-shadow: inset 0 0 20px rgba(0,0,0,.3); margin-top: 15px; }
+.map-search-wrapper { display: flex; gap: 10px; margin-bottom: 5px; }
+.map-search-input { flex: 1; background: rgba(255,255,255,.03); border: 1px solid var(--border); border-radius: 12px; padding: 10px 15px; color: var(--text); font-size: 13px; }
+.search-map-btn { padding: 0 20px; font-size: 12px; border-radius: 10px; }
+
 .btn-large { padding: 16px 40px; font-size: 16px; }
 .form-actions { margin-top: 50px; text-align: center; }
-@media (max-width: 768px) {
-    .form-grid, .academic-grid { grid-template-columns: 1fr; }
-    .full-width { grid-column: span 1; }
+@media (max-width: 992px) {
+    .edit-form { padding: 30px; border-radius: 24px; }
+    .form-grid { grid-template-columns: 1fr; gap: 30px; }
+    .academic-grid { grid-template-columns: 1fr 1fr; }
+}
+
+@media (max-width: 600px) {
+    .edit-form { padding: 20px; }
+    .academic-grid { grid-template-columns: 1fr; }
+    .media-inputs { grid-template-columns: 1fr; }
+    .form-actions .btn-g { width: 100%; padding: 16px; }
+    .stylish-map-container { height: 300px; }
+    .map-search-wrapper { flex-direction: column; }
+    .search-map-btn { padding: 12px; }
 }
 </style>
 
