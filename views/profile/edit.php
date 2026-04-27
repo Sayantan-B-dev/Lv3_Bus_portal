@@ -7,7 +7,7 @@
                 <div class="sec-title">Edit <span>Profile</span></div>
                 <div class="sec-desc">Update your personal and academic information</div>
             </div>
-            <a href="<?= APP_URL ?>/profile" class="sec-link">Back to Profile ↗</a>
+            <a href="<?= APP_URL ?>/profile" class="btn-g back-btn">Back to Profile</a>
         </div>
 
         <form action="<?= APP_URL ?>/profile/update" method="POST" enctype="multipart/form-data" class="edit-form reveal">
@@ -168,6 +168,7 @@ document.querySelectorAll('.file-btn').forEach(btn => {
 
 <style>
 .profile-edit-page { padding-bottom: 100px; }
+.back-btn { font-size: 13px; padding: 10px 20px; border-radius: 12px; }
 .edit-form { background: var(--surface); border: 1px solid var(--border); border-radius: 32px; padding: 50px; margin-top: 40px; }
 .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 40px; }
 .form-section { display: grid; gap: 20px; align-content: start; }
