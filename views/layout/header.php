@@ -126,24 +126,53 @@ use App\Middleware\CsrfMiddleware;
                     <label>Username</label>
                     <span><?= htmlspecialchars($u['username'] ?? 'N/A') ?></span>
                 </div>
+                <div class="card-item">
+                    <label>Occupation</label>
+                    <span><?= htmlspecialchars($u['occupation'] ?? 'N/A') ?></span>
+                </div>
+                <div class="card-item">
+                    <label>Location</label>
+                    <span><?= htmlspecialchars(($u['city'] ?? '') . ($u['country'] ? ', ' . $u['country'] : '')) ?: 'N/A' ?></span>
+                </div>
+
                 <?php if ($u['is_student']): ?>
-                <div class="card-item">
-                    <label>College</label>
-                    <span><?= htmlspecialchars($u['college_name'] ?? 'N/A') ?></span>
-                </div>
-                <div class="card-item">
-                    <label>Roll No</label>
-                    <span><?= htmlspecialchars($u['roll_number'] ?? 'N/A') ?></span>
-                </div>
-                <div class="card-item">
-                    <label>Branch</label>
-                    <span><?= htmlspecialchars($u['branch'] ?? 'N/A') ?></span>
-                </div>
-                <div class="card-item">
-                    <label>Year</label>
-                    <span><?= htmlspecialchars($u['year_of_study'] ?? 'N/A') ?></span>
+                <div class="card-item full-width">
+                    <label>Student Academic Info</label>
+                    <div class="card-sub-grid">
+                        <div class="card-item"><label>College</label><span><?= htmlspecialchars($u['college_name'] ?? 'N/A') ?></span></div>
+                        <div class="card-item"><label>Reg No</label><span><?= htmlspecialchars($u['college_registration_number'] ?? 'N/A') ?></span></div>
+                        <div class="card-item"><label>Roll No</label><span><?= htmlspecialchars($u['roll_number'] ?? 'N/A') ?></span></div>
+                        <div class="card-item"><label>Branch</label><span><?= htmlspecialchars($u['branch'] ?? 'N/A') ?></span></div>
+                        <div class="card-item"><label>Year</label><span><?= htmlspecialchars($u['year_of_study'] ?? 'N/A') ?></span></div>
+                    </div>
                 </div>
                 <?php endif; ?>
+
+                <div class="card-item full-width">
+                    <label>Bio</label>
+                    <p class="card-bio"><?= htmlspecialchars($u['bio'] ?? 'No bio provided.') ?></p>
+                </div>
+
+                <?php if (!empty($u['skills'])): ?>
+                <div class="card-item full-width">
+                    <label>Skills</label>
+                    <div class="card-skills">
+                        <?php foreach (explode(',', $u['skills']) as $skill): ?>
+                            <span class="card-skill-tag"><?= trim(htmlspecialchars($skill)) ?></span>
+                        <?php endforeach; ?>
+                    </div>
+                </div>
+                <?php endif; ?>
+
+                <div class="card-item full-width">
+                    <label>Social Links</label>
+                    <div class="card-links">
+                        <?php if ($u['linkedin_url']): ?><a href="<?= $u['linkedin_url'] ?>" target="_blank">LinkedIn</a><?php endif; ?>
+                        <?php if ($u['github_url']): ?><a href="<?= $u['github_url'] ?>" target="_blank">GitHub</a><?php endif; ?>
+                        <?php if ($u['portfolio_url']): ?><a href="<?= $u['portfolio_url'] ?>" target="_blank">Portfolio</a><?php endif; ?>
+                    </div>
+                </div>
+
                 <div class="card-item">
                     <label>Joined</label>
                     <span><?= date('M d, Y', strtotime($u['created_at'])) ?></span>
