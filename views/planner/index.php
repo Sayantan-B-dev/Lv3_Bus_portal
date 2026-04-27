@@ -382,13 +382,13 @@ document.addEventListener('DOMContentLoaded', () => {
                                     <span class="rbadge rb-nm">${j.route_type}</span>
                                 </div>
                                 <div class="rroute">
-                                    <div class="rstop"><small>From</small>${j.route_name.split(' - ')[0]}</div>
+                                    <div class="rstop"><small>From</small>${j.from_stop}</div>
                                     <div class="rconn">
                                         <div class="rline"></div>
                                         <span class="rdist">${j.distance_km} km</span>
                                         <div class="rline" style="background:linear-gradient(90deg,rgba(255,255,255,.04),rgba(255,255,255,.2))"></div>
                                     </div>
-                                    <div class="rstop"><small>To</small>${j.route_name.split(' - ')[1]}</div>
+                                    <div class="rstop"><small>To</small>${j.to_stop}</div>
                                 </div>
                                 <div class="rmeta">
                                     <div class="rmeta-item"><span class="rmv">${Math.round(j.distance_km * 3)} min</span><span class="rmk">Est. Time</span></div>
@@ -409,10 +409,10 @@ document.addEventListener('DOMContentLoaded', () => {
                                         <span class="rbadge rb-ex">LEG 1</span>
                                     </div>
                                     <div class="rroute">
-                                        <div class="rstop"><small>From</small>${j.r1_src}</div>
+                                        <div class="rstop"><small>From</small>${j.from_stop_name}</div>
                                         <div class="rconn">
                                             <div class="rline"></div>
-                                            <span class="rdist">Leg 1</span>
+                                            <span class="rdist">${round(j.dist_leg1, 1)} km</span>
                                             <div class="rline" style="background:linear-gradient(90deg,rgba(255,255,255,.04),rgba(255,255,255,.2))"></div>
                                         </div>
                                         <div class="rstop"><small>Transfer at</small>${j.transfer_stop_name}</div>
@@ -439,10 +439,10 @@ document.addEventListener('DOMContentLoaded', () => {
                                         <div class="rstop"><small>From</small>${j.transfer_stop_name}</div>
                                         <div class="rconn">
                                             <div class="rline"></div>
-                                            <span class="rdist">Leg 2</span>
+                                            <span class="rdist">${round(j.dist_leg2, 1)} km</span>
                                             <div class="rline" style="background:linear-gradient(90deg,rgba(255,255,255,.04),rgba(255,255,255,.2))"></div>
                                         </div>
-                                        <div class="rstop"><small>To</small>${j.r2_dest}</div>
+                                        <div class="rstop"><small>To</small>${j.to_stop_name}</div>
                                     </div>
                                 </div>
                             </a>

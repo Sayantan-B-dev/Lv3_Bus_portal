@@ -111,11 +111,13 @@ if ($method === 'GET' && $uri === '/stops') {
 
 // GET /stops/nearby?lat=&lng=&radius=&city_id=
 if ($method === 'GET' && $uri === '/stops/nearby') {
-    $lat    = (float)($_GET['lat']    ?? 0);
-    $lng    = (float)($_GET['lng']    ?? 0);
+    if (!isset($_GET['lat']) || !isset($_GET['lng'])) {
+        Response::error('lat and lng are required query parameters.', 422);
+    }
+    $lat    = (float)$_GET['lat'];
+    $lng    = (float)$_GET['lng'];
     $radius = (float)($_GET['radius'] ?? 1.0);
     $cityId = (int)($_GET['city_id']  ?? 0);
-    if (!$lat || !$lng) Response::error('lat and lng are required.', 422);
     $stops = $stopModel->nearby($lat, $lng, $radius, $cityId);
     Response::json($stops);
 }
