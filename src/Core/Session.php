@@ -70,7 +70,10 @@ class Session
     public static function setUser(array $user): void
     {
         self::set('admin_user', $user);
-        self::set('admin_token', $user['_jwt'] ?? '');
+        // Only update the token if provided; otherwise preserve the existing one.
+        if (isset($user['_jwt'])) {
+            self::set('admin_token', $user['_jwt']);
+        }
     }
 
     public static function getUser(): ?array

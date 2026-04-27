@@ -73,10 +73,6 @@ use App\Middleware\CsrfMiddleware;
                 // Refresh user data from DB to ensure role/permissions are up to date
                 $u = (new \App\Models\User())->findById((int)$sessionUser['id']);
                 if ($u) {
-                    // Preserve the JWT token which is not in the DB
-                    if (isset($sessionUser['_jwt'])) {
-                        $u['_jwt'] = $sessionUser['_jwt'];
-                    }
                     \App\Core\Session::setUser($u); // Update session with fresh data
                 } else {
                     $u = $sessionUser; // Fallback

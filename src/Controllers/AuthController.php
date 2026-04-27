@@ -18,10 +18,15 @@ class AuthController
     {
         if (Session::isLoggedIn()) {
             $user = Session::getUser();
-            if (in_array($user['role'] ?? '', ['admin', 'super_admin'], true)) {
-                Response::redirect(APP_URL . '/admin');
+            $token = Session::get('admin_token');
+            if ($token && $this->auth->validateJWT($token)) {
+                if (in_array($user['role'] ?? '', ['admin', 'super_admin'], true)) {
+                    Response::redirect(APP_URL . '/admin');
+                }
+                Response::redirect(APP_URL . '/');
+            } else {
+                Session::logout(); // Token expired or missing, force fresh login
             }
-            Response::redirect(APP_URL . '/');
         }
         Response::view('auth/login', ['pageTitle' => 'Admin Login']);
     }
@@ -30,10 +35,15 @@ class AuthController
     {
         if (Session::isLoggedIn()) {
             $user = Session::getUser();
-            if (in_array($user['role'] ?? '', ['admin', 'super_admin'], true)) {
-                Response::redirect(APP_URL . '/admin');
+            $token = Session::get('admin_token');
+            if ($token && $this->auth->validateJWT($token)) {
+                if (in_array($user['role'] ?? '', ['admin', 'super_admin'], true)) {
+                    Response::redirect(APP_URL . '/admin');
+                }
+                Response::redirect(APP_URL . '/');
+            } else {
+                Session::logout();
             }
-            Response::redirect(APP_URL . '/');
         }
         Response::view('auth/adminLogin', ['pageTitle' => 'Administrator Access']);
     }

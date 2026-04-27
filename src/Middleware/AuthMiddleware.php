@@ -37,7 +37,8 @@ class AuthMiddleware
         }
 
         // Sync session if needed
-        if (!\App\Core\Session::has('admin_user') || \App\Core\Session::getUser()['role'] !== $user['role']) {
+        $sessionUser = \App\Core\Session::getUser();
+        if (!$sessionUser || ($sessionUser['role'] ?? '') !== $user['role']) {
              \App\Core\Session::setUser($user);
         }
 

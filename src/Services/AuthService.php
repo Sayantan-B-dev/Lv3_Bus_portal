@@ -69,15 +69,16 @@ class AuthService
             'email' => $user['email'],
             'role'  => $user['role'],
             'iat'   => time(),
-            'exp'   => time() + (int)$_ENV['JWT_EXPIRY'],
+            'exp'   => time() + (int)($_ENV['JWT_EXPIRY'] ?? 3600),
         ];
-        return JWT::encode($payload, $_ENV['JWT_SECRET'], 'HS256');
+        return JWT::encode($payload, $_ENV['JWT_SECRET'] ?? '', 'HS256');
     }
 
     public function validateJWT(string $token): ?array
     {
         try {
-            $decoded = JWT::decode($token, new Key($_ENV['JWT_SECRET'], 'HS256'));
+            $secret = $_ENV['JWT_SECRET'] ?? '';
+            $decoded = JWT::decode($token, new Key($secret, 'HS256'));
             return (array)$decoded;
         } catch (\Exception $e) { return null; }
     }
