@@ -53,7 +53,7 @@ include dirname(__DIR__) . '/layout/header.php';
             </div>
 
             <!-- STOPS + FARE SIDE BY SIDE -->
-            <div style="display:grid;grid-template-columns:repeat(auto-fit, minmax(350px, 1fr));gap:20px" class="anim-4">
+            <div class="route-details-grid anim-4">
 
                 <!-- STOP TIMELINE -->
                 <div class="stop-detail-card tab-content" id="tab-stops">
@@ -88,24 +88,26 @@ include dirname(__DIR__) . '/layout/header.php';
                         <span style="font-family:var(--font-display);font-size:15px;font-weight:700">Fare Slabs</span>
                         <span style="color:var(--muted);font-size:12px">Route <?= htmlspecialchars($route['route_number']) ?> · <?= $route['route_type'] ?></span>
                     </div>
-                    <table>
-                        <thead>
-                            <tr>
-                                <th>Distance Slab</th>
-                                <th>Passenger Type</th>
-                                <th>Fare</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <?php foreach ($route['fares'] as $f): ?>
+                    <div class="adm-table-wrap" style="border:none">
+                        <table>
+                            <thead>
                                 <tr>
-                                    <td><?= $f['min_km'] ?> – <?= $f['max_km'] ?> km</td>
-                                    <td><?= htmlspecialchars($f['passenger_type']) ?></td>
-                                    <td class="fare-price"><?= $city['currency'] ?> <?= $f['fare_amount'] ?></td>
+                                    <th>Distance Slab</th>
+                                    <th>Passenger Type</th>
+                                    <th>Fare</th>
                                 </tr>
-                            <?php endforeach; ?>
-                        </tbody>
-                    </table>
+                            </thead>
+                            <tbody>
+                                <?php foreach ($route['fares'] as $f): ?>
+                                    <tr>
+                                        <td><?= $f['min_km'] ?> – <?= $f['max_km'] ?> km</td>
+                                        <td><?= htmlspecialchars($f['passenger_type']) ?></td>
+                                        <td class="fare-price"><?= $city['currency'] ?> <?= $f['fare_amount'] ?></td>
+                                    </tr>
+                                <?php endforeach; ?>
+                            </tbody>
+                        </table>
+                    </div>
                     <div style="padding:16px 20px;border-top:1px solid var(--border);display:flex;gap:20px; flex-wrap: wrap;">
                         <div style="display:flex;align-items:center;gap:6px;font-size:12px;color:var(--muted)">
                             <span style="width:10px;height:10px;border-radius:50%;background:#60a5fa;display:inline-block"></span>

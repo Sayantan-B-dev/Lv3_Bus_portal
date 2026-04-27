@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Apr 27, 2026 at 07:53 PM
+-- Generation Time: Apr 27, 2026 at 09:59 PM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -43,12 +43,12 @@ CREATE TABLE `activity_log` (
 --
 
 INSERT INTO `activity_log` (`id`, `user_id`, `action`, `entity_type`, `entity_id`, `details`, `ip_address`, `created_at`) VALUES
-(1, 1, 'login', 'user', 1, '{\"method\":\"google_oauth\"}', '192.168.1.10', '2026-04-27 17:15:12'),
-(2, 2, 'create_route', 'route', 12, '{\"route_number\":\"534\",\"city\":\"Delhi\"}', '192.168.1.12', '2026-04-27 17:15:12'),
-(3, 3, 'update_stop', 'stop', 45, '{\"old_name\":\"Sector 5 Stop\",\"new_name\":\"Sector 5 Terminal\"}', '192.168.1.15', '2026-04-27 17:15:12'),
-(4, 1, 'update_fare', 'fare', 77, '{\"old_fare\":20,\"new_fare\":25}', '192.168.1.18', '2026-04-27 17:15:12'),
-(5, 4, 'delete_route', 'route', 31, '{\"reason\":\"duplicate route entry\"}', '192.168.1.22', '2026-04-27 17:15:12'),
-(6, 5, 'logout', 'user', 5, '{\"session_duration\":\"2 hours\"}', '192.168.1.25', '2026-04-27 17:15:12');
+(1, NULL, 'login', 'user', 1, '{\"method\":\"google_oauth\"}', '192.168.1.10', '2026-04-27 17:15:12'),
+(2, NULL, 'create_route', 'route', 12, '{\"route_number\":\"534\",\"city\":\"Delhi\"}', '192.168.1.12', '2026-04-27 17:15:12'),
+(3, NULL, 'update_stop', 'stop', 45, '{\"old_name\":\"Sector 5 Stop\",\"new_name\":\"Sector 5 Terminal\"}', '192.168.1.15', '2026-04-27 17:15:12'),
+(4, NULL, 'update_fare', 'fare', 77, '{\"old_fare\":20,\"new_fare\":25}', '192.168.1.18', '2026-04-27 17:15:12'),
+(5, NULL, 'delete_route', 'route', 31, '{\"reason\":\"duplicate route entry\"}', '192.168.1.22', '2026-04-27 17:15:12'),
+(6, NULL, 'logout', 'user', 5, '{\"session_duration\":\"2 hours\"}', '192.168.1.25', '2026-04-27 17:15:12');
 
 -- --------------------------------------------------------
 
@@ -2339,7 +2339,8 @@ INSERT INTO `fares` (`id`, `route_id`, `min_km`, `max_km`, `fare_amount`, `passe
 (2228, 285, 10.10, 20.00, 30.00, 'General'),
 (2229, 285, 20.10, 40.00, 45.00, 'General'),
 (2230, 285, 0.00, 40.00, 15.00, 'Student'),
-(2231, 285, 0.00, 40.00, 18.00, 'Senior');
+(2231, 285, 0.00, 40.00, 18.00, 'Senior'),
+(2232, 7, 55.00, 55.00, 55.00, 'General');
 
 -- --------------------------------------------------------
 
@@ -2392,7 +2393,7 @@ INSERT INTO `routes` (`id`, `city_id`, `route_number`, `source`, `destination`, 
 (4, 1, '937A', 'Sultan Puri Terminal', 'Old Delhi Railway Station', 'Normal', 20, '06:00:00', '22:00:00', 0.00, NULL, NULL, 1, '2026-04-27 17:06:31', '2026-04-27 17:06:31'),
 (5, 1, '953STL', 'Mangolpuri D Block', 'New Delhi Railway Station Gate 2', 'Normal', 20, '06:00:00', '22:00:00', 0.00, NULL, NULL, 1, '2026-04-27 17:06:31', '2026-04-27 17:06:31'),
 (6, 1, '990EXT', 'Rohini Sec 23 (Green Hill Pkt-1)', 'Shivaji Stadium Terminal', 'Normal', 20, '06:00:00', '22:00:00', 0.00, NULL, NULL, 1, '2026-04-27 17:06:31', '2026-04-27 17:06:31'),
-(7, 1, '107', 'Katewara Village', 'Old Delhi Railway Station', 'Normal', 20, '06:00:00', '22:00:00', 0.00, NULL, NULL, 1, '2026-04-27 17:06:31', '2026-04-27 17:06:31'),
+(7, 1, '107', 'Katewara Village', 'Old Delhi Railway Station', 'Normal', 20, '06:00:00', '22:00:00', 0.00, 'ok', NULL, 1, '2026-04-27 17:06:31', '2026-04-27 19:53:40'),
 (8, 1, '161', 'Bawana Village', 'Old Delhi Railway Station', 'Normal', 20, '06:00:00', '22:00:00', 0.00, NULL, NULL, 1, '2026-04-27 17:06:31', '2026-04-27 17:06:31'),
 (9, 1, 'D-005', 'Deavli Village', 'Nehru Place Terminal', 'Normal', 20, '06:00:00', '22:00:00', 0.00, NULL, NULL, 1, '2026-04-27 17:06:31', '2026-04-27 17:06:31'),
 (10, 1, 'D-007', 'Nehru Place Terminal', 'Deavli Village', 'Normal', 20, '06:00:00', '22:00:00', 0.00, NULL, NULL, 1, '2026-04-27 17:06:31', '2026-04-27 17:06:31'),
@@ -4565,6 +4566,38 @@ CREATE TABLE `users` (
   `google_id` varchar(255) DEFAULT NULL,
   `name` varchar(150) NOT NULL,
   `email` varchar(150) NOT NULL,
+  `username` varchar(150) DEFAULT NULL,
+  `password_hash` varchar(255) DEFAULT NULL,
+  `phone` varchar(20) DEFAULT NULL,
+  `alternate_phone` varchar(20) DEFAULT NULL,
+  `dob` date DEFAULT NULL,
+  `gender` enum('Male','Female','Other') DEFAULT NULL,
+  `address` varchar(255) DEFAULT NULL,
+  `city` varchar(100) DEFAULT NULL,
+  `state` varchar(100) DEFAULT NULL,
+  `country` varchar(100) DEFAULT NULL,
+  `pincode` varchar(20) DEFAULT NULL,
+  `latitude` decimal(10,7) DEFAULT NULL,
+  `longitude` decimal(10,7) DEFAULT NULL,
+  `bio` text DEFAULT NULL,
+  `profile_image` varchar(255) DEFAULT NULL,
+  `cover_image` varchar(255) DEFAULT NULL,
+  `occupation` varchar(150) DEFAULT NULL,
+  `is_student` tinyint(1) DEFAULT 0,
+  `college_name` varchar(150) DEFAULT NULL,
+  `college_registration_number` varchar(50) DEFAULT NULL,
+  `roll_number` varchar(50) DEFAULT NULL,
+  `branch` varchar(100) DEFAULT NULL,
+  `year_of_study` varchar(20) DEFAULT NULL,
+  `semester` varchar(20) DEFAULT NULL,
+  `graduation_year` year(4) DEFAULT NULL,
+  `linkedin_url` varchar(255) DEFAULT NULL,
+  `github_url` varchar(255) DEFAULT NULL,
+  `portfolio_url` varchar(255) DEFAULT NULL,
+  `skills` text DEFAULT NULL,
+  `emergency_contact_name` varchar(150) DEFAULT NULL,
+  `emergency_contact_phone` varchar(20) DEFAULT NULL,
+  `last_profile_updated_at` timestamp NULL DEFAULT NULL,
   `avatar_url` text DEFAULT NULL,
   `role` enum('admin','editor','viewer') NOT NULL DEFAULT 'viewer',
   `is_active` tinyint(1) NOT NULL DEFAULT 1,
@@ -4577,19 +4610,8 @@ CREATE TABLE `users` (
 -- Dumping data for table `users`
 --
 
-INSERT INTO `users` (`id`, `google_id`, `name`, `email`, `avatar_url`, `role`, `is_active`, `last_login_at`, `created_at`, `updated_at`) VALUES
-(1, NULL, 'Admin User', 'admin@busportal.com', NULL, 'admin', 1, NULL, '2026-04-27 17:01:08', '2026-04-27 17:01:08'),
-(2, 'google_1001', 'Amit Sharma', 'amit.admin@busportal.com', 'https://example.com/avatar1.jpg', 'admin', 1, '2026-04-20 09:15:00', '2026-04-27 17:04:13', '2026-04-27 17:04:13'),
-(3, 'google_1002', 'Priya Mehta', 'priya.admin@busportal.com', 'https://example.com/avatar2.jpg', 'admin', 1, '2026-04-21 10:30:00', '2026-04-27 17:04:13', '2026-04-27 17:04:13'),
-(4, 'google_1003', 'Rahul Verma', 'rahul.editor@busportal.com', 'https://example.com/avatar3.jpg', 'editor', 1, '2026-04-22 11:00:00', '2026-04-27 17:04:13', '2026-04-27 17:04:13'),
-(5, 'google_1004', 'Sneha Roy', 'sneha.editor@busportal.com', 'https://example.com/avatar4.jpg', 'editor', 1, '2026-04-23 14:20:00', '2026-04-27 17:04:13', '2026-04-27 17:04:13'),
-(6, 'google_1005', 'Arjun Patel', 'arjun.editor@busportal.com', 'https://example.com/avatar5.jpg', 'editor', 1, '2026-04-24 16:10:00', '2026-04-27 17:04:13', '2026-04-27 17:04:13'),
-(7, 'google_1006', 'Neha Das', 'neha.viewer@busportal.com', 'https://example.com/avatar6.jpg', 'viewer', 1, '2026-04-25 08:45:00', '2026-04-27 17:04:13', '2026-04-27 17:04:13'),
-(8, 'google_1007', 'Rohan Gupta', 'rohan.viewer@busportal.com', 'https://example.com/avatar7.jpg', 'viewer', 1, '2026-04-25 12:00:00', '2026-04-27 17:04:13', '2026-04-27 17:04:13'),
-(9, 'google_1008', 'Ananya Sen', 'ananya.viewer@busportal.com', 'https://example.com/avatar8.jpg', 'viewer', 1, '2026-04-26 09:30:00', '2026-04-27 17:04:13', '2026-04-27 17:04:13'),
-(10, 'google_1009', 'Vikram Singh', 'vikram.viewer@busportal.com', 'https://example.com/avatar9.jpg', 'viewer', 0, '2026-04-18 17:00:00', '2026-04-27 17:04:13', '2026-04-27 17:04:13'),
-(11, 'google_1010', 'Pooja Nair', 'pooja.viewer@busportal.com', 'https://example.com/avatar10.jpg', 'viewer', 1, '2026-04-26 19:40:00', '2026-04-27 17:04:13', '2026-04-27 17:04:13'),
-(12, '110611255409254914450', 'Sayantan Bharati', 'sayantanbharati611@gmail.com', 'https://lh3.googleusercontent.com/a/ACg8ocKd7sqvrckWGEXRLC5uEYzyRUslU9iihRebj3NxAVbJsxhlFzTC=s96-c', 'viewer', 1, NULL, '2026-04-27 17:41:24', '2026-04-27 17:41:24');
+INSERT INTO `users` (`id`, `google_id`, `name`, `email`, `username`, `password_hash`, `phone`, `alternate_phone`, `dob`, `gender`, `address`, `city`, `state`, `country`, `pincode`, `latitude`, `longitude`, `bio`, `profile_image`, `cover_image`, `occupation`, `is_student`, `college_name`, `college_registration_number`, `roll_number`, `branch`, `year_of_study`, `semester`, `graduation_year`, `linkedin_url`, `github_url`, `portfolio_url`, `skills`, `emergency_contact_name`, `emergency_contact_phone`, `last_profile_updated_at`, `avatar_url`, `role`, `is_active`, `last_login_at`, `created_at`, `updated_at`) VALUES
+(12, '110611255409254914450', 'Sayantan Bharati', 'sayantanbharati611@gmail.com', 'Sayantan', NULL, '+918888888888', '01234125125', '1999-07-17', 'Male', 'Barasat', 'kolkata', 'West Bengal', 'India', '743287', 22.9247385, 88.7778889, 'I am Developer', NULL, NULL, 'Student', 1, 'Kingston Polytechnic  College', '12345678', '12345678', 'CST', '2nd', '6', '2026', 'https://github.com/Sayantan-B-dev/Lv3_Bus_portal', 'https://github.com/Sayantan-B-dev/Lv3_Bus_portal', 'https://github.com/Sayantan-B-dev/Lv3_Bus_portal', 'PHP', '', '', '2026-04-27 19:32:10', 'https://lh3.googleusercontent.com/a/ACg8ocKd7sqvrckWGEXRLC5uEYzyRUslU9iihRebj3NxAVbJsxhlFzTC=s96-c', 'admin', 1, '2026-04-28 01:19:02', '2026-04-27 17:41:24', '2026-04-27 19:49:02');
 
 --
 -- Indexes for dumped tables
@@ -4674,7 +4696,7 @@ ALTER TABLE `cities`
 -- AUTO_INCREMENT for table `fares`
 --
 ALTER TABLE `fares`
-  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2232;
+  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2233;
 
 --
 -- AUTO_INCREMENT for table `oauth_tokens`

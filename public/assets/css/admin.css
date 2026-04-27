@@ -462,9 +462,36 @@ button { font-family: inherit; }
   .admin-sidebar {
     width: 100%;
     height: auto;
-    position: static;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    border-right: none;
+    border-bottom: 1px solid var(--c-line);
+    flex-direction: row;
+    align-items: center;
+    padding: 0.5rem 1rem;
+    overflow-x: auto;
   }
-  .admin-sidebar .nav { flex-direction: row; flex-wrap: wrap; }
-  .admin-content { padding: 1rem; }
-  .admin-page-title { font-size: 28px; }
+  .sidebar-brand { padding: 0; margin: 0; margin-right: 1.5rem; }
+  .sidebar-brand-badge { width: 32px; height: 32px; margin: 0; font-size: 9px; }
+  .sidebar-brand-title, .sidebar-brand-subtitle { display: none; }
+  
+  .admin-sidebar .nav { flex-direction: row; padding: 0; gap: 0.5rem; }
+  .admin-sidebar .nav-link { padding: 0.5rem 0.8rem; font-size: 13px; white-space: nowrap; }
+  .sidebar-logout-wrap { margin: 0; padding: 0; margin-left: auto; }
+  
+  .admin-header { padding: 0.8rem 1rem; position: static; }
+  .admin-header-title { font-size: 11px; }
+  .admin-user-text { display: none; }
+  
+  .admin-content { padding: 1.25rem 1rem; }
+  .admin-page-title { font-size: 24px; }
+  
+  .admin-stats-grid { grid-template-columns: 1fr; gap: 0.75rem; }
+  .adm-cities-grid { grid-template-columns: 1fr; }
+  
+  .modal-dialog { width: 95%; margin: 10px auto; }
+  .adm-form-grid.two-col { grid-template-columns: 1fr; }
+  
+  .city-actions-container { grid-template-columns: 1fr !important; }
 }
