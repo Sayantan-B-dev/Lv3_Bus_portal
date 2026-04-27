@@ -119,5 +119,12 @@ To access the management dashboard:
 ## Mobile Support
 The project recently underwent a Global Responsiveness Audit (v3.0). All components including the 3D cards, admin tables, and complex profile forms are fully functional on iOS and Android devices.
 
+## Screenshots
+
+![Dashboard Overview](public/assets/img/1.png)
+![Route Details](public/assets/img/2.png)
+![Admin Panel](public/assets/img/3.png)
+![Mobile View](public/assets/img/4.png)
+![GIS Integration](public/assets/img/5.png)
 ---
 *Built for Modern Urban Transit.*
