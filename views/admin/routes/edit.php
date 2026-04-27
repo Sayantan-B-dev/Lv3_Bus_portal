@@ -5,26 +5,27 @@
 ob_start();
 ?>
 
-<div class="mb-4 d-flex justify-content-between align-items-end">
+<div class="adm-head-block admin-page-head">
     <div>
-        <a href="<?= APP_URL ?>/admin/routes" class="text-muted small">← BACK TO LIST</a>
-        <h3 class="h4 font-rajdhani mt-2">Edit Route <span class="text-primary">#<?= $route['route_number'] ?></span></h3>
+        <a href="<?= APP_URL ?>/admin/routes" class="adm-back-link">← BACK TO LIST</a>
+        <h3 class="adm-title adm-gap-top admin-page-title">Edit Route <span style="color:var(--admin-accent)">#<?= $route['route_number'] ?></span></h3>
     </div>
 </div>
 
-<div class="card border-0 shadow-sm">
-    <div class="card-body">
+<div class="adm-card adm-gap-bottom">
+    <div class="adm-card-head">CORE CONFIGURATION</div>
+    <div class="adm-card-body">
         <form action="<?= APP_URL ?>/admin/routes/<?= $route['id'] ?>" method="POST">
             <input type="hidden" name="_csrf" value="<?= $csrf ?>">
             
-            <div class="row">
-                <div class="col-md-6 mb-3">
-                    <label class="form-label small fw-bold">Route Number</label>
-                    <input type="text" name="route_number" class="form-control" value="<?= htmlspecialchars($route['route_number']) ?>" required>
+            <div class="adm-form-grid two-col">
+                <div class="adm-field">
+                    <label class="adm-label">Route Number</label>
+                    <input type="text" name="route_number" class="adm-input" style="background:var(--admin-surface2); border:1px solid var(--admin-border); color:var(--admin-text)" value="<?= htmlspecialchars($route['route_number']) ?>" required>
                 </div>
-                <div class="col-md-6 mb-3">
-                    <label class="form-label small fw-bold">Route Type</label>
-                    <select name="route_type" class="form-select">
+                <div class="adm-field">
+                    <label class="adm-label">Route Type</label>
+                    <select name="route_type" class="adm-select" style="background:var(--admin-surface2); border:1px solid var(--admin-border); color:var(--admin-text)">
                         <?php foreach (['Normal', 'AC', 'Express', 'Night', 'Mini'] as $t): ?>
                             <option value="<?= $t ?>" <?= $route['route_type'] == $t ? 'selected' : '' ?>><?= $t ?></option>
                         <?php endforeach; ?>
@@ -32,52 +33,52 @@ ob_start();
                 </div>
             </div>
 
-            <div class="row">
-                <div class="col-md-6 mb-3">
-                    <label class="form-label small fw-bold">Source</label>
-                    <input type="text" name="source" class="form-control" value="<?= htmlspecialchars($route['source']) ?>" required>
+            <div class="adm-form-grid two-col">
+                <div class="adm-field">
+                    <label class="adm-label">Source</label>
+                    <input type="text" name="source" class="adm-input" style="background:var(--admin-surface2); border:1px solid var(--admin-border); color:var(--admin-text)" value="<?= htmlspecialchars($route['source']) ?>" required>
                 </div>
-                <div class="col-md-6 mb-3">
-                    <label class="form-label small fw-bold">Destination</label>
-                    <input type="text" name="destination" class="form-control" value="<?= htmlspecialchars($route['destination']) ?>" required>
-                </div>
-            </div>
-
-            <div class="row">
-                <div class="col-md-4 mb-3">
-                    <label class="form-label small fw-bold">Frequency (mins)</label>
-                    <input type="number" name="frequency_mins" class="form-control" value="<?= $route['frequency_mins'] ?>">
-                </div>
-                <div class="col-md-4 mb-3">
-                    <label class="form-label small fw-bold">First Bus</label>
-                    <input type="time" name="first_bus_time" class="form-control" value="<?= date('H:i', strtotime($route['first_bus_time'])) ?>">
-                </div>
-                <div class="col-md-4 mb-3">
-                    <label class="form-label small fw-bold">Last Bus</label>
-                    <input type="time" name="last_bus_time" class="form-control" value="<?= date('H:i', strtotime($route['last_bus_time'])) ?>">
+                <div class="adm-field">
+                    <label class="adm-label">Destination</label>
+                    <input type="text" name="destination" class="adm-input" style="background:var(--admin-surface2); border:1px solid var(--admin-border); color:var(--admin-text)" value="<?= htmlspecialchars($route['destination']) ?>" required>
                 </div>
             </div>
 
-            <div class="mb-3">
-                <label class="form-label small fw-bold">Description</label>
-                <textarea name="description" class="form-control" rows="2"><?= htmlspecialchars($route['description'] ?? '') ?></textarea>
+            <div class="adm-form-grid three-col">
+                <div class="adm-field">
+                    <label class="adm-label">Frequency (mins)</label>
+                    <input type="number" name="frequency_mins" class="adm-input" style="background:var(--admin-surface2); border:1px solid var(--admin-border); color:var(--admin-text)" value="<?= $route['frequency_mins'] ?>">
+                </div>
+                <div class="adm-field">
+                    <label class="adm-label">First Bus</label>
+                    <input type="time" name="first_bus_time" class="adm-input" style="background:var(--admin-surface2); border:1px solid var(--admin-border); color:var(--admin-text)" value="<?= date('H:i', strtotime($route['first_bus_time'])) ?>">
+                </div>
+                <div class="adm-field">
+                    <label class="adm-label">Last Bus</label>
+                    <input type="time" name="last_bus_time" class="adm-input" style="background:var(--admin-surface2); border:1px solid var(--admin-border); color:var(--admin-text)" value="<?= date('H:i', strtotime($route['last_bus_time'])) ?>">
+                </div>
             </div>
 
-            <hr class="my-4">
+            <div class="adm-field">
+                <label class="adm-label">Description</label>
+                <textarea name="description" class="adm-input" style="background:var(--admin-surface2); border:1px solid var(--admin-border); color:var(--admin-text)" rows="2"><?= htmlspecialchars($route['description'] ?? '') ?></textarea>
+            </div>
 
-            <div class="d-flex gap-2">
-                <button type="submit" class="btn btn-primary px-5">Update Route</button>
-                <a href="<?= APP_URL ?>/admin/routes" class="btn btn-outline-secondary">Cancel</a>
+            <hr class="adm-divider-space">
+
+            <div class="admin-form-actions">
+                <button type="submit" class="adm-action adm-action-primary">Update Route</button>
+                <a href="<?= APP_URL ?>/admin/routes" class="adm-action adm-action-outline">Cancel</a>
             </div>
         </form>
     </div>
 </div>
 
-<div class="mt-4">
-    <h4 class="h5 font-rajdhani mb-3">STOP SEQUENCE</h4>
-    <div class="card border-0 shadow-sm">
-        <div class="card-body">
-            <p class="small text-muted">Sequence management coming soon. Use database for now.</p>
+<div class="adm-gap-top">
+    <h4 class="adm-subhead">STOP SEQUENCE</h4>
+    <div class="adm-card">
+        <div class="adm-card-body">
+            <p class="adm-muted-note">Sequence management coming soon. Use database for now.</p>
         </div>
     </div>
 </div>

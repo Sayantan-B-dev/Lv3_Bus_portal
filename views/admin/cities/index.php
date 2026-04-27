@@ -5,30 +5,33 @@
 ob_start();
 ?>
 
-<div class="d-flex justify-content-between align-items-center mb-4">
+<div class="admin-page-head">
     <div>
-        <h3 class="h4 font-rajdhani mb-0">Manage <span class="text-primary">Cities</span></h3>
-        <p class="text-muted small">Add and configure supported regions</p>
+        <h3 class="adm-title admin-page-title">Manage <span style="color:var(--admin-accent)">Cities</span></h3>
+        <p class="adm-muted-note">Add and configure supported operational regions</p>
     </div>
-    <button type="button" class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#addCityModal">+ Add City</button>
+    <button type="button" class="adm-action adm-action-primary" data-modal-target="#addCityModal">+ Add City</button>
 </div>
 
-<div class="row">
+<div class="adm-cities-grid">
     <?php foreach ($cities as $c): ?>
-        <div class="col-md-6 col-lg-4 mb-4">
-            <div class="card border-0 shadow-sm h-100">
-                <div class="card-body">
-                    <div class="d-flex justify-content-between align-items-start mb-3">
-                        <h5 class="font-rajdhani mb-0 text-primary"><?= htmlspecialchars($c['city_name']) ?></h5>
-                        <span class="badge bg-light text-dark border"><?= $c['country_code'] ?></span>
-                    </div>
-                    <p class="small text-muted mb-4">
+        <div>
+            <div class="adm-card adm-full-height">
+                <div class="adm-card-head adm-head-row">
+                    <span class="adm-head-label"><?= htmlspecialchars($c['city_name']) ?></span>
+                    <span class="adm-pill" style="font-size: 9px;"><?= $c['country_code'] ?></span>
+                </div>
+                <div class="adm-card-body">
+                    <p class="adm-muted-note adm-gap-sm">
                         <?= htmlspecialchars($c['state_region']) ?>, <?= htmlspecialchars($c['country']) ?><br>
-                        Currency: <?= $c['currency'] ?> | Timezone: <?= $c['timezone'] ?>
+                        <span class="adm-inline-note" style="font-size: 11px;">
+                            Currency: <span style="color:var(--admin-accent)"><?= $c['currency'] ?></span> | 
+                            Timezone: <?= $c['timezone'] ?>
+                        </span>
                     </p>
-                    <div class="d-flex gap-2">
-                        <a href="<?= APP_URL ?>/admin/routes?city_id=<?= $c['id'] ?>" class="btn btn-sm btn-outline-primary flex-grow-1">Routes</a>
-                        <a href="<?= APP_URL ?>/admin/stops?city_id=<?= $c['id'] ?>" class="btn btn-sm btn-outline-secondary flex-grow-1">Stops</a>
+                    <div class="admin-card-actions">
+                        <a href="<?= APP_URL ?>/admin/routes?city_id=<?= $c['id'] ?>" class="adm-action adm-action-outline adm-grow action-btn">Routes</a>
+                        <a href="<?= APP_URL ?>/admin/stops?city_id=<?= $c['id'] ?>" class="adm-action adm-action-outline adm-grow action-btn" style="border-color:var(--admin-border); color:var(--admin-text)">Stops</a>
                     </div>
                 </div>
             </div>
@@ -37,35 +40,35 @@ ob_start();
 </div>
 
 <!-- Add City Modal -->
-<div class="modal fade" id="addCityModal" tabindex="-1">
+<div class="modal" id="addCityModal" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog">
-        <div class="modal-content border-0">
+        <div class="modal-content">
             <form action="<?= APP_URL ?>/admin/cities" method="POST">
                 <input type="hidden" name="_csrf" value="<?= $csrf ?>">
                 <div class="modal-header font-rajdhani">
                     <h5 class="modal-title">ADD NEW CITY</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                    <button type="button" class="adm-modal-close" data-modal-close></button>
                 </div>
                 <div class="modal-body">
-                    <p class="text-muted small mb-3">The system will automatically attempt to find the city's coordinates and OSM Relation ID via Nominatim.</p>
-                    <div class="mb-3">
-                        <label class="form-label small fw-bold">City Name</label>
-                        <input type="text" name="city_name" class="form-control" placeholder="e.g. New York" required>
+                    <p class="adm-muted-note adm-gap-sm">The system will automatically attempt to find the city's coordinates and OSM Relation ID via Nominatim.</p>
+                    <div class="adm-field">
+                        <label class="adm-label">City Name</label>
+                        <input type="text" name="city_name" class="adm-input" placeholder="e.g. New York" required>
                     </div>
-                    <div class="row">
-                        <div class="col-6 mb-3">
-                            <label class="form-label small fw-bold">Country Code</label>
-                            <input type="text" name="country_code" class="form-control" value="IN" maxlength="2">
+                    <div class="adm-form-grid two-col">
+                        <div class="adm-field">
+                            <label class="adm-label">Country Code</label>
+                            <input type="text" name="country_code" class="adm-input" value="IN" maxlength="2">
                         </div>
-                        <div class="col-6 mb-3">
-                            <label class="form-label small fw-bold">Currency</label>
-                            <input type="text" name="currency" class="form-control" value="INR">
+                        <div class="adm-field">
+                            <label class="adm-label">Currency</label>
+                            <input type="text" name="currency" class="adm-input" value="INR">
                         </div>
                     </div>
                 </div>
-                <div class="modal-footer bg-light">
-                    <button type="button" class="btn btn-secondary btn-sm" data-bs-dismiss="modal">Cancel</button>
-                    <button type="submit" class="btn btn-primary btn-sm">Create City</button>
+                <div class="modal-footer">
+                    <button type="button" class="adm-action adm-action-outline" data-modal-close>Cancel</button>
+                    <button type="submit" class="adm-action adm-action-primary">Create City</button>
                 </div>
             </form>
         </div>

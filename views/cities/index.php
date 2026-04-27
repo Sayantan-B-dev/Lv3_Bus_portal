@@ -5,46 +5,43 @@
 include dirname(__DIR__) . '/layout/header.php';
 ?>
 
-<main style="padding-top: 100px;">
-    <section class="section">
-        <div class="container">
-            <div class="section-header anim-1">
-                <div>
-                    <h1 class="section-title">Browse <span class="text-primary">Cities</span></h1>
-                    <p class="section-sub">Select a city to view its routes and transit information.</p>
-                </div>
-            </div>
-
-            <div class="routes-grid anim-3" style="grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));">
-                <?php if (empty($cities)): ?>
-                    <div style="grid-column: span 3; text-align: center; padding: 60px 0;">
-                        <p class="text-muted">No cities available at the moment.</p>
-                    </div>
-                <?php else: ?>
-                    <?php foreach ($cities as $c): ?>
-                        <div class="route-card" style="display: flex; flex-direction: column; justify-content: space-between; height: 100%;">
-                            <div>
-                                <div class="route-card-top" style="margin-bottom: 12px;">
-                                    <span class="route-num" style="font-size: 24px;"><?= htmlspecialchars($c['city_name']) ?></span>
-                                    <span class="badge-outline" style="font-size: 10px;"><?= htmlspecialchars($c['state_region']) ?></span>
-                                </div>
-                                <p class="text-muted small" style="margin-bottom: 20px;">
-                                    Reliable transit data for <?= htmlspecialchars($c['city_name']) ?>, <?= htmlspecialchars($c['country'] ?? 'India') ?>.
-                                </p>
-                            </div>
-                            
-                            <form action="<?= APP_URL ?>/cities/switch" method="POST">
-                                <input type="hidden" name="city_id" value="<?= $c['id'] ?>">
-                                <button type="submit" class="btn-primary" style="width: 100%; justify-content: center;">
-                                    Switch to <?= htmlspecialchars($c['city_name']) ?>
-                                </button>
-                            </form>
-                        </div>
-                    <?php endforeach; ?>
-                <?php endif; ?>
+<main class="page">
+    <div class="sec">
+        <div class="sec-head reveal">
+            <div>
+                <div class="sec-title">Browse <span>Cities</span></div>
+                <div class="sec-desc">Select a city to view its routes and transit information.</div>
             </div>
         </div>
-    </section>
+
+        <div class="r-grid">
+            <?php if (empty($cities)): ?>
+                <div style="grid-column: 1 / -1; text-align: center; padding: 60px 0;">
+                    <p class="sec-desc">No cities available at the moment.</p>
+                </div>
+            <?php else: ?>
+                <?php foreach ($cities as $c): ?>
+                    <div class="rcard reveal" style="--strip-a:var(--blue);--strip-b:var(--accent)">
+                        <div class="rcard-strip"></div>
+                        <div class="rcard-inner" style="display:flex;flex-direction:column;gap:18px;height:100%">
+                            <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:12px">
+                                <div style="min-width:0">
+                                    <div class="rnum" style="font-size:28px;letter-spacing:0"><?= htmlspecialchars($c['city_name']) ?></div>
+                                    <div class="sec-desc" style="margin-top:4px"><?= htmlspecialchars($c['state_region']) ?> · <?= htmlspecialchars($c['country'] ?? 'India') ?></div>
+                                </div>
+                                <span class="rbadge rb-ac"><?= htmlspecialchars($c['country_code'] ?? 'IN') ?></span>
+                            </div>
+
+                            <form action="<?= APP_URL ?>/cities/switch" method="POST" style="margin-top:auto">
+                                <input type="hidden" name="city_id" value="<?= $c['id'] ?>">
+                                <button type="submit" class="btn-o" style="width:100%;padding:12px 16px;font-size:14px">Switch to <?= htmlspecialchars($c['city_name']) ?> →</button>
+                            </form>
+                        </div>
+                    </div>
+                <?php endforeach; ?>
+            <?php endif; ?>
+        </div>
+    </div>
 </main>
 
 <?php include dirname(__DIR__) . '/layout/footer.php'; ?>

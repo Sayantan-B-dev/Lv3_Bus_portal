@@ -6,7 +6,7 @@ $extraScripts = ['map'];
 include dirname(__DIR__) . '/layout/header.php';
 ?>
 
-<main style="padding-top: 100px;">
+<main class="page">
     <section class="section" style="padding-top:0">
         <div class="container">
             <div class="section-header anim-1">

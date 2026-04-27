@@ -14,21 +14,21 @@ class CityController
         Response::view('cities/index', compact('cities', 'pageTitle'));
     }
 
-    public function switchCity(array $params = []): void
-    {
-        $cityId = (int)($_POST['city_id'] ?? $_GET['city_id'] ?? 0);
-        if ($cityId > 0) {
-            $_SESSION['city_id'] = $cityId;
-        }
-        // JSON response for AJAX city switch
-        if (str_contains($_SERVER['HTTP_ACCEPT'] ?? '', 'application/json')) {
-            $city = (new City())->findById($cityId);
-            Response::json($city ?: []);
-        }
-        $referer = $_SERVER['HTTP_REFERER'] ?? (APP_URL . '/');
-        // Strip existing city_id from referer if present to avoid confusion
-        $referer = preg_replace('/(\?|&)city_id=\d+/', '', $referer);
-        $separator = str_contains($referer, '?') ? '&' : '?';
-        Response::redirect($referer . $separator . 'city_id=' . $cityId);
+public function switchCity(array $params = []): void
+{
+    $cityId = (int)($_POST['city_id'] ?? $_GET['city_id'] ?? 0);
+
+    if ($cityId > 0) {
+        $_SESSION['city_id'] = $cityId;
     }
+
+    // Return JSON if request is AJAX/API based
+    if (str_contains($_SERVER['HTTP_ACCEPT'] ?? '', 'application/json')) {
+        $city = (new City())->findById($cityId);
+        Response::json($city ?: []);
+    }
+
+    // Always redirect to homepage after city switch
+    Response::redirect(APP_URL . '/');
+}
 }

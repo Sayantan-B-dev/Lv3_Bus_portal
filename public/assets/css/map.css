@@ -1,4 +1,4 @@
-/* public/assets/css/map.css */
+public/assets/css/map.css
 
 #routeMap, #plannerMap {
     width: 100%;
@@ -11,8 +11,8 @@
     bottom: 20px;
     left: 20px;
     z-index: 1000;
-    background: var(--clr-surface);
-    border: 1px solid var(--clr-border);
+    background: var(--surface);
+    border: 1px solid var(--border);
     padding: 10px;
     box-shadow: var(--shadow-card);
 }
@@ -40,17 +40,17 @@
 }
 
 .leaflet-popup-content-wrapper {
-    background: var(--clr-surface) !important;
-    color: var(--clr-text) !important;
+    background: var(--surface) !important;
+    color: var(--text) !important;
     border-radius: 0 !important;
-    border: 1px solid var(--clr-primary) !important;
+    border: 1px solid var(--accent) !important;
 }
 
 .leaflet-popup-tip {
-    background: var(--clr-primary) !important;
+    background: var(--accent) !important;
 }
 
 .stop-marker-svg {
     border-radius: 50%;
-    border: 2px solid var(--clr-bg);
+    border: 2px solid var(--bg);
 }

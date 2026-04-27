@@ -1,0 +1,1446 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DTC — Delhi Bus Routes</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Plus+Jakarta+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,300&display=swap" rel="stylesheet">
+<style>
+/*──────────────────────────────────────────
+  TOKENS & RESET
+──────────────────────────────────────────*/
+:root {
+  --c-bg:      #050508;
+  --c-s1:      #0c0c14;
+  --c-s2:      #12121e;
+  --c-s3:      #1a1a2e;
+  --c-line:    rgba(255,255,255,.07);
+  --c-line2:   rgba(255,255,255,.12);
+  --c-or:      #ff4500;
+  --c-or2:     #ff6a33;
+  --c-or-dim:  rgba(255,69,0,.15);
+  --c-or-glow: rgba(255,69,0,.35);
+  --c-mint:    #00e5a0;
+  --c-mint-dim:rgba(0,229,160,.12);
+  --c-blue:    #4f8bff;
+  --c-gold:    #ffcc00;
+  --c-purple:  #b06aff;
+  --c-txt:     #f4f4f8;
+  --c-m:       #8888a0;
+  --c-m2:      #b0b0c8;
+  --f-big:     'Bebas Neue', sans-serif;
+  --f-body:    'Plus Jakarta Sans', sans-serif;
+  --ease:      cubic-bezier(.16,1,.3,1);
+  --ease2:     cubic-bezier(.4,0,.2,1);
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth;overflow-x:hidden}
+body{
+  background:var(--c-bg);
+  color:var(--c-txt);
+  font-family:var(--f-body);
+  font-size:15px;
+  line-height:1.6;
+  overflow-x:hidden;
+  cursor:none;
+}
+a{color:inherit;text-decoration:none}
+button{font-family:var(--f-body);cursor:none}
+img{display:block;max-width:100%}
+::selection{background:var(--c-or);color:#fff}
+::-webkit-scrollbar{width:4px}
+::-webkit-scrollbar-track{background:transparent}
+::-webkit-scrollbar-thumb{background:var(--c-s3);border-radius:2px}
+
+/*──────────────────────────────────────────
+  CUSTOM CURSOR
+──────────────────────────────────────────*/
+#cursor{
+  position:fixed;width:14px;height:14px;
+  background:var(--c-or);border-radius:50%;
+  pointer-events:none;z-index:10000;
+  transform:translate(-50%,-50%);
+  transition:width .25s var(--ease),height .25s var(--ease),background .25s;
+  mix-blend-mode:difference;
+}
+#cursor-ring{
+  position:fixed;width:40px;height:40px;
+  border:1.5px solid rgba(255,255,255,.25);
+  border-radius:50%;pointer-events:none;z-index:9999;
+  transform:translate(-50%,-50%);
+  transition:width .4s var(--ease),height .4s var(--ease),
+             border-color .3s,transform .1s linear;
+}
+body:has(a:hover) #cursor,
+body:has(button:hover) #cursor{width:22px;height:22px}
+body:has(a:hover) #cursor-ring,
+body:has(button:hover) #cursor-ring{width:56px;height:56px;border-color:var(--c-or)}
+@media(pointer:coarse){#cursor,#cursor-ring{display:none}body{cursor:auto}button{cursor:pointer}}
+
+/*──────────────────────────────────────────
+  NOISE LAYER
+──────────────────────────────────────────*/
+body::after{
+  content:'';position:fixed;inset:0;z-index:9998;pointer-events:none;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='300' height='300' filter='url(%23n)' opacity='.04'/%3E%3C/svg%3E");
+  opacity:.6;
+}
+
+/*──────────────────────────────────────────
+  NAV
+──────────────────────────────────────────*/
+nav{
+  position:fixed;top:0;inset-inline:0;z-index:1000;
+  display:flex;align-items:center;justify-content:space-between;
+  padding:0 clamp(16px,4vw,56px);
+  height:62px;
+  background:rgba(5,5,8,.7);
+  backdrop-filter:blur(24px) saturate(160%);
+  border-bottom:1px solid var(--c-line);
+}
+.n-logo{
+  display:flex;align-items:center;gap:10px;
+  font-family:var(--f-big);font-size:22px;letter-spacing:2px;
+}
+.n-icon{
+  width:34px;height:34px;border-radius:8px;
+  background:var(--c-or);display:flex;align-items:center;justify-content:center;
+  font-family:var(--f-body);font-size:11px;font-weight:800;color:#fff;
+  box-shadow:0 0 18px var(--c-or-glow);
+  position:relative;overflow:hidden;
+}
+.n-icon::before{
+  content:'';position:absolute;inset:0;
+  background:linear-gradient(135deg,rgba(255,255,255,.3),transparent 60%);
+}
+.n-badge{
+  background:rgba(255,69,0,.15);border:1px solid rgba(255,69,0,.3);
+  color:var(--c-or2);font-size:10px;font-weight:700;padding:2px 8px;
+  border-radius:100px;letter-spacing:.5px;margin-left:4px;
+  animation:pls 3s infinite;
+}
+@keyframes pls{0%,100%{opacity:1}50%{opacity:.5}}
+.n-links{display:flex;gap:2px}
+.n-links a{
+  padding:6px 14px;border-radius:8px;color:var(--c-m);
+  font-size:13.5px;font-weight:500;transition:all .2s;
+}
+.n-links a:hover{color:var(--c-txt);background:rgba(255,255,255,.06)}
+.n-links a.act{color:var(--c-txt)}
+.n-cta{
+  display:flex;align-items:center;gap:10px;
+}
+.btn-o{
+  padding:8px 20px;border-radius:10px;
+  background:var(--c-or);color:#fff;
+  border:none;font-weight:700;font-size:13px;
+  letter-spacing:.4px;
+  box-shadow:0 0 20px var(--c-or-dim);
+  transition:all .2s var(--ease);position:relative;overflow:hidden;
+}
+.btn-o::before{
+  content:'';position:absolute;top:0;left:-100%;width:100%;height:100%;
+  background:linear-gradient(90deg,transparent,rgba(255,255,255,.2),transparent);
+  transition:left .4s var(--ease);
+}
+.btn-o:hover::before{left:100%}
+.btn-o:hover{transform:translateY(-2px);box-shadow:0 6px 28px var(--c-or-glow)}
+.btn-g{
+  padding:8px 20px;border-radius:10px;
+  background:transparent;color:var(--c-m2);
+  border:1px solid var(--c-line2);
+  font-weight:500;font-size:13px;
+  transition:all .2s;
+}
+.btn-g:hover{color:var(--c-txt);border-color:rgba(255,255,255,.25)}
+@media(max-width:768px){.n-links{display:none}}
+@media(max-width:480px){.btn-g{display:none}}
+
+/*──────────────────────────────────────────
+  HERO
+──────────────────────────────────────────*/
+.hero{
+  min-height:100svh;
+  display:grid;grid-template-rows:1fr auto;
+  padding-top:62px;
+  position:relative;overflow:hidden;
+}
+
+/* animated mesh bg */
+.hero-mesh{
+  position:absolute;inset:0;z-index:0;
+  background:
+    radial-gradient(ellipse 80% 60% at 10% 20%, rgba(255,69,0,.12) 0%, transparent 60%),
+    radial-gradient(ellipse 60% 50% at 90% 80%, rgba(79,139,255,.1) 0%, transparent 60%),
+    radial-gradient(ellipse 50% 40% at 50% 50%, rgba(0,229,160,.05) 0%, transparent 70%);
+  animation:meshAnim 12s ease-in-out infinite alternate;
+}
+@keyframes meshAnim{
+  0%{background-position:0% 0%,100% 100%,50% 50%}
+  100%{background-position:10% 20%,80% 70%,60% 40%}
+}
+
+/* grid lines */
+.hero-grid{
+  position:absolute;inset:0;z-index:0;
+  background-image:
+    linear-gradient(var(--c-line) 1px,transparent 1px),
+    linear-gradient(90deg,var(--c-line) 1px,transparent 1px);
+  background-size:80px 80px;
+  mask-image:radial-gradient(ellipse 80% 60% at 50% 40%,black 20%,transparent 80%);
+}
+
+.hero-inner{
+  position:relative;z-index:1;
+  display:flex;flex-direction:column;justify-content:center;
+  padding:60px clamp(16px,5vw,80px) 40px;
+  max-width:1320px;margin:0 auto;width:100%;
+}
+
+.hero-pill{
+  display:inline-flex;align-items:center;gap:8px;
+  background:rgba(255,255,255,.05);
+  border:1px solid var(--c-line2);
+  padding:6px 16px;border-radius:100px;
+  font-size:12px;font-weight:600;letter-spacing:.6px;text-transform:uppercase;
+  color:var(--c-m2);
+  width:fit-content;margin-bottom:32px;
+  animation:fadeUp .8s var(--ease) both;
+}
+.hero-pill span{
+  width:7px;height:7px;border-radius:50%;background:var(--c-mint);
+  box-shadow:0 0 8px var(--c-mint);flex-shrink:0;
+  animation:pls 2s infinite;
+}
+
+/* BIG title */
+.hero-title{
+  font-family:var(--f-big);
+  font-size:clamp(64px,11vw,160px);
+  line-height:.93;
+  letter-spacing:-1px;
+  margin-bottom:36px;
+  animation:fadeUp .8s .1s var(--ease) both;
+  position:relative;
+}
+.hero-title .line1{display:block;color:var(--c-txt)}
+.hero-title .line2{
+  display:block;
+  color:transparent;
+  -webkit-text-stroke:1.5px rgba(255,255,255,.25);
+  position:relative;
+}
+.hero-title .accent-word{
+  color:var(--c-or);
+  -webkit-text-stroke:0;
+  text-shadow:0 0 80px var(--c-or-glow);
+  position:relative;
+}
+.hero-title .accent-word::after{
+  content:'';
+  position:absolute;bottom:4px;left:0;right:0;height:4px;
+  background:linear-gradient(90deg,var(--c-or),var(--c-or2));
+  border-radius:2px;
+}
+
+.hero-sub{
+  font-size:clamp(14px,2vw,18px);
+  color:var(--c-m);font-weight:300;
+  max-width:520px;line-height:1.75;
+  margin-bottom:48px;
+  animation:fadeUp .8s .2s var(--ease) both;
+}
+.hero-sub strong{color:var(--c-m2);font-weight:500}
+
+/* SEARCH */
+.search-bar{
+  display:flex;align-items:stretch;
+  background:rgba(255,255,255,.04);
+  border:1px solid var(--c-line2);
+  border-radius:16px;
+  max-width:680px;
+  padding:6px 6px 6px 20px;
+  gap:8px;
+  transition:border-color .25s,box-shadow .25s;
+  animation:fadeUp .8s .3s var(--ease) both;
+  position:relative;overflow:hidden;
+}
+.search-bar::before{
+  content:'';position:absolute;inset:0;
+  background:linear-gradient(135deg,rgba(255,255,255,.03),transparent);
+  pointer-events:none;
+}
+.search-bar:focus-within{
+  border-color:rgba(255,69,0,.4);
+  box-shadow:0 0 0 4px rgba(255,69,0,.08),0 16px 48px rgba(0,0,0,.5);
+}
+.s-icon{color:var(--c-m);font-size:18px;align-self:center;flex-shrink:0}
+.s-input{
+  flex:1;background:transparent;border:none;outline:none;
+  color:var(--c-txt);font-family:var(--f-body);
+  font-size:15px;font-weight:400;min-width:0;
+}
+.s-input::placeholder{color:var(--c-m)}
+.s-sep{width:1px;background:var(--c-line);margin:4px 0;flex-shrink:0}
+.s-select{
+  background:transparent;border:none;outline:none;
+  color:var(--c-m);font-family:var(--f-body);font-size:13px;
+  padding:0 12px;cursor:none;
+}
+.s-select option{background:var(--c-s2)}
+.s-btn{
+  background:var(--c-or);color:#fff;
+  border:none;border-radius:10px;
+  padding:10px 24px;
+  font-weight:700;font-size:14px;letter-spacing:.3px;
+  transition:all .2s;position:relative;overflow:hidden;
+  white-space:nowrap;
+  box-shadow:0 0 20px rgba(255,69,0,.3);
+}
+.s-btn:hover{background:#ff5a1a;box-shadow:0 4px 24px rgba(255,69,0,.5)}
+
+.hero-tags{
+  display:flex;flex-wrap:wrap;gap:8px;margin-top:20px;
+  animation:fadeUp .8s .4s var(--ease) both;
+}
+.h-tag{
+  padding:5px 14px;border-radius:100px;
+  border:1px solid var(--c-line);color:var(--c-m);
+  font-size:12.5px;font-weight:500;
+  transition:all .2s;position:relative;overflow:hidden;
+}
+.h-tag::before{
+  content:'';position:absolute;inset:0;
+  background:linear-gradient(135deg,rgba(255,255,255,.04),transparent);
+  opacity:0;transition:opacity .2s;
+}
+.h-tag:hover{border-color:var(--c-line2);color:var(--c-m2)}
+.h-tag:hover::before{opacity:1}
+
+/* HERO BOTTOM TICKER */
+.ticker-wrap{
+  position:relative;z-index:1;
+  border-top:1px solid var(--c-line);
+  padding:16px 0;
+  overflow:hidden;
+  background:rgba(5,5,8,.5);
+  backdrop-filter:blur(8px);
+}
+.ticker-track{
+  display:flex;gap:0;
+  animation:ticker 28s linear infinite;
+  width:max-content;
+}
+.ticker-track:hover{animation-play-state:paused}
+.tick-item{
+  display:flex;align-items:center;gap:12px;
+  padding:0 40px;
+  font-family:var(--f-big);font-size:15px;letter-spacing:2px;
+  color:var(--c-m);
+  border-right:1px solid var(--c-line);
+  white-space:nowrap;
+}
+.tick-item .tick-dot{
+  width:6px;height:6px;border-radius:50%;
+  flex-shrink:0;
+}
+.tick-item .tick-num{color:var(--c-txt)}
+.tick-item .tick-route{color:var(--c-m)}
+@keyframes ticker{from{transform:translateX(0)}to{transform:translateX(-50%)}}
+
+@keyframes fadeUp{
+  from{opacity:0;transform:translateY(30px)}
+  to{opacity:1;transform:translateY(0)}
+}
+
+/*──────────────────────────────────────────
+  STATS ROW
+──────────────────────────────────────────*/
+.stats{
+  display:grid;grid-template-columns:repeat(4,1fr);
+  border-bottom:1px solid var(--c-line);
+  position:relative;
+}
+.stats::before{
+  content:'';position:absolute;top:0;left:0;right:0;height:1px;
+  background:linear-gradient(90deg,transparent,var(--c-or),transparent);
+  opacity:.4;
+}
+.stat{
+  padding:40px 0;text-align:center;
+  border-right:1px solid var(--c-line);
+  position:relative;overflow:hidden;
+  transition:background .3s;
+}
+.stat:last-child{border-right:none}
+.stat:hover{background:rgba(255,255,255,.02)}
+.stat-n{
+  font-family:var(--f-big);
+  font-size:clamp(40px,5vw,64px);
+  letter-spacing:-2px;
+  display:block;
+  background:linear-gradient(135deg,var(--c-txt),rgba(244,244,248,.4));
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;
+  background-clip:text;
+  line-height:1;
+}
+.stat-l{
+  color:var(--c-m);font-size:11px;
+  letter-spacing:1px;text-transform:uppercase;
+  font-weight:600;margin-top:8px;display:block;
+}
+.stat-bar{
+  position:absolute;bottom:0;left:50%;transform:translateX(-50%);
+  width:0;height:2px;background:var(--c-or);
+  transition:width .6s var(--ease);border-radius:1px;
+}
+.stat:hover .stat-bar{width:60%}
+@media(max-width:640px){.stats{grid-template-columns:repeat(2,1fr)}.stat:nth-child(2){border-right:none}.stat:nth-child(1),.stat:nth-child(2){border-bottom:1px solid var(--c-line)}}
+
+/*──────────────────────────────────────────
+  SECTION SHELL
+──────────────────────────────────────────*/
+.sec{padding:80px clamp(16px,5vw,80px);max-width:1320px;margin:0 auto}
+.sec-head{
+  display:flex;align-items:flex-end;justify-content:space-between;
+  gap:20px;margin-bottom:36px;flex-wrap:wrap;
+}
+.sec-title{
+  font-family:var(--f-big);font-size:clamp(36px,5vw,56px);
+  letter-spacing:-.5px;line-height:1;
+}
+.sec-title span{color:var(--c-or)}
+.sec-desc{color:var(--c-m);font-size:14px;margin-top:6px;font-weight:300}
+.sec-link{
+  color:var(--c-m);font-size:13px;white-space:nowrap;
+  display:flex;align-items:center;gap:6px;
+  border:1px solid var(--c-line);
+  padding:8px 16px;border-radius:100px;
+  transition:all .2s;font-weight:500;
+}
+.sec-link:hover{color:var(--c-txt);border-color:var(--c-line2)}
+
+/*──────────────────────────────────────────
+  FILTER CHIPS
+──────────────────────────────────────────*/
+.chips{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:28px}
+.chip{
+  padding:7px 18px;border-radius:100px;
+  border:1px solid var(--c-line);background:transparent;
+  color:var(--c-m);font-size:13px;font-weight:600;
+  transition:all .2s var(--ease2);
+  position:relative;overflow:hidden;
+}
+.chip::before{
+  content:'';position:absolute;inset:0;background:var(--c-or);
+  transform:scaleX(0);transform-origin:left;
+  transition:transform .3s var(--ease);border-radius:100px;
+}
+.chip span{position:relative;z-index:1}
+.chip:hover{color:var(--c-m2);border-color:var(--c-line2)}
+.chip.on{border-color:var(--c-or);color:#fff}
+.chip.on::before{transform:scaleX(1)}
+
+/*──────────────────────────────────────────
+  ROUTE CARDS — 3D tilt
+──────────────────────────────────────────*/
+.r-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:20px}
+@media(max-width:1024px){.r-grid{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:600px){.r-grid{grid-template-columns:1fr}}
+
+.rcard{
+  background:var(--c-s1);
+  border:1px solid var(--c-line);
+  border-radius:20px;
+  padding:0;
+  position:relative;overflow:hidden;
+  transition:border-color .25s,box-shadow .25s;
+  transform-style:preserve-3d;
+  will-change:transform;
+  cursor:none;
+}
+.rcard-inner{padding:24px}
+.rcard::before{
+  content:'';position:absolute;inset:0;
+  background:radial-gradient(circle at var(--mx,50%) var(--my,50%),rgba(255,69,0,.08),transparent 60%);
+  opacity:0;transition:opacity .3s;pointer-events:none;
+}
+.rcard:hover{border-color:rgba(255,255,255,.13);box-shadow:0 20px 60px rgba(0,0,0,.5)}
+.rcard:hover::before{opacity:1}
+
+/* color accent strip top */
+.rcard-strip{
+  height:3px;width:100%;
+  background:linear-gradient(90deg,var(--strip-a),var(--strip-b));
+  position:relative;overflow:hidden;
+}
+.rcard-strip::after{
+  content:'';position:absolute;top:0;left:-100%;width:50%;height:100%;
+  background:linear-gradient(90deg,transparent,rgba(255,255,255,.5),transparent);
+  animation:shimStrip 3s 1s infinite;
+}
+@keyframes shimStrip{0%{left:-50%}100%{left:150%}}
+
+.rcard-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:22px}
+.rnum{
+  font-family:var(--f-big);font-size:42px;letter-spacing:-1px;
+  line-height:1;color:var(--c-txt);
+  text-shadow:0 0 40px rgba(255,255,255,.1);
+}
+.rbadge{
+  padding:4px 12px;border-radius:100px;font-size:11px;font-weight:700;
+  letter-spacing:.5px;text-transform:uppercase;
+}
+.rb-ac{background:rgba(79,139,255,.15);color:#7aa8ff;border:1px solid rgba(79,139,255,.25)}
+.rb-ex{background:rgba(255,204,0,.12);color:#ffcc00;border:1px solid rgba(255,204,0,.2)}
+.rb-nm{background:rgba(0,229,160,.1);color:#00e5a0;border:1px solid rgba(0,229,160,.2)}
+.rb-ni{background:rgba(176,106,255,.12);color:#c084fc;border:1px solid rgba(176,106,255,.2)}
+
+.rroute{margin-bottom:20px}
+.rstop{font-size:15px;font-weight:600}
+.rstop small{display:block;font-size:10.5px;color:var(--c-m);font-weight:400;letter-spacing:.5px;text-transform:uppercase;margin-bottom:2px}
+.rconn{
+  display:flex;align-items:center;gap:10px;padding:8px 0;
+}
+.rline{
+  flex:1;height:1px;
+  background:linear-gradient(90deg,rgba(255,255,255,.2),rgba(255,255,255,.04));
+  position:relative;
+}
+.rline::after{
+  content:'';position:absolute;right:0;top:50%;transform:translateY(-50%);
+  border:4px solid transparent;border-left:6px solid rgba(255,255,255,.15);
+}
+.rdist{
+  font-size:11px;color:var(--c-m);
+  background:var(--c-s2);border:1px solid var(--c-line);
+  padding:3px 10px;border-radius:100px;font-weight:600;white-space:nowrap;
+}
+
+.rmeta{
+  display:flex;gap:0;
+  border-top:1px solid var(--c-line);
+  margin-top:4px;
+}
+.rmeta-item{
+  flex:1;padding:12px 14px;
+  border-right:1px solid var(--c-line);
+  display:flex;flex-direction:column;gap:2px;
+}
+.rmeta-item:last-child{border-right:none}
+.rmv{font-size:13px;font-weight:700;color:var(--c-txt)}
+.rmk{font-size:9.5px;color:var(--c-m);text-transform:uppercase;letter-spacing:.6px}
+
+.rdot{display:inline-flex;align-items:center;gap:5px}
+.dot{width:6px;height:6px;border-radius:50%;display:inline-block;flex-shrink:0}
+.d-g{background:#22c55e;box-shadow:0 0 6px #22c55e}
+.d-y{background:#f59e0b;box-shadow:0 0 6px #f59e0b}
+.d-r{background:var(--c-or);box-shadow:0 0 6px var(--c-or)}
+
+/*──────────────────────────────────────────
+  FEATURED ROUTE (full-width detail)
+──────────────────────────────────────────*/
+.featured{
+  margin:0 clamp(16px,5vw,80px) 80px;
+  border-radius:28px;
+  border:1px solid var(--c-line);
+  overflow:hidden;
+  background:var(--c-s1);
+  display:grid;grid-template-columns:1fr 1fr;
+}
+@media(max-width:900px){.featured{grid-template-columns:1fr;margin-bottom:60px}}
+
+.feat-left{
+  padding:48px;
+  border-right:1px solid var(--c-line);
+  display:flex;flex-direction:column;gap:32px;
+}
+@media(max-width:900px){.feat-left{border-right:none;border-bottom:1px solid var(--c-line);padding:32px 24px}}
+@media(max-width:480px){.feat-left{padding:24px 16px}}
+
+.feat-label{
+  display:inline-flex;align-items:center;gap:8px;
+  color:var(--c-or2);font-size:11px;font-weight:700;letter-spacing:1px;text-transform:uppercase;
+  background:rgba(255,69,0,.08);border:1px solid rgba(255,69,0,.2);
+  padding:5px 14px;border-radius:100px;width:fit-content;
+}
+
+.feat-num{
+  font-family:var(--f-big);font-size:clamp(80px,12vw,120px);
+  letter-spacing:-4px;line-height:1;
+  color:var(--c-or);
+  text-shadow:0 0 100px var(--c-or-glow);
+  position:relative;
+}
+.feat-num sub{
+  font-size:18px;letter-spacing:0;
+  color:var(--c-m);vertical-align:super;
+  font-family:var(--f-body);font-weight:700;
+}
+
+.feat-path{
+  display:flex;flex-direction:column;gap:12px;
+}
+.feat-stop{display:flex;align-items:flex-start;gap:14px}
+.feat-stop-dot{
+  width:12px;height:12px;border-radius:50%;flex-shrink:0;
+  margin-top:4px;position:relative;
+}
+.feat-stop-dot.or{background:var(--c-or);box-shadow:0 0 12px var(--c-or-glow)}
+.feat-stop-dot.bl{background:var(--c-blue);box-shadow:0 0 12px rgba(79,139,255,.4)}
+.feat-stop-connector{
+  width:2px;height:24px;
+  background:linear-gradient(180deg,var(--c-or),var(--c-blue));
+  margin:0 5px;border-radius:1px;
+}
+.feat-stop-name{font-size:16px;font-weight:700}
+.feat-stop-code{font-size:11px;color:var(--c-m);font-weight:400;margin-top:2px;letter-spacing:.4px}
+
+.feat-chips{display:flex;flex-wrap:wrap;gap:8px}
+.feat-chip{
+  padding:7px 16px;border-radius:10px;
+  background:var(--c-s2);border:1px solid var(--c-line);
+  font-size:12px;font-weight:700;color:var(--c-m2);
+  display:flex;flex-direction:column;gap:2px;
+}
+.feat-chip span:first-child{color:var(--c-txt);font-size:16px}
+
+/* RIGHT: map + timeline */
+.feat-right{padding:32px;display:flex;flex-direction:column;gap:24px}
+@media(max-width:480px){.feat-right{padding:20px 16px}}
+
+/* SVG animated route map */
+.map-svg-wrap{
+  flex:0 0 auto;
+  background:var(--c-s2);border:1px solid var(--c-line);
+  border-radius:16px;overflow:hidden;position:relative;height:180px;
+}
+.map-svg-wrap svg{width:100%;height:100%}
+
+/* stop list */
+.stop-list{
+  flex:1;overflow-y:auto;max-height:280px;
+  scrollbar-width:thin;scrollbar-color:var(--c-s3) transparent;
+  display:flex;flex-direction:column;
+}
+.slist-item{
+  display:flex;align-items:center;gap:14px;
+  padding:10px 0;
+  border-bottom:1px solid var(--c-line);
+  position:relative;
+}
+.slist-item:last-child{border-bottom:none}
+.slist-left{
+  width:2px;background:var(--c-line2);
+  align-self:stretch;flex-shrink:0;position:relative;
+}
+.slist-left::before{
+  content:'';position:absolute;top:50%;left:50%;
+  transform:translate(-50%,-50%);
+  width:10px;height:10px;border-radius:50%;
+  background:var(--c-s2);border:2px solid var(--c-m);
+}
+.slist-item.terminal .slist-left::before{
+  background:var(--c-or);border-color:var(--c-or);
+  box-shadow:0 0 8px var(--c-or-glow);width:12px;height:12px;
+}
+.slist-item.major .slist-left::before{
+  background:var(--c-mint);border-color:var(--c-mint);
+}
+.slist-name{flex:1;font-size:13.5px;font-weight:500}
+.slist-name small{display:block;font-size:10.5px;color:var(--c-m);font-weight:300;margin-top:1px}
+.slist-t{font-size:12px;font-weight:700;color:var(--c-m2);font-variant-numeric:tabular-nums}
+
+/*──────────────────────────────────────────
+  FARE SECTION
+──────────────────────────────────────────*/
+.fare-wrap{
+  background:var(--c-s1);
+  border:1px solid var(--c-line);
+  border-radius:20px;overflow:hidden;
+}
+.fare-hd{
+  padding:20px 24px;border-bottom:1px solid var(--c-line);
+  display:flex;align-items:center;justify-content:space-between;
+  flex-wrap:wrap;gap:12px;
+}
+.fare-hd-title{font-family:var(--f-big);font-size:22px;letter-spacing:-.5px}
+.fare-hd-note{color:var(--c-m);font-size:12.5px}
+.fare-table{width:100%;border-collapse:collapse}
+.fare-table th{
+  padding:12px 20px;font-size:10.5px;font-weight:700;
+  letter-spacing:.8px;text-transform:uppercase;color:var(--c-m);
+  text-align:left;border-bottom:1px solid var(--c-line);
+  background:rgba(255,255,255,.02);
+}
+.fare-table td{
+  padding:14px 20px;font-size:14px;
+  border-bottom:1px solid var(--c-line);
+  transition:background .15s;
+}
+.fare-table tr:last-child td{border-bottom:none}
+.fare-table tr:hover td{background:rgba(255,255,255,.025)}
+.fare-p{font-weight:800;font-size:16px}
+.fare-p.gen{color:var(--c-or2)}
+.fare-p.stu{color:#7aa8ff}
+.fare-p.sen{color:var(--c-mint)}
+.fare-tag{
+  display:inline-block;padding:3px 10px;border-radius:100px;
+  font-size:11px;font-weight:700;
+}
+.fare-tag.gen{background:rgba(255,69,0,.1);color:var(--c-or2);border:1px solid rgba(255,69,0,.2)}
+.fare-tag.stu{background:rgba(79,139,255,.1);color:#7aa8ff;border:1px solid rgba(79,139,255,.2)}
+.fare-tag.sen{background:rgba(0,229,160,.1);color:var(--c-mint);border:1px solid rgba(0,229,160,.2)}
+
+/*──────────────────────────────────────────
+  API DOCS PREVIEW
+──────────────────────────────────────────*/
+.api-grid{display:grid;grid-template-columns:1fr 1fr;gap:20px}
+@media(max-width:768px){.api-grid{grid-template-columns:1fr}}
+
+.api-card{
+  background:var(--c-s1);border:1px solid var(--c-line);
+  border-radius:18px;padding:24px;
+  transition:all .25s;
+}
+.api-card:hover{border-color:var(--c-line2);background:var(--c-s2)}
+.api-endpoint{
+  display:flex;align-items:center;gap:10px;
+  margin-bottom:12px;
+}
+.method{
+  font-size:11px;font-weight:800;letter-spacing:.5px;
+  padding:3px 9px;border-radius:6px;font-family:monospace;
+}
+.m-get{background:rgba(0,229,160,.12);color:var(--c-mint);border:1px solid rgba(0,229,160,.2)}
+.m-post{background:rgba(255,204,0,.1);color:var(--c-gold);border:1px solid rgba(255,204,0,.2)}
+.m-put{background:rgba(79,139,255,.1);color:#7aa8ff;border:1px solid rgba(79,139,255,.2)}
+.m-del{background:rgba(255,69,0,.1);color:var(--c-or2);border:1px solid rgba(255,69,0,.2)}
+.api-path{font-family:monospace;font-size:13px;color:var(--c-m2)}
+.api-desc{color:var(--c-m);font-size:13.5px;font-weight:300;line-height:1.55}
+.api-params{margin-top:14px;display:flex;flex-wrap:wrap;gap:6px}
+.api-param{
+  font-family:monospace;font-size:11px;
+  background:var(--c-s2);border:1px solid var(--c-line);
+  color:var(--c-m2);padding:2px 10px;border-radius:6px;
+}
+
+/*──────────────────────────────────────────
+  ADMIN CTA
+──────────────────────────────────────────*/
+.admin-cta{
+  margin:0 clamp(16px,5vw,80px) 80px;
+  border-radius:24px;
+  padding:clamp(40px,5vw,64px);
+  position:relative;overflow:hidden;
+  display:flex;align-items:center;justify-content:space-between;
+  gap:32px;flex-wrap:wrap;
+  background:linear-gradient(135deg,rgba(255,69,0,.1) 0%,rgba(79,139,255,.06) 100%);
+  border:1px solid rgba(255,69,0,.2);
+}
+.admin-cta::before{
+  content:'';position:absolute;
+  width:500px;height:500px;border-radius:50%;
+  background:radial-gradient(circle,rgba(255,69,0,.15),transparent 60%);
+  top:-200px;right:-100px;pointer-events:none;
+}
+.admin-cta-text h2{
+  font-family:var(--f-big);font-size:clamp(32px,5vw,52px);
+  letter-spacing:-.5px;margin-bottom:8px;
+}
+.admin-cta-text p{color:var(--c-m);font-size:15px;font-weight:300;max-width:480px}
+.admin-cta-btns{display:flex;gap:12px;flex-wrap:wrap;position:relative;z-index:1}
+
+/*──────────────────────────────────────────
+  FOOTER
+──────────────────────────────────────────*/
+footer{
+  border-top:1px solid var(--c-line);
+  padding:36px clamp(16px,5vw,80px);
+  display:flex;align-items:center;justify-content:space-between;
+  gap:20px;flex-wrap:wrap;
+}
+.f-logo{font-family:var(--f-big);font-size:18px;letter-spacing:1px;color:var(--c-m)}
+.f-copy{font-size:12px;color:var(--c-m);order:3;flex-basis:100%;text-align:center}
+.f-links{display:flex;gap:20px}
+.f-links a{color:var(--c-m);font-size:12.5px;transition:color .2s}
+.f-links a:hover{color:var(--c-txt)}
+@media(min-width:600px){.f-copy{order:0;flex-basis:auto;text-align:left}}
+
+/*──────────────────────────────────────────
+  REVEAL ANIMATION (scroll)
+──────────────────────────────────────────*/
+.reveal{opacity:0;transform:translateY(28px);transition:opacity .7s var(--ease),transform .7s var(--ease)}
+.reveal.in{opacity:1;transform:none}
+.reveal-d1{transition-delay:.1s}
+.reveal-d2{transition-delay:.18s}
+.reveal-d3{transition-delay:.26s}
+.reveal-d4{transition-delay:.34s}
+.reveal-d5{transition-delay:.42s}
+.reveal-d6{transition-delay:.5s}
+
+/*──────────────────────────────────────────
+  RESPONSIVE NAV HAMBURGER
+──────────────────────────────────────────*/
+.ham{
+  display:none;flex-direction:column;gap:5px;
+  background:none;border:none;padding:6px;
+}
+.ham span{display:block;width:22px;height:2px;background:var(--c-m2);border-radius:1px;transition:all .3s}
+@media(max-width:768px){.ham{display:flex}}
+.mob-nav{
+  display:none;position:fixed;inset:62px 0 0;
+  background:rgba(5,5,8,.96);backdrop-filter:blur(24px);
+  z-index:999;flex-direction:column;align-items:center;
+  justify-content:center;gap:32px;
+  transition:opacity .3s;
+}
+.mob-nav.open{display:flex}
+.mob-nav a{font-family:var(--f-big);font-size:40px;letter-spacing:1px;color:var(--c-m);transition:color .2s}
+.mob-nav a:hover{color:var(--c-txt)}
+</style>
+</head>
+<body>
+
+<!-- CURSOR -->
+<div id="cursor"></div>
+<div id="cursor-ring"></div>
+
+<!-- MOBILE NAV -->
+<div class="mob-nav" id="mobNav">
+  <a href="#" onclick="closeMob()">Routes</a>
+  <a href="#" onclick="closeMob()">Stops</a>
+  <a href="#" onclick="closeMob()">Fares</a>
+  <a href="#" onclick="closeMob()">API</a>
+  <a href="#" onclick="closeMob()">Admin</a>
+</div>
+
+<!-- NAV -->
+<nav>
+  <div class="n-logo">
+    <div class="n-icon">DTC</div>
+    <span>ROUTES</span>
+    <span class="n-badge">LIVE</span>
+  </div>
+  <div class="n-links">
+    <a href="#" class="act">Routes</a>
+    <a href="#">Stops</a>
+    <a href="#">Fares</a>
+    <a href="#">API</a>
+    <a href="#">Admin</a>
+  </div>
+  <div class="n-cta">
+    <button class="btn-g">Sign In</button>
+    <button class="btn-o">Admin Panel →</button>
+    <button class="ham" id="hamBtn" onclick="toggleMob()">
+      <span></span><span></span><span></span>
+    </button>
+  </div>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-mesh"></div>
+  <div class="hero-grid"></div>
+
+  <div class="hero-inner">
+    <div class="hero-pill"><span></span>Delhi Transport Corporation — v1.0</div>
+    <h1 class="hero-title">
+      <span class="line1">EXPLORE</span>
+      <span class="line2">ALL <span class="accent-word">BUS</span></span>
+      <span class="line1">ROUTES.</span>
+    </h1>
+    <p class="hero-sub">Search <strong>648+ DTC routes</strong> by number, source, or destination. Real-time stop sequences, fare slabs, timings and maps — built for Delhi.</p>
+
+    <div class="search-bar">
+      <span class="s-icon">⌕</span>
+      <input class="s-input" type="text" placeholder="Route 401, Dwarka, Kashmere Gate…" id="sInput">
+      <div class="s-sep"></div>
+      <select class="s-select">
+        <option>All Types</option>
+        <option>AC ❄</option>
+        <option>Express ⚡</option>
+        <option>Normal</option>
+        <option>Night 🌙</option>
+      </select>
+      <button class="s-btn">Search</button>
+    </div>
+
+    <div class="hero-tags">
+      <span class="h-tag">🚌 Route 401 — Kashmere Gate</span>
+      <span class="h-tag">❄️ AC Deluxe</span>
+      <span class="h-tag">⚡ Express Routes</span>
+      <span class="h-tag">🌙 Night Service</span>
+      <span class="h-tag">🏛 ISBT Terminals</span>
+      <span class="h-tag">📍 Nearby Stops</span>
+    </div>
+  </div>
+
+  <!-- TICKER -->
+  <div class="ticker-wrap">
+    <div class="ticker-track" id="ticker">
+      <div class="tick-item"><span class="tick-dot dot d-g"></span><span class="tick-num">401</span><span class="tick-route">Kashmere Gate → Dwarka Sec 9</span></div>
+      <div class="tick-item"><span class="tick-dot dot d-g"></span><span class="tick-num">522</span><span class="tick-route">Nehru Place → IGI Airport T3</span></div>
+      <div class="tick-item"><span class="tick-dot dot d-y"></span><span class="tick-num">N-11</span><span class="tick-route">Connaught Place → Rohini</span></div>
+      <div class="tick-item"><span class="tick-dot dot d-g"></span><span class="tick-num">303</span><span class="tick-route">Shahdara ISBT → Noida Sec 62</span></div>
+      <div class="tick-item"><span class="tick-dot dot d-g"></span><span class="tick-num">615</span><span class="tick-route">Lajpat Nagar → Janakpuri</span></div>
+      <div class="tick-item"><span class="tick-dot dot d-r"></span><span class="tick-num">757</span><span class="tick-route">Anand Vihar → Gurgaon</span></div>
+      <div class="tick-item"><span class="tick-dot dot d-g"></span><span class="tick-num">181</span><span class="tick-route">Saket → Pitampura</span></div>
+      <div class="tick-item"><span class="tick-dot dot d-g"></span><span class="tick-num">425</span><span class="tick-route">GTB Nagar → Dwarka</span></div>
+      <!-- duplicate for loop -->
+      <div class="tick-item"><span class="tick-dot dot d-g"></span><span class="tick-num">401</span><span class="tick-route">Kashmere Gate → Dwarka Sec 9</span></div>
+      <div class="tick-item"><span class="tick-dot dot d-g"></span><span class="tick-num">522</span><span class="tick-route">Nehru Place → IGI Airport T3</span></div>
+      <div class="tick-item"><span class="tick-dot dot d-y"></span><span class="tick-num">N-11</span><span class="tick-route">Connaught Place → Rohini</span></div>
+      <div class="tick-item"><span class="tick-dot dot d-g"></span><span class="tick-num">303</span><span class="tick-route">Shahdara ISBT → Noida Sec 62</span></div>
+      <div class="tick-item"><span class="tick-dot dot d-g"></span><span class="tick-num">615</span><span class="tick-route">Lajpat Nagar → Janakpuri</span></div>
+      <div class="tick-item"><span class="tick-dot dot d-r"></span><span class="tick-num">757</span><span class="tick-route">Anand Vihar → Gurgaon</span></div>
+      <div class="tick-item"><span class="tick-dot dot d-g"></span><span class="tick-num">181</span><span class="tick-route">Saket → Pitampura</span></div>
+      <div class="tick-item"><span class="tick-dot dot d-g"></span><span class="tick-num">425</span><span class="tick-route">GTB Nagar → Dwarka</span></div>
+    </div>
+  </div>
+</section>
+
+<!-- STATS -->
+<div class="stats reveal">
+  <div class="stat">
+    <span class="stat-n" data-target="648">0</span>
+    <span class="stat-l">Active Routes</span>
+    <div class="stat-bar"></div>
+  </div>
+  <div class="stat">
+    <span class="stat-n" data-target="3200">0</span>
+    <span class="stat-l">Bus Stops</span>
+    <div class="stat-bar"></div>
+  </div>
+  <div class="stat">
+    <span class="stat-n" data-target="99">0</span>
+    <span class="stat-l">Data Accuracy %</span>
+    <div class="stat-bar"></div>
+  </div>
+  <div class="stat">
+    <span class="stat-n" data-target="4">0</span>
+    <span class="stat-l">Route Categories</span>
+    <div class="stat-bar"></div>
+  </div>
+</div>
+
+<!-- ROUTES SECTION -->
+<div class="sec">
+  <div class="sec-head reveal">
+    <div>
+      <div class="sec-title">Popular <span>Routes</span></div>
+      <div class="sec-desc">High-frequency routes across the city</div>
+    </div>
+    <a class="sec-link" href="#">View all 648 routes ↗</a>
+  </div>
+
+  <div class="chips reveal reveal-d1" id="chipBar">
+    <button class="chip on" onclick="setChip(this)"><span>All Routes</span></button>
+    <button class="chip" onclick="setChip(this)"><span>❄️ AC</span></button>
+    <button class="chip" onclick="setChip(this)"><span>⚡ Express</span></button>
+    <button class="chip" onclick="setChip(this)"><span>Normal</span></button>
+    <button class="chip" onclick="setChip(this)"><span>🌙 Night</span></button>
+  </div>
+
+  <div class="r-grid" id="rGrid">
+
+    <div class="rcard reveal reveal-d1" style="--strip-a:#ff4500;--strip-b:#ff6a33">
+      <div class="rcard-strip"></div>
+      <div class="rcard-inner">
+        <div class="rcard-top">
+          <span class="rnum">401</span>
+          <span class="rbadge rb-ac">AC ❄️</span>
+        </div>
+        <div class="rroute">
+          <div class="rstop"><small>From</small>ISBT Kashmere Gate</div>
+          <div class="rconn">
+            <div class="rline"></div>
+            <span class="rdist">34.2 km</span>
+            <div class="rline" style="background:linear-gradient(90deg,rgba(255,255,255,.04),rgba(255,255,255,.2))"></div>
+          </div>
+          <div class="rstop"><small>To</small>Dwarka Sector 9</div>
+        </div>
+        <div class="rmeta">
+          <div class="rmeta-item"><span class="rmv">12 min</span><span class="rmk">Frequency</span></div>
+          <div class="rmeta-item"><span class="rmv">05:30</span><span class="rmk">First Bus</span></div>
+          <div class="rmeta-item"><span class="rmv rdot"><span class="dot d-g"></span>Active</span><span class="rmk">Status</span></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="rcard reveal reveal-d2" style="--strip-a:#ffcc00;--strip-b:#ff9f00">
+      <div class="rcard-strip"></div>
+      <div class="rcard-inner">
+        <div class="rcard-top">
+          <span class="rnum">522</span>
+          <span class="rbadge rb-ex">Express ⚡</span>
+        </div>
+        <div class="rroute">
+          <div class="rstop"><small>From</small>Nehru Place Terminal</div>
+          <div class="rconn">
+            <div class="rline"></div>
+            <span class="rdist">22.8 km</span>
+            <div class="rline" style="background:linear-gradient(90deg,rgba(255,255,255,.04),rgba(255,255,255,.2))"></div>
+          </div>
+          <div class="rstop"><small>To</small>IGI Airport T3</div>
+        </div>
+        <div class="rmeta">
+          <div class="rmeta-item"><span class="rmv">20 min</span><span class="rmk">Frequency</span></div>
+          <div class="rmeta-item"><span class="rmv">04:45</span><span class="rmk">First Bus</span></div>
+          <div class="rmeta-item"><span class="rmv rdot"><span class="dot d-g"></span>Active</span><span class="rmk">Status</span></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="rcard reveal reveal-d3" style="--strip-a:#b06aff;--strip-b:#7b3fff">
+      <div class="rcard-strip"></div>
+      <div class="rcard-inner">
+        <div class="rcard-top">
+          <span class="rnum">N-11</span>
+          <span class="rbadge rb-ni">Night 🌙</span>
+        </div>
+        <div class="rroute">
+          <div class="rstop"><small>From</small>Connaught Place</div>
+          <div class="rconn">
+            <div class="rline"></div>
+            <span class="rdist">28.5 km</span>
+            <div class="rline" style="background:linear-gradient(90deg,rgba(255,255,255,.04),rgba(255,255,255,.2))"></div>
+          </div>
+          <div class="rstop"><small>To</small>Rohini Sector 11</div>
+        </div>
+        <div class="rmeta">
+          <div class="rmeta-item"><span class="rmv">45 min</span><span class="rmk">Frequency</span></div>
+          <div class="rmeta-item"><span class="rmv">23:00</span><span class="rmk">First Bus</span></div>
+          <div class="rmeta-item"><span class="rmv rdot"><span class="dot d-y"></span>Limited</span><span class="rmk">Status</span></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="rcard reveal reveal-d4" style="--strip-a:#00e5a0;--strip-b:#00bcd4">
+      <div class="rcard-strip"></div>
+      <div class="rcard-inner">
+        <div class="rcard-top">
+          <span class="rnum">615</span>
+          <span class="rbadge rb-nm">Normal</span>
+        </div>
+        <div class="rroute">
+          <div class="rstop"><small>From</small>Lajpat Nagar</div>
+          <div class="rconn">
+            <div class="rline"></div>
+            <span class="rdist">18.3 km</span>
+            <div class="rline" style="background:linear-gradient(90deg,rgba(255,255,255,.04),rgba(255,255,255,.2))"></div>
+          </div>
+          <div class="rstop"><small>To</small>Janakpuri West</div>
+        </div>
+        <div class="rmeta">
+          <div class="rmeta-item"><span class="rmv">15 min</span><span class="rmk">Frequency</span></div>
+          <div class="rmeta-item"><span class="rmv">05:15</span><span class="rmk">First Bus</span></div>
+          <div class="rmeta-item"><span class="rmv rdot"><span class="dot d-g"></span>Active</span><span class="rmk">Status</span></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="rcard reveal reveal-d5" style="--strip-a:#4f8bff;--strip-b:#0044ff">
+      <div class="rcard-strip"></div>
+      <div class="rcard-inner">
+        <div class="rcard-top">
+          <span class="rnum">303</span>
+          <span class="rbadge rb-ac">AC ❄️</span>
+        </div>
+        <div class="rroute">
+          <div class="rstop"><small>From</small>Shahdara ISBT</div>
+          <div class="rconn">
+            <div class="rline"></div>
+            <span class="rdist">31.0 km</span>
+            <div class="rline" style="background:linear-gradient(90deg,rgba(255,255,255,.04),rgba(255,255,255,.2))"></div>
+          </div>
+          <div class="rstop"><small>To</small>Noida Sector 62</div>
+        </div>
+        <div class="rmeta">
+          <div class="rmeta-item"><span class="rmv">10 min</span><span class="rmk">Frequency</span></div>
+          <div class="rmeta-item"><span class="rmv">06:00</span><span class="rmk">First Bus</span></div>
+          <div class="rmeta-item"><span class="rmv rdot"><span class="dot d-g"></span>Active</span><span class="rmk">Status</span></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="rcard reveal reveal-d6" style="--strip-a:#ff4500;--strip-b:#b06aff">
+      <div class="rcard-strip"></div>
+      <div class="rcard-inner">
+        <div class="rcard-top">
+          <span class="rnum">757</span>
+          <span class="rbadge rb-ex">Express ⚡</span>
+        </div>
+        <div class="rroute">
+          <div class="rstop"><small>From</small>Anand Vihar ISBT</div>
+          <div class="rconn">
+            <div class="rline"></div>
+            <span class="rdist">47.6 km</span>
+            <div class="rline" style="background:linear-gradient(90deg,rgba(255,255,255,.04),rgba(255,255,255,.2))"></div>
+          </div>
+          <div class="rstop"><small>To</small>Gurgaon Bus Stand</div>
+        </div>
+        <div class="rmeta">
+          <div class="rmeta-item"><span class="rmv">30 min</span><span class="rmk">Frequency</span></div>
+          <div class="rmeta-item"><span class="rmv">06:30</span><span class="rmk">First Bus</span></div>
+          <div class="rmeta-item"><span class="rmv rdot"><span class="dot d-r"></span>Reduced</span><span class="rmk">Status</span></div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- FEATURED ROUTE DETAIL -->
+<div class="featured reveal">
+  <div class="feat-left">
+    <div class="feat-label">🔎 Route Detail View</div>
+    <div class="feat-num">401<sub>AC</sub></div>
+
+    <div class="feat-path">
+      <div class="feat-stop">
+        <div class="feat-stop-dot or"></div>
+        <div>
+          <div class="feat-stop-name">ISBT Kashmere Gate</div>
+          <div class="feat-stop-code">Terminal · Code: ISBT01 · Zone A</div>
+        </div>
+      </div>
+      <div style="display:flex;gap:0;padding-left:5px">
+        <div class="feat-stop-connector"></div>
+      </div>
+      <div class="feat-stop">
+        <div class="feat-stop-dot bl"></div>
+        <div>
+          <div class="feat-stop-name">Dwarka Sector 9</div>
+          <div class="feat-stop-code">Terminal · 34.2 km · Zone C</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="feat-chips">
+      <div class="feat-chip"><span>34.2 km</span><span style="color:var(--c-m);font-size:10px;font-weight:400">Total Distance</span></div>
+      <div class="feat-chip"><span>~55 min</span><span style="color:var(--c-m);font-size:10px;font-weight:400">Est. Duration</span></div>
+      <div class="feat-chip"><span>18</span><span style="color:var(--c-m);font-size:10px;font-weight:400">Stops</span></div>
+      <div class="feat-chip"><span>Every 12 min</span><span style="color:var(--c-m);font-size:10px;font-weight:400">Frequency</span></div>
+      <div class="feat-chip"><span>05:30 – 23:45</span><span style="color:var(--c-m);font-size:10px;font-weight:400">Operating Hours</span></div>
+    </div>
+  </div>
+
+  <div class="feat-right">
+    <!-- SVG MAP -->
+    <div class="map-svg-wrap">
+      <svg viewBox="0 0 600 180" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid meet">
+        <defs>
+          <linearGradient id="rg" x1="0%" y1="0%" x2="100%" y2="0%">
+            <stop offset="0%" stop-color="#ff4500"/>
+            <stop offset="100%" stop-color="#4f8bff"/>
+          </linearGradient>
+          <filter id="glow">
+            <feGaussianBlur stdDeviation="4" result="blur"/>
+            <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+          </filter>
+          <radialGradient id="bg1" cx="20%" cy="50%" r="50%">
+            <stop offset="0%" stop-color="rgba(255,69,0,0.15)"/>
+            <stop offset="100%" stop-color="transparent"/>
+          </radialGradient>
+          <radialGradient id="bg2" cx="80%" cy="50%" r="50%">
+            <stop offset="0%" stop-color="rgba(79,139,255,0.15)"/>
+            <stop offset="100%" stop-color="transparent"/>
+          </radialGradient>
+        </defs>
+        <!-- bg glow -->
+        <rect width="600" height="180" fill="url(#bg1)"/>
+        <rect width="600" height="180" fill="url(#bg2)"/>
+        <!-- grid -->
+        <g stroke="rgba(255,255,255,0.05)" stroke-width="1">
+          <line x1="0" y1="36" x2="600" y2="36"/><line x1="0" y1="72" x2="600" y2="72"/>
+          <line x1="0" y1="108" x2="600" y2="108"/><line x1="0" y1="144" x2="600" y2="144"/>
+          <line x1="100" y1="0" x2="100" y2="180"/><line x1="200" y1="0" x2="200" y2="180"/>
+          <line x1="300" y1="0" x2="300" y2="180"/><line x1="400" y1="0" x2="400" y2="180"/>
+          <line x1="500" y1="0" x2="500" y2="180"/>
+        </g>
+        <!-- route path (wavy) -->
+        <path d="M50,90 C120,60 180,110 250,85 S380,100 450,80 S530,85 550,90"
+              stroke="url(#rg)" stroke-width="2.5" fill="none" filter="url(#glow)"
+              stroke-dasharray="600" stroke-dashoffset="600">
+          <animate attributeName="stroke-dashoffset" values="600;0" dur="2s" fill="freeze"/>
+        </path>
+        <!-- stops -->
+        <g fill="none">
+          <circle cx="50" cy="90" r="8" fill="#ff4500" filter="url(#glow)">
+            <animate attributeName="r" values="8;11;8" dur="2s" repeatCount="indefinite"/>
+          </circle>
+          <circle cx="150" cy="75" r="5" fill="rgba(255,255,255,0.6)"/>
+          <circle cx="250" cy="85" r="5" fill="rgba(255,255,255,0.6)"/>
+          <circle cx="350" cy="92" r="7" fill="rgba(0,229,160,0.8)" filter="url(#glow)"/>
+          <circle cx="450" cy="80" r="5" fill="rgba(255,255,255,0.6)"/>
+          <circle cx="550" cy="90" r="8" fill="#4f8bff" filter="url(#glow)">
+            <animate attributeName="r" values="8;11;8" dur="2s" begin="1s" repeatCount="indefinite"/>
+          </circle>
+        </g>
+        <!-- labels -->
+        <text x="50" y="114" text-anchor="middle" fill="rgba(255,255,255,0.7)" font-size="9" font-family="Plus Jakarta Sans,sans-serif">Kashmere Gate</text>
+        <text x="350" y="116" text-anchor="middle" fill="rgba(0,229,160,0.8)" font-size="9" font-family="Plus Jakarta Sans,sans-serif">Connaught Pl</text>
+        <text x="550" y="114" text-anchor="middle" fill="rgba(255,255,255,0.7)" font-size="9" font-family="Plus Jakarta Sans,sans-serif">Dwarka Sec 9</text>
+        <!-- km labels -->
+        <text x="300" y="16" text-anchor="middle" fill="rgba(255,255,255,0.3)" font-size="8" font-family="Plus Jakarta Sans,sans-serif">34.2 km  ·  ~55 min  ·  18 stops</text>
+      </svg>
+    </div>
+
+    <!-- STOP LIST -->
+    <div class="stop-list">
+      <div class="slist-item terminal">
+        <div class="slist-left"></div>
+        <div class="slist-name">ISBT Kashmere Gate <small>Terminal · Code ISBT01</small></div>
+        <span class="slist-t">05:30</span>
+      </div>
+      <div class="slist-item major">
+        <div class="slist-left"></div>
+        <div class="slist-name">Kashmere Gate Metro <small>1.2 km</small></div>
+        <span class="slist-t">+04</span>
+      </div>
+      <div class="slist-item">
+        <div class="slist-left"></div>
+        <div class="slist-name">Mori Gate <small>3.1 km</small></div>
+        <span class="slist-t">+09</span>
+      </div>
+      <div class="slist-item major">
+        <div class="slist-left"></div>
+        <div class="slist-name">Connaught Place <small>6.8 km — Major Stop</small></div>
+        <span class="slist-t">+16</span>
+      </div>
+      <div class="slist-item">
+        <div class="slist-left"></div>
+        <div class="slist-name">Patel Chowk <small>8.2 km</small></div>
+        <span class="slist-t">+20</span>
+      </div>
+      <div class="slist-item major">
+        <div class="slist-left"></div>
+        <div class="slist-name">Dilli Haat / INA <small>13.5 km</small></div>
+        <span class="slist-t">+31</span>
+      </div>
+      <div class="slist-item">
+        <div class="slist-left"></div>
+        <div class="slist-name">Vasant Vihar <small>21.0 km</small></div>
+        <span class="slist-t">+44</span>
+      </div>
+      <div class="slist-item terminal">
+        <div class="slist-left"></div>
+        <div class="slist-name">Dwarka Sector 9 <small>34.2 km — Terminal</small></div>
+        <span class="slist-t">+55</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- FARE TABLE -->
+<div class="sec" style="padding-top:0">
+  <div class="sec-head reveal">
+    <div>
+      <div class="sec-title">Fare <span>Slabs</span></div>
+      <div class="sec-desc">Route 401 · AC · As of April 2025</div>
+    </div>
+  </div>
+  <div class="fare-wrap reveal reveal-d1">
+    <div class="fare-hd">
+      <div class="fare-hd-title">Route 401 — Fare Structure</div>
+      <div style="display:flex;gap:10px;flex-wrap:wrap">
+        <span class="fare-tag gen">General</span>
+        <span class="fare-tag stu">Student</span>
+        <span class="fare-tag sen">Senior</span>
+      </div>
+    </div>
+    <table class="fare-table">
+      <thead>
+        <tr>
+          <th>Distance Slab</th>
+          <th>General Fare</th>
+          <th>Student (Concession)</th>
+          <th>Senior Citizen</th>
+          <th>Passenger Type</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr><td>0 – 5 km</td><td><span class="fare-p gen">₹15</span></td><td><span class="fare-p stu">₹10</span></td><td><span class="fare-p sen">₹10</span></td><td><span class="fare-tag gen">General</span></td></tr>
+        <tr><td>5 – 10 km</td><td><span class="fare-p gen">₹20</span></td><td><span class="fare-p stu">₹14</span></td><td><span class="fare-p sen">₹14</span></td><td><span class="fare-tag gen">General</span></td></tr>
+        <tr><td>10 – 20 km</td><td><span class="fare-p gen">₹30</span></td><td><span class="fare-p stu">₹20</span></td><td><span class="fare-p sen">₹20</span></td><td><span class="fare-tag gen">General</span></td></tr>
+        <tr><td>20 – 30 km</td><td><span class="fare-p gen">₹40</span></td><td><span class="fare-p stu">₹28</span></td><td><span class="fare-p sen">₹28</span></td><td><span class="fare-tag gen">General</span></td></tr>
+        <tr><td>30+ km</td><td><span class="fare-p gen">₹50</span></td><td><span class="fare-p stu">₹35</span></td><td><span class="fare-p sen">₹35</span></td><td><span class="fare-tag gen">General</span></td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- API PREVIEW -->
+<div class="sec" style="padding-top:0">
+  <div class="sec-head reveal">
+    <div>
+      <div class="sec-title">REST <span>API</span></div>
+      <div class="sec-desc">Full RESTful endpoints — PHP 8.x backend, PDO prepared statements</div>
+    </div>
+    <a class="sec-link" href="#">Full Docs ↗</a>
+  </div>
+  <div class="api-grid">
+    <div class="api-card reveal reveal-d1">
+      <div class="api-endpoint"><span class="method m-get">GET</span><span class="api-path">/api/routes</span></div>
+      <div class="api-desc">Fetch all active bus routes. Supports pagination, filtering by type, and search by source/destination.</div>
+      <div class="api-params"><span class="api-param">?q=kashmere</span><span class="api-param">?type=AC</span><span class="api-param">?page=1</span></div>
+    </div>
+    <div class="api-card reveal reveal-d2">
+      <div class="api-endpoint"><span class="method m-get">GET</span><span class="api-path">/api/routes/{id}</span></div>
+      <div class="api-desc">Get a single route with all stop sequences, fare slabs, and schedule metadata by route ID.</div>
+      <div class="api-params"><span class="api-param">{id}: INT</span><span class="api-param">includes=stops,fares</span></div>
+    </div>
+    <div class="api-card reveal reveal-d3">
+      <div class="api-endpoint"><span class="method m-get">GET</span><span class="api-path">/api/search</span></div>
+      <div class="api-desc">Autocomplete search across routes and stops. Returns ranked results by relevance score.</div>
+      <div class="api-params"><span class="api-param">?q=dwarka</span><span class="api-param">?limit=10</span></div>
+    </div>
+    <div class="api-card reveal reveal-d4">
+      <div class="api-endpoint"><span class="method m-post">POST</span><span class="api-path">/api/admin/routes</span></div>
+      <div class="api-desc">Create a new bus route. Requires admin JWT authentication via Google OAuth 2.0 bearer token.</div>
+      <div class="api-params"><span class="api-param">Authorization: Bearer</span><span class="api-param">Content-Type: JSON</span></div>
+    </div>
+  </div>
+</div>
+
+<!-- ADMIN CTA -->
+<div class="admin-cta reveal">
+  <div class="admin-cta-text">
+    <h2>Manage Routes,<br>Stops & Fares.</h2>
+    <p>Full admin dashboard with Google OAuth 2.0. CRUD operations on all data, activity logging, role-based access.</p>
+  </div>
+  <div class="admin-cta-btns">
+    <button class="btn-g" style="padding:12px 24px;font-size:14px">View API Docs</button>
+    <button class="btn-o" style="padding:12px 28px;font-size:14px">Sign in with Google →</button>
+  </div>
+</div>
+
+<!-- FOOTER -->
+<footer>
+  <div class="f-logo">DTC · ROUTE PORTAL</div>
+  <div class="f-links">
+    <a href="#">API Reference</a>
+    <a href="#">SRS Docs</a>
+    <a href="#">GitHub</a>
+    <a href="#">Privacy</a>
+    <a href="#">Status</a>
+  </div>
+  <div class="f-copy">© 2025 Delhi Transport Corporation · v1.0 · Internal Open Source</div>
+</footer>
+
+<script>
+/*── CURSOR ──*/
+const cur = document.getElementById('cursor');
+const ring = document.getElementById('cursor-ring');
+let mx=0,my=0,rx=0,ry=0;
+document.addEventListener('mousemove',e=>{
+  mx=e.clientX;my=e.clientY;
+  cur.style.left=mx+'px';cur.style.top=my+'px';
+});
+function animRing(){
+  rx+=(mx-rx)*.12;ry+=(my-ry)*.12;
+  ring.style.left=rx+'px';ring.style.top=ry+'px';
+  requestAnimationFrame(animRing);
+}
+animRing();
+
+/*── 3D CARD TILT ──*/
+document.querySelectorAll('.rcard').forEach(c=>{
+  c.addEventListener('mousemove',e=>{
+    const r=c.getBoundingClientRect();
+    const x=(e.clientX-r.left)/r.width-.5;
+    const y=(e.clientY-r.top)/r.height-.5;
+    c.style.transform=`perspective(800px) rotateY(${x*14}deg) rotateX(${-y*14}deg) translateZ(8px)`;
+    c.style.setProperty('--mx',(e.clientX-r.left)+'px');
+    c.style.setProperty('--my',(e.clientY-r.top)+'px');
+  });
+  c.addEventListener('mouseleave',()=>{
+    c.style.transform='perspective(800px) rotateY(0) rotateX(0) translateZ(0)';
+  });
+});
+
+/*── SCROLL REVEAL ──*/
+const obs=new IntersectionObserver(entries=>{
+  entries.forEach(e=>{if(e.isIntersecting)e.target.classList.add('in')});
+},{threshold:.12});
+document.querySelectorAll('.reveal').forEach(el=>obs.observe(el));
+
+/*── STAT COUNTER ──*/
+function countUp(el,target,duration=1600){
+  let start=null;
+  const step=ts=>{
+    if(!start)start=ts;
+    const p=Math.min((ts-start)/duration,1);
+    const eased=1-Math.pow(1-p,4);
+    el.textContent=Math.floor(target*eased).toLocaleString();
+    if(p<1)requestAnimationFrame(step);
+    else el.textContent=target.toLocaleString();
+  };
+  requestAnimationFrame(step);
+}
+const statObs=new IntersectionObserver(entries=>{
+  entries.forEach(e=>{
+    if(e.isIntersecting){
+      e.target.querySelectorAll('.stat-n').forEach(n=>{
+        countUp(n,+n.dataset.target);
+      });
+      statObs.unobserve(e.target);
+    }
+  });
+},{threshold:.3});
+document.querySelector('.stats') && statObs.observe(document.querySelector('.stats'));
+
+/*── FILTER CHIPS ──*/
+function setChip(el){
+  document.querySelectorAll('.chip').forEach(c=>c.classList.remove('on'));
+  el.classList.add('on');
+}
+
+/*── MOBILE NAV ──*/
+function toggleMob(){
+  document.getElementById('mobNav').classList.toggle('open');
+}
+function closeMob(){
+  document.getElementById('mobNav').classList.remove('open');
+}
+
+/*── SEARCH SUGGESTIONS ──*/
+const routes=['401 – Kashmere Gate → Dwarka','522 – Nehru Place → IGI Airport','N-11 – CP → Rohini','303 – Shahdara → Noida','615 – Lajpat → Janakpuri','757 – Anand Vihar → Gurgaon'];
+const si=document.getElementById('sInput');
+let suggestBox=null;
+si && si.addEventListener('input',()=>{
+  const v=si.value.trim().toLowerCase();
+  if(suggestBox){suggestBox.remove();suggestBox=null}
+  if(!v)return;
+  const hits=routes.filter(r=>r.toLowerCase().includes(v));
+  if(!hits.length)return;
+  suggestBox=document.createElement('div');
+  Object.assign(suggestBox.style,{
+    position:'absolute',top:'calc(100% + 8px)',left:0,right:0,
+    background:'#12121e',border:'1px solid rgba(255,255,255,.1)',
+    borderRadius:'12px',overflow:'hidden',zIndex:'200',
+    boxShadow:'0 16px 40px rgba(0,0,0,.5)'
+  });
+  hits.forEach(h=>{
+    const d=document.createElement('div');
+    d.textContent=h;
+    Object.assign(d.style,{
+      padding:'12px 20px',fontSize:'14px',color:'#b0b0c8',
+      cursor:'pointer',transition:'background .15s'
+    });
+    d.onmouseenter=()=>d.style.background='rgba(255,255,255,.04)';
+    d.onmouseleave=()=>d.style.background='';
+    d.onclick=()=>{si.value=h;suggestBox.remove();suggestBox=null};
+    suggestBox.appendChild(d);
+  });
+  si.parentElement.style.position='relative';
+  si.parentElement.appendChild(suggestBox);
+});
+document.addEventListener('click',e=>{
+  if(suggestBox && !si.parentElement.contains(e.target)){suggestBox.remove();suggestBox=null}
+});
+</script>
+</body>
+</html>

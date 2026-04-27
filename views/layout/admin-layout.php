@@ -3,67 +3,80 @@
  * views/layout/admin-layout.php
  */
 use App\Core\Session;
+$user = $user ?? Session::getUser() ?? [];
+$isRoutesView = strpos(($view ?? ''), 'admin/routes') === 0;
+$isStopsView = strpos(($view ?? ''), 'admin/stops') === 0;
+$isCitiesView = strpos(($view ?? ''), 'admin/cities') === 0;
 ?>
 <!DOCTYPE html>
 <html lang="en">
+<!-- views/layout/admin-layout.php -->
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title><?= $pageTitle ?? 'Admin' ?> — DTC Route Information Portal</title>
+    <title><?= $pageTitle ?? 'Admin' ?> — Bus Portal</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600;700&family=Lato:wght@300;400;700&display=swap" rel="stylesheet">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link href="<?= APP_URL ?>/assets/css/admin.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Plus+Jakarta+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,300&display=swap" rel="stylesheet">
+    
+    <?php 
+    $baseUrl = defined('APP_URL') ? APP_URL : ''; // fallback
+    $cssFile = $baseUrl . '/public/assets/css/admin.css?v=' . filemtime(__DIR__ . '/../../public/assets/css/admin.css');
+    ?>
+    <link href="<?= $cssFile ?>" rel="stylesheet">
 </head>
 <body>
+    <!-- CURSOR -->
+    <div id="cursor"></div>
+    <div id="cursor-ring"></div>
+
     <div class="admin-wrapper">
         <!-- Sidebar -->
         <aside class="admin-sidebar">
-            <div class="p-4 mb-3">
-                <div style="background: var(--admin-accent); color: white; width: 40px; height: 40px; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-weight: 800; font-family: 'Syne'; margin-bottom: 16px;">ADM</div>
-                <h1 class="h5 font-display fw-bold mb-0" style="letter-spacing: -0.5px;">DTC PORTAL</h1>
-                <p class="small text-muted mb-0">Management Hub</p>
+            <div class="sidebar-brand">
+                <div class="sidebar-brand-badge">ADM</div>
+                <h1 class="sidebar-brand-title">ROUTE PORTAL</h1>
+                <p class="sidebar-brand-subtitle">Management Hub</p>
             </div>
             
-            <nav class="nav flex-column">
+            <nav class="nav admin-sidebar-nav">
                 <a class="nav-link <?= ($view ?? '') == 'admin/dashboard' ? 'active' : '' ?>" href="<?= APP_URL ?>/admin">Dashboard</a>
-                <a class="nav-link <?= str_starts_with($view ?? '', 'admin/routes') ? 'active' : '' ?>" href="<?= APP_URL ?>/admin/routes">Routes</a>
-                <a class="nav-link <?= str_starts_with($view ?? '', 'admin/stops') ? 'active' : '' ?>" href="<?= APP_URL ?>/admin/stops">Stops</a>
-                <a class="nav-link <?= str_starts_with($view ?? '', 'admin/cities') ? 'active' : '' ?>" href="<?= APP_URL ?>/admin/cities">Cities</a>
+                <a class="nav-link <?= $isRoutesView ? 'active' : '' ?>" href="<?= APP_URL ?>/admin/routes">Routes</a>
+                <a class="nav-link <?= $isStopsView ? 'active' : '' ?>" href="<?= APP_URL ?>/admin/stops">Stops</a>
+                <a class="nav-link <?= $isCitiesView ? 'active' : '' ?>" href="<?= APP_URL ?>/admin/cities">Cities</a>
                 <a class="nav-link" href="<?= APP_URL ?>/" target="_blank">View Portal</a>
-                <div class="mt-auto p-4">
-                    <hr class="border-secondary opacity-25">
-                    <a class="nav-link text-danger m-0 p-2" href="javascript:void(0)" onclick="document.getElementById('logoutForm').submit()">Logout</a>
+                <div class="sidebar-logout-wrap">
+                    <hr class="admin-divider">
+                    <a class="nav-link sidebar-logout-link" href="javascript:void(0)" onclick="document.getElementById('logoutForm').submit()">Logout</a>
                 </div>
             </nav>
             
-            <form id="logoutForm" action="<?= APP_URL ?>/auth/logout" method="POST" class="d-none"></form>
+            <form id="logoutForm" action="<?= APP_URL ?>/auth/logout" method="POST" class="is-hidden"></form>
         </aside>
 
         <!-- Main Content -->
-        <div class="flex-grow-1" style="overflow-y: auto;">
+        <div class="admin-main">
             <header class="admin-header">
-                <h2 class="h6 font-display fw-bold mb-0 text-uppercase" style="letter-spacing: 1px;"><?= $pageTitle ?? 'Dashboard' ?></h2>
-                <div class="user-info d-flex align-items-center gap-3">
-                    <div class="text-end d-none d-md-block">
-                        <div class="small fw-bold" style="line-height: 1;"><?= htmlspecialchars($user['name'] ?? 'Admin') ?></div>
-                        <span class="text-muted" style="font-size: 10px;"><?= htmlspecialchars($user['role'] ?? 'Staff') ?></span>
+                <h2 class="admin-header-title"><?= $pageTitle ?? 'Dashboard' ?></h2>
+                <div class="user-info admin-user-info">
+                    <div class="admin-user-text">
+                        <div class="admin-user-name"><?= htmlspecialchars($user['name'] ?? 'Admin') ?></div>
+                        <span class="admin-user-role"><?= htmlspecialchars($user['role'] ?? 'Staff') ?></span>
                     </div>
                     <?php if ($user['avatar_url'] ?? false): ?>
-                        <img src="<?= $user['avatar_url'] ?>" class="rounded-circle border border-secondary" width="32" height="32" alt="p">
+                        <img src="<?= $user['avatar_url'] ?>" class="admin-user-avatar" width="32" height="32" alt="p">
                     <?php else: ?>
-                        <div class="rounded-circle bg-secondary" style="width: 32px; height: 32px;"></div>
+                        <div class="admin-user-avatar admin-user-avatar-placeholder"></div>
                     <?php endif; ?>
                 </div>
             </header>
 
             <main class="admin-content">
                 <?php if ($success = Session::getFlash('success')): ?>
-                    <div class="alert alert-success border-0 shadow-sm" style="background: rgba(34,197,94,0.1); color: #4ade80; border: 1px solid rgba(34,197,94,0.2) !important;"><?= htmlspecialchars($success) ?></div>
+                    <div class="alert alert-success"><?= htmlspecialchars($success) ?></div>
                 <?php endif; ?>
                 <?php if ($error = Session::getFlash('error')): ?>
-                    <div class="alert alert-danger border-0 shadow-sm" style="background: rgba(232,64,37,0.1); color: var(--admin-accent); border: 1px solid rgba(232,64,37,0.2) !important;"><?= htmlspecialchars($error) ?></div>
+                    <div class="alert alert-danger"><?= htmlspecialchars($error) ?></div>
                 <?php endif; ?>
 
                 <?= $content ?>
@@ -71,7 +84,6 @@ use App\Core\Session;
         </div>
     </div>
 
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="<?= APP_URL ?>/assets/js/admin.js"></script>
+    <script src="<?= APP_URL ?>/public/assets/js/admin.js"></script>
 </body>
 </html>

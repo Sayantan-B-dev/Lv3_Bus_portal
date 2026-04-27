@@ -6,7 +6,7 @@ $extraScripts = ['dijkstra', 'map'];
 include dirname(__DIR__) . '/layout/header.php';
 ?>
 
-<main style="padding-top: 100px;">
+<main class="page">
     <section class="section" style="padding-top:0">
         <div class="container">
             <div class="section-header anim-1">
@@ -28,7 +28,7 @@ include dirname(__DIR__) . '/layout/header.php';
                         <span style="font-family:var(--font-display);font-size:15px;font-weight:700">Set Journey</span>
                     </div>
 
-                    <div class="flex flex-direction-column gap-12" style="flex-direction:column; display:flex;">
+                    <div class="planner-controls-stack">
                         <div>
                             <label class="meta-key" style="margin-bottom:5px; display:block">From Stop</label>
                             <select id="plannerFrom" class="search-type" style="width:100%; background: var(--surface2); border: 1px solid var(--border); padding: 10px; border-radius: 8px; color: var(--text);">
