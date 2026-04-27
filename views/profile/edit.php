@@ -175,8 +175,29 @@ document.querySelectorAll('.file-btn').forEach(btn => {
 .form-section h3 { font-family: var(--font-display); font-size: 20px; letter-spacing: 1px; color: var(--accent); margin-bottom: 10px; border-bottom: 1px solid var(--border); padding-bottom: 10px; }
 .input-group { display: flex; flex-direction: column; gap: 8px; }
 .input-group label { font-size: 12px; font-weight: 600; color: var(--muted); }
-.input-group input, .input-group select, .input-group textarea { background: rgba(255,255,255,.05); border: 1px solid var(--border); border-radius: 12px; padding: 12px 16px; color: var(--text); font-family: var(--font-body); font-size: 14px; transition: all .2s; }
-.input-group input:focus { border-color: var(--accent); outline: none; background: rgba(255,255,255,.08); }
+.input-group input, .input-group select, .input-group textarea { 
+    background: rgba(255,255,255,.05); 
+    border: 1px solid var(--border); 
+    border-radius: 12px; 
+    padding: 12px 16px; 
+    color: var(--text); 
+    font-family: var(--font-body); 
+    font-size: 14px; 
+    transition: all .2s;
+    appearance: none;
+}
+.input-group select {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%238888a0' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 16px center;
+    padding-right: 45px;
+}
+.input-group select option {
+    background-color: var(--surface2);
+    color: var(--text);
+    padding: 10px;
+}
+.input-group input:focus, .input-group select:focus { border-color: var(--accent); outline: none; background: rgba(255,255,255,.08); }
 .academic-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
 .student-toggle-wrap { background: var(--surface2); padding: 25px; border-radius: 20px; border: 1px solid var(--border); }
 
