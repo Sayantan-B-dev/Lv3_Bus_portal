@@ -28,10 +28,20 @@ class AuthMiddleware
     public static function requireAdmin(): array
     {
         $payload = self::handle();
-        if (!in_array($payload['role'] ?? '', ['admin', 'super_admin'], true)) {
+        
+        // Always fetch full user from DB to ensure we have name, avatar, etc.
+        $user = (new \App\Models\User())->findById((int)$payload['sub']);
+        
+        if (!$user || !in_array($user['role'] ?? '', ['admin', 'super_admin'], true)) {
             self::forbidden();
         }
-        return $payload;
+
+        // Sync session if needed
+        if (!\App\Core\Session::has('admin_user') || \App\Core\Session::getUser()['role'] !== $user['role']) {
+             \App\Core\Session::setUser($user);
+        }
+
+        return $user;
     }
 
     private static function unauthorized(): never

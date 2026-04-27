@@ -61,10 +61,27 @@ use App\Middleware\CsrfMiddleware;
             <a href="<?= APP_URL ?>/routes" class="<?= ($view ?? '') == 'routes/list' ? 'act' : '' ?>">Routes</a>
             <a href="<?= APP_URL ?>/planner" class="<?= ($view ?? '') == 'planner/index' ? 'act' : '' ?>">Planner</a>
             <a href="<?= APP_URL ?>/cities" class="<?= ($view ?? '') == 'cities/index' ? 'act' : '' ?>">Cities</a>
+            <?php if (\App\Core\Session::isLoggedIn() && in_array(\App\Core\Session::getUser()['role'] ?? '', ['admin', 'super_admin'], true)): ?>
+                <a href="<?= APP_URL ?>/admin" class="<?= str_starts_with($view ?? '', 'admin/') ? 'act' : '' ?>">Admin</a>
+            <?php endif; ?>
         </div>
 
         <div class="n-cta">
-            <?php if (\App\Core\Session::isLoggedIn()): $u = \App\Core\Session::getUser(); ?>
+            <?php 
+            if (\App\Core\Session::isLoggedIn()): 
+                $sessionUser = \App\Core\Session::getUser();
+                // Refresh user data from DB to ensure role/permissions are up to date
+                $u = (new \App\Models\User())->findById((int)$sessionUser['id']);
+                if ($u) {
+                    // Preserve the JWT token which is not in the DB
+                    if (isset($sessionUser['_jwt'])) {
+                        $u['_jwt'] = $sessionUser['_jwt'];
+                    }
+                    \App\Core\Session::setUser($u); // Update session with fresh data
+                } else {
+                    $u = $sessionUser; // Fallback
+                }
+            ?>
                 <div class="user-actions">
                     <button class="info-trigger" onclick="toggleUserInfo()" aria-label="User Info">
                         <svg viewBox="0 0 24 24" width="20" height="20" stroke="currentColor" stroke-width="2" fill="none"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg>

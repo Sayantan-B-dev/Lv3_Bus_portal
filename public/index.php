@@ -67,12 +67,18 @@ $router->post('/admin/routes/{id}',          [AdminRouteController::class,  'upd
 $router->post('/admin/routes/{id}/delete',   [AdminRouteController::class,  'destroy']);
 $router->get('/admin/stops',                 [AdminStopController::class,   'index']);
 $router->post('/admin/stops',                [AdminStopController::class,   'store']);
+$router->post('/admin/stops/{id}',           [AdminStopController::class,   'update']);
+$router->post('/admin/stops/{id}/delete',    [AdminStopController::class,   'destroy']);
 $router->post('/admin/stops/import-osm',     [AdminStopController::class,   'importFromOsm']);
+
 $router->get('/admin/fares/{routeId}',       [AdminFareController::class,   'index']);
 $router->post('/admin/fares',                [AdminFareController::class,   'store']);
 $router->post('/admin/fares/{id}/delete',    [AdminFareController::class,   'destroy']);
+
 $router->get('/admin/cities',                [AdminCityController::class,   'index']);
 $router->post('/admin/cities',               [AdminCityController::class,   'store']);
+$router->post('/admin/cities/{id}',          [AdminCityController::class,   'update']);
+$router->post('/admin/cities/{id}/delete',   [AdminCityController::class,   'destroy']);
 
 // ─── Dispatch ─────────────────────────────────────────────────────────────────
 $router->dispatch();

@@ -60,14 +60,14 @@ $isCitiesView = strpos(($view ?? ''), 'admin/cities') === 0;
                 <h2 class="admin-header-title"><?= $pageTitle ?? 'Dashboard' ?></h2>
                 <div class="user-info admin-user-info">
                     <div class="admin-user-text">
-                        <div class="admin-user-name"><?= htmlspecialchars($user['name'] ?? 'Admin') ?></div>
-                        <span class="admin-user-role"><?= htmlspecialchars($user['role'] ?? 'Staff') ?></span>
+                        <div class="admin-user-name"><?= htmlspecialchars($user['name'] ?? 'Administrator') ?></div>
+                        <span class="admin-user-role"><?= ucwords(str_replace('_', ' ', $user['role'] ?? 'Admin')) ?></span>
                     </div>
-                    <?php if ($user['avatar_url'] ?? false): ?>
-                        <img src="<?= $user['avatar_url'] ?>" class="admin-user-avatar" width="32" height="32" alt="p">
-                    <?php else: ?>
-                        <div class="admin-user-avatar admin-user-avatar-placeholder"></div>
-                    <?php endif; ?>
+                    <img src="<?= htmlspecialchars($user['avatar_url'] ?? $user['profile_image'] ?? APP_URL . '/public/assets/img/default-avatar.png') ?>" 
+                         class="admin-user-avatar" 
+                         width="40" 
+                         height="40" 
+                         alt="Avatar">
                 </div>
             </header>
 

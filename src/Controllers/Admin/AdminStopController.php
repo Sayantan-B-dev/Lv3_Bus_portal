@@ -47,6 +47,44 @@ class AdminStopController
         Response::redirect(APP_URL . '/admin/stops?city_id=' . $data['city_id']);
     }
 
+    public function update(array $params = []): void
+    {
+        AdminMiddleware::handle();
+        CsrfMiddleware::validate();
+        $id = (int)$params['id'];
+        $data = [
+            'stop_name'   => trim($_POST['stop_name'] ?? ''),
+            'stop_code'   => trim($_POST['stop_code'] ?? '') ?: null,
+            'latitude'    => $_POST['latitude']  ? (float)$_POST['latitude']  : null,
+            'longitude'   => $_POST['longitude'] ? (float)$_POST['longitude'] : null,
+            'landmark'    => trim($_POST['landmark'] ?? '') ?: null,
+            'zone'        => trim($_POST['zone'] ?? '') ?: null,
+            'is_terminal' => (int)($_POST['is_terminal'] ?? 0),
+        ];
+        
+        $stopModel = new Stop();
+        $stop = $stopModel->findById($id);
+        if (!$stop) { Response::error('Stop not found', 404); }
+
+        $stopModel->update($id, $data);
+        Session::flash('success', 'Stop "' . $data['stop_name'] . '" updated.');
+        Response::redirect(APP_URL . '/admin/stops?city_id=' . $stop['city_id']);
+    }
+
+    public function destroy(array $params = []): void
+    {
+        AdminMiddleware::handle();
+        CsrfMiddleware::validate();
+        $id = (int)$params['id'];
+        $stopModel = new Stop();
+        $stop = $stopModel->findById($id);
+        if (!$stop) { Response::error('Stop not found', 404); }
+
+        $stopModel->delete($id);
+        Session::flash('success', 'Stop deleted.');
+        Response::redirect(APP_URL . '/admin/stops?city_id=' . $stop['city_id']);
+    }
+
     public function importFromOsm(array $params = []): void
     {
         AdminMiddleware::handle();

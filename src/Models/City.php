@@ -144,4 +144,9 @@ class City
         );
         return $stmt->fetch() ?: null;
     }
+    public function delete(int $id): bool
+    {
+        $stmt = $this->db->prepare('UPDATE cities SET is_active = 0 WHERE id = ?');
+        return $stmt->execute([$id]);
+    }
 }

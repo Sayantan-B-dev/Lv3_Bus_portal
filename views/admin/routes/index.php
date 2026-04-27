@@ -51,12 +51,15 @@ ob_start();
                             </td>
                             <td><span class="adm-pill"><?= $r['route_type'] ?></span></td>
                             <td><span style="color:var(--admin-accent); font-weight: 500;"><?= $r['frequency_mins'] ?>m</span></td>
-                            <td class="adm-align-end">
-                                <a href="<?= APP_URL ?>/admin/fares/<?= $r['id'] ?>" class="action-btn adm-link-success">Fares</a>
-                                <a href="<?= APP_URL ?>/admin/routes/<?= $r['id'] ?>/edit" class="adm-action adm-action-outline action-btn">Edit</a>
-                                <form action="<?= APP_URL ?>/admin/routes/<?= $r['id'] ?>/delete" method="POST" class="adm-inline-form" onsubmit="return confirm('Delete this route?')">
-                                    <button type="submit" class="action-btn adm-link-danger">Delete</button>
-                                </form>
+                             <td class="adm-align-end">
+                                <div style="display:flex; gap:0.6rem; justify-content:flex-end; align-items:center">
+                                    <a href="<?= APP_URL ?>/admin/fares/<?= $r['id'] ?>" class="adm-action adm-action-outline adm-action-compact adm-link-success" style="font-size:11px">Fares</a>
+                                    <a href="<?= APP_URL ?>/admin/routes/<?= $r['id'] ?>/edit" class="adm-action adm-action-outline adm-action-compact" style="font-size:11px">Edit</a>
+                                    <form action="<?= APP_URL ?>/admin/routes/<?= $r['id'] ?>/delete" method="POST" class="adm-inline-form" onsubmit="return confirm('Delete this route?')">
+                                        <input type="hidden" name="_csrf" value="<?= $csrf ?? '' ?>">
+                                        <button type="submit" class="adm-action adm-action-outline adm-action-compact adm-link-danger" style="font-size:11px">Delete</button>
+                                    </form>
+                                </div>
                             </td>
                         </tr>
                     <?php endforeach; ?>

@@ -152,7 +152,7 @@ class Stop
         ]);
     }
 
-    public function softDelete(int $id): bool
+    public function delete(int $id): bool
     {
         $stmt = $this->db->prepare('UPDATE stops SET is_active = 0 WHERE id = ?');
         return $stmt->execute([$id]);
