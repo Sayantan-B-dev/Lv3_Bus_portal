@@ -141,11 +141,8 @@ class Router
             header('Content-Type: application/json');
             echo json_encode(['status' => 'error', 'message' => 'Route not found', 'code' => 404]);
         } else {
-            // Show a simple 404 page
-            echo '<!DOCTYPE html><html><head><title>404 — Not Found</title>
-            <style>body{background:#0D0D0D;color:#E8E8E8;font-family:sans-serif;text-align:center;padding-top:100px}
-            h1{color:#E8B84B;font-size:3rem}a{color:#E8B84B}</style></head>
-            <body><h1>404</h1><p>Page not found.</p><a href="' . APP_URL . '">← Back to Home</a></body></html>';
+            // Render stylish 404 page
+            Response::view('errors/404');
         }
     }
 
