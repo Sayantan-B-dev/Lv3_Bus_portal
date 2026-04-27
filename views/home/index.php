@@ -131,22 +131,4 @@ include dirname(__DIR__) . '/layout/header.php';
         </div>
     </div>
 
-<!-- ADMIN STRIP -->
-<div class="container">
-    <div class="admin-strip anim-5">
-        <div class="admin-strip-text">
-            <h3>Admin Dashboard</h3>
-            <p>Manage routes, stops, fares, and users. Secure access via Google OAuth.</p>
-        </div>
-        <div class="admin-strip-btns">
-            <a href="<?= APP_URL ?>/api" class="btn-g">View API Docs</a>
-            <?php if (isset($_SESSION['user_id'])): ?>
-                <a href="<?= APP_URL ?>/admin" class="btn-o">Dashboard</a>
-            <?php else: ?>
-                <a href="<?= APP_URL ?>/auth/login" class="btn-o">Login with Google →</a>
-            <?php endif; ?>
-        </div>
-    </div>
-</div>
-
 <?php include dirname(__DIR__) . '/layout/footer.php'; ?>

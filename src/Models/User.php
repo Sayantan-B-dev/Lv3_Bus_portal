@@ -63,6 +63,35 @@ class User
         $this->db->prepare('UPDATE users SET last_login_at = NOW() WHERE id = ?')->execute([$id]);
     }
 
+    public function updateProfile(int $id, array $data): bool
+    {
+        $fields = [];
+        $params = [];
+        
+        $allowedFields = [
+            'name', 'username', 'phone', 'alternate_phone', 'dob', 'gender', 
+            'address', 'city', 'state', 'country', 'pincode', 'bio', 
+            'profile_image', 'cover_image', 'occupation', 'is_student', 
+            'college_name', 'college_registration_number', 'roll_number', 
+            'branch', 'year_of_study', 'graduation_year', 'linkedin_url', 
+            'github_url', 'portfolio_url', 'skills', 'emergency_contact_name', 
+            'emergency_contact_phone'
+        ];
+
+        foreach ($data as $key => $value) {
+            if (in_array($key, $allowedFields)) {
+                $fields[] = "`$key` = ?";
+                $params[] = $value;
+            }
+        }
+
+        if (empty($fields)) return false;
+
+        $params[] = $id;
+        $sql = "UPDATE users SET " . implode(', ', $fields) . ", last_profile_updated_at = NOW() WHERE id = ?";
+        return $this->db->prepare($sql)->execute($params);
+    }
+
     public function all(): array
     {
         return $this->db->query('SELECT * FROM users ORDER BY created_at DESC')->fetchAll();

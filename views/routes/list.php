@@ -13,6 +13,12 @@ include dirname(__DIR__) . '/layout/header.php';
                 <div class="sec-desc"><?= $total ?> routes available in <?= htmlspecialchars($city['city_name']) ?></div>
             </div>
 
+            <form action="<?= APP_URL ?>/search" method="GET" class="search-bar" style="margin-bottom:0; max-width:400px; padding:4px 4px 4px 15px; border-radius:12px;">
+                <input type="hidden" name="city_id" value="<?= $city['id'] ?>">
+                <input class="s-input" type="text" name="q" placeholder="Search routes..." value="<?= htmlspecialchars($_GET['q'] ?? '') ?>" required>
+                <button type="submit" class="s-btn" style="padding:6px 16px; font-size:12px; border-radius:8px;">⌕</button>
+            </form>
+
             <div class="chips">
                 <a href="?city_id=<?= $city['id'] ?>" class="chip <?= !$type ? 'on' : '' ?>"><span>All</span></a>
                 <a href="?city_id=<?= $city['id'] ?>&type=AC" class="chip <?= $type == 'AC' ? 'on' : '' ?>"><span>❄️ AC</span></a>

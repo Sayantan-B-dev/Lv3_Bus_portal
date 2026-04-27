@@ -65,12 +65,35 @@ use App\Middleware\CsrfMiddleware;
 
         <div class="n-cta">
             <?php if (\App\Core\Session::isLoggedIn()): $u = \App\Core\Session::getUser(); ?>
-                <?php if (in_array($u['role'] ?? '', ['admin', 'super_admin'], true)): ?>
-                    <a href="<?= APP_URL ?>/admin" class="btn-g">Dashboard</a>
-                <?php endif; ?>
-                <form action="<?= APP_URL ?>/auth/logout" method="POST" style="display:inline;">
-                    <button type="submit" class="btn-o">Logout</button>
-                </form>
+                <div class="user-actions">
+                    <button class="info-trigger" onclick="toggleUserInfo()" aria-label="User Info">
+                        <svg viewBox="0 0 24 24" width="20" height="20" stroke="currentColor" stroke-width="2" fill="none"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg>
+                    </button>
+                    
+                    <div class="profile-dropdown">
+                        <button class="profile-btn" onclick="toggleProfileMenu()">
+                            <img src="<?= htmlspecialchars($u['avatar_url'] ?? $u['profile_image'] ?? APP_URL . '/public/assets/img/default-avatar.png') ?>" alt="Profile" class="nav-avatar">
+                            <span><?= htmlspecialchars($u['name'] ?? 'User') ?></span>
+                            <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" stroke-width="2" fill="none"><polyline points="6 9 12 15 18 9"></polyline></svg>
+                        </button>
+                        <div class="dropdown-content" id="profileMenu">
+                            <div class="dropdown-header">
+                                <strong><?= htmlspecialchars($u['name']) ?></strong>
+                                <span><?= htmlspecialchars($u['email']) ?></span>
+                            </div>
+                            <hr>
+                            <a href="<?= APP_URL ?>/profile">View Profile</a>
+                            <a href="<?= APP_URL ?>/profile/edit">Edit Profile</a>
+                            <?php if (in_array($u['role'] ?? '', ['admin', 'super_admin'], true)): ?>
+                                <a href="<?= APP_URL ?>/admin">Dashboard</a>
+                            <?php endif; ?>
+                            <hr>
+                            <form action="<?= APP_URL ?>/auth/logout" method="POST">
+                                <button type="submit" class="logout-link">Logout</button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
             <?php else: ?>
                 <a href="<?= APP_URL ?>/auth/login" class="btn-g">Sign In</a>
                 <a href="<?= APP_URL ?>/auth/adminLogin" class="btn-o">Admin Panel →</a>
@@ -81,5 +104,57 @@ use App\Middleware\CsrfMiddleware;
             </button>
         </div>
     </nav>
+
+    <!-- USER INFO CARD (Glassy Pop-up) -->
+    <?php if (\App\Core\Session::isLoggedIn()): $u = \App\Core\Session::getUser(); ?>
+    <div id="userInfoCard" class="user-info-card">
+        <div class="card-close" onclick="toggleUserInfo()">×</div>
+        <div class="card-glass"></div>
+        <div class="card-content">
+            <div class="card-user">
+                <img src="<?= htmlspecialchars($u['avatar_url'] ?? $u['profile_image'] ?? APP_URL . '/public/assets/img/default-avatar.png') ?>" alt="" class="card-avatar">
+                <h3><?= htmlspecialchars($u['name']) ?></h3>
+                <span class="card-role"><?= strtoupper($u['role'] ?? 'Viewer') ?></span>
+            </div>
+            
+            <div class="card-grid">
+                <div class="card-item">
+                    <label>Email</label>
+                    <span><?= htmlspecialchars($u['email']) ?></span>
+                </div>
+                <div class="card-item">
+                    <label>Username</label>
+                    <span><?= htmlspecialchars($u['username'] ?? 'N/A') ?></span>
+                </div>
+                <?php if ($u['is_student']): ?>
+                <div class="card-item">
+                    <label>College</label>
+                    <span><?= htmlspecialchars($u['college_name'] ?? 'N/A') ?></span>
+                </div>
+                <div class="card-item">
+                    <label>Roll No</label>
+                    <span><?= htmlspecialchars($u['roll_number'] ?? 'N/A') ?></span>
+                </div>
+                <div class="card-item">
+                    <label>Branch</label>
+                    <span><?= htmlspecialchars($u['branch'] ?? 'N/A') ?></span>
+                </div>
+                <div class="card-item">
+                    <label>Year</label>
+                    <span><?= htmlspecialchars($u['year_of_study'] ?? 'N/A') ?></span>
+                </div>
+                <?php endif; ?>
+                <div class="card-item">
+                    <label>Joined</label>
+                    <span><?= date('M d, Y', strtotime($u['created_at'])) ?></span>
+                </div>
+            </div>
+            
+            <div class="card-actions">
+                <a href="<?= APP_URL ?>/profile/edit" class="btn-o">Update Profile</a>
+            </div>
+        </div>
+    </div>
+    <?php endif; ?>
 
     <main>

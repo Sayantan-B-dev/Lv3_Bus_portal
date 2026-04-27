@@ -25,6 +25,7 @@ use App\Controllers\SearchController;
 use App\Controllers\PlannerController;
 use App\Controllers\CityController;
 use App\Controllers\AuthController;
+use App\Controllers\UserController;
 use App\Controllers\Admin\DashboardController;
 use App\Controllers\Admin\AdminRouteController;
 use App\Controllers\Admin\AdminStopController;
@@ -50,6 +51,11 @@ $router->get('/auth/google',          [AuthController::class, 'googleRedirect'])
 $router->get('/auth/google/callback', [AuthController::class, 'googleCallback']);
 $router->post('/auth/logout',         [AuthController::class, 'logout']);
 $router->get('/auth/logout',          [AuthController::class, 'logout']);
+
+// ─── Profile Routes ───────────────────────────────────────────────────────────
+$router->get('/profile',              [UserController::class, 'view']);
+$router->get('/profile/edit',         [UserController::class, 'edit']);
+$router->post('/profile/update',       [UserController::class, 'update']);
 
 // ─── Admin Routes ─────────────────────────────────────────────────────────────
 $router->get('/admin',                       [DashboardController::class,   'index']);

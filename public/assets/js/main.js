@@ -154,4 +154,49 @@ document.querySelectorAll('.rcard').forEach(card => {
         }
         animRing();
     }
+
+    // Toggle Profile Menu
+    window.toggleProfileMenu = () => {
+        const menu = document.getElementById('profileMenu');
+        if (menu) menu.classList.toggle('show');
+    };
+
+    // Close dropdown when clicking outside
+    window.addEventListener('click', (e) => {
+        if (!e.target.closest('.profile-dropdown')) {
+            const menu = document.getElementById('profileMenu');
+            if (menu) menu.classList.remove('show');
+        }
+    });
+
+    // Toggle User Info Card
+    window.toggleUserInfo = () => {
+        const card = document.getElementById('userInfoCard');
+        if (card) card.classList.toggle('active');
+    };
 });
+
+// Re-init 3D effect for all .rcard (even those added later if any)
+function init3DEffect() {
+    let ticking = false;
+    document.querySelectorAll('.rcard').forEach(c => {
+        // Remove existing listener if any to avoid duplicates
+        c.onmousemove = (e) => {
+            if (ticking) return;
+            ticking = true;
+            requestAnimationFrame(() => {
+                const r = c.getBoundingClientRect();
+                const x = (e.clientX - r.left) / r.width - 0.5;
+                const y = (e.clientY - r.top) / r.height - 0.5;
+                c.style.transform = `perspective(1000px) rotateY(${x * 12}deg) rotateX(${-y * 12}deg) translateZ(10px)`;
+                ticking = false;
+            });
+        };
+        c.onmouseleave = () => {
+            c.style.transform = 'perspective(1000px) rotateY(0) rotateX(0) translateZ(0)';
+        };
+    });
+}
+
+// Call init3DEffect on load and after any grid updates
+document.addEventListener('DOMContentLoaded', init3DEffect);
