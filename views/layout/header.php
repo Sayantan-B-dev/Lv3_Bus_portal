@@ -96,7 +96,7 @@ use App\Middleware\CsrfMiddleware;
                 </div>
             <?php else: ?>
                 <a href="<?= APP_URL ?>/auth/login" class="btn-g">Sign In</a>
-                <a href="<?= APP_URL ?>/auth/adminLogin" class="btn-o">Admin Panel →</a>
+                <a href="<?= APP_URL ?>/auth/adminLogin" class="btn-o">Admin Panel</a>
             <?php endif; ?>
 
             <button class="ham" id="hamBtn" onclick="toggleMob()" aria-label="Menu">
@@ -108,7 +108,7 @@ use App\Middleware\CsrfMiddleware;
     <!-- USER INFO CARD (Glassy Pop-up) -->
     <?php if (\App\Core\Session::isLoggedIn()): $u = \App\Core\Session::getUser(); ?>
     <div id="userInfoCard" class="user-info-card">
-        <div class="card-close" onclick="toggleUserInfo()">×</div>
+        <div class="card-close" onclick="toggleUserInfo()">Close</div>
         <div class="card-glass"></div>
         <div class="card-content">
             <div class="card-user">

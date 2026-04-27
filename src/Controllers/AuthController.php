@@ -77,6 +77,12 @@ class AuthController
             Response::redirect(APP_URL . '/admin');
         }
 
+        // Redirect to profile edit if basic info is missing
+        if (empty($user['username']) || empty($user['phone'])) {
+            Session::flash('info', 'Please complete your profile to continue.');
+            Response::redirect(APP_URL . '/profile/edit');
+        }
+
         Response::redirect(APP_URL . '/');
     }
 

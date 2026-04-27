@@ -17,10 +17,10 @@
                     <h1><?= htmlspecialchars($user['name']) ?> <span>(@<?= htmlspecialchars($user['username'] ?? 'user') ?>)</span></h1>
                     <p class="profile-bio"><?= htmlspecialchars($user['bio'] ?? 'No bio yet.') ?></p>
                     <div class="profile-meta-badges">
-                        <span class="badge-item"><i class="icon">📍</i> <?= htmlspecialchars($user['city'] ?? 'Earth') ?></span>
-                        <span class="badge-item"><i class="icon">📅</i> Joined <?= date('M Y', strtotime($user['created_at'])) ?></span>
+                        <span class="badge-item"><i class="icon">City:</i> <?= htmlspecialchars($user['city'] ?? 'Earth') ?></span>
+                        <span class="badge-item"><i class="icon">Joined:</i> <?= date('M Y', strtotime($user['created_at'])) ?></span>
                         <?php if ($user['is_student']): ?>
-                            <span class="badge-item student-badge"><i class="icon">🎓</i> Student</span>
+                            <span class="badge-item student-badge"><i class="icon">Status:</i> Student</span>
                         <?php endif; ?>
                     </div>
                 </div>

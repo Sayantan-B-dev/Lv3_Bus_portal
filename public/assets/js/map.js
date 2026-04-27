@@ -73,7 +73,7 @@ class BusMap {
         
         const busIcon = L.divIcon({
             className: 'bus-marker',
-            html: '🚌',
+            html: '<div class="map-bus-icon"></div>',
             iconSize: [24, 24],
             iconAnchor: [12, 12]
         });

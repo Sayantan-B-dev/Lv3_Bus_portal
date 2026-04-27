@@ -21,10 +21,10 @@ include dirname(__DIR__) . '/layout/header.php';
 
             <div class="chips">
                 <a href="?city_id=<?= $city['id'] ?>" class="chip <?= !$type ? 'on' : '' ?>"><span>All</span></a>
-                <a href="?city_id=<?= $city['id'] ?>&type=AC" class="chip <?= $type == 'AC' ? 'on' : '' ?>"><span>❄️ AC</span></a>
-                <a href="?city_id=<?= $city['id'] ?>&type=Express" class="chip <?= $type == 'Express' ? 'on' : '' ?>"><span>⚡ Express</span></a>
+                <a href="?city_id=<?= $city['id'] ?>&type=AC" class="chip <?= $type == 'AC' ? 'on' : '' ?>"><span>AC</span></a>
+                <a href="?city_id=<?= $city['id'] ?>&type=Express" class="chip <?= $type == 'Express' ? 'on' : '' ?>"><span>Express</span></a>
                 <a href="?city_id=<?= $city['id'] ?>&type=Normal" class="chip <?= $type == 'Normal' ? 'on' : '' ?>"><span>Normal</span></a>
-                <a href="?city_id=<?= $city['id'] ?>&type=Night" class="chip <?= $type == 'Night' ? 'on' : '' ?>"><span>🌙 Night</span></a>
+                <a href="?city_id=<?= $city['id'] ?>&type=Night" class="chip <?= $type == 'Night' ? 'on' : '' ?>"><span>Night</span></a>
             </div>
         </div>
 

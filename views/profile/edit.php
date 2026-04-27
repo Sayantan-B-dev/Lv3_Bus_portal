@@ -20,11 +20,19 @@
                     <div class="media-inputs">
                         <div class="input-group">
                             <label>Profile Image</label>
-                            <input type="file" name="profile_image" accept="image/*">
+                            <div class="file-upload-wrapper">
+                                <button type="button" class="btn-g file-btn">Choose Image</button>
+                                <input type="file" name="profile_image" accept="image/*" class="file-input-hidden">
+                                <span class="file-name">No file chosen</span>
+                            </div>
                         </div>
                         <div class="input-group">
                             <label>Cover Image</label>
-                            <input type="file" name="cover_image" accept="image/*">
+                            <div class="file-upload-wrapper">
+                                <button type="button" class="btn-g file-btn">Choose Image</button>
+                                <input type="file" name="cover_image" accept="image/*" class="file-input-hidden">
+                                <span class="file-name">No file chosen</span>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -78,8 +86,9 @@
 
                 <!-- Student Info Toggle -->
                 <div class="form-section full-width student-toggle-wrap">
-                    <label class="toggle-label">
+                    <label class="custom-checkbox">
                         <input type="checkbox" name="is_student" id="isStudentCheckbox" <?= ($user['is_student'] ?? 0) ? 'checked' : '' ?>>
+                        <span class="checkmark"></span>
                         <span class="toggle-text">Are you a student?</span>
                     </label>
                 </div>
@@ -142,6 +151,19 @@
 document.getElementById('isStudentCheckbox')?.addEventListener('change', function() {
     document.getElementById('studentInfoFields').style.display = this.checked ? 'block' : 'none';
 });
+
+// File input handler
+document.querySelectorAll('.file-input-hidden').forEach(input => {
+    input.addEventListener('change', function() {
+        const fileName = this.files[0] ? this.files[0].name : 'No file chosen';
+        this.parentElement.querySelector('.file-name').textContent = fileName;
+    });
+});
+document.querySelectorAll('.file-btn').forEach(btn => {
+    btn.addEventListener('click', function() {
+        this.parentElement.querySelector('input[type="file"]').click();
+    });
+});
 </script>
 
 <style>
@@ -156,9 +178,50 @@ document.getElementById('isStudentCheckbox')?.addEventListener('change', functio
 .input-group input, .input-group select, .input-group textarea { background: rgba(255,255,255,.05); border: 1px solid var(--border); border-radius: 12px; padding: 12px 16px; color: var(--text); font-family: var(--font-body); font-size: 14px; transition: all .2s; }
 .input-group input:focus { border-color: var(--accent); outline: none; background: rgba(255,255,255,.08); }
 .academic-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
-.student-toggle-wrap { background: var(--accent-dim); padding: 20px; border-radius: 16px; }
-.toggle-label { display: flex; align-items: center; gap: 15px; cursor: pointer; }
-.toggle-text { font-weight: 700; font-size: 16px; color: var(--accent2); }
+.student-toggle-wrap { background: var(--surface2); padding: 25px; border-radius: 20px; border: 1px solid var(--border); }
+
+/* Custom Checkbox */
+.custom-checkbox {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    cursor: pointer;
+    user-select: none;
+    position: relative;
+}
+.custom-checkbox input { position: absolute; opacity: 0; cursor: pointer; height: 0; width: 0; }
+.checkmark {
+    height: 24px;
+    width: 24px;
+    background-color: rgba(255,255,255,.05);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    transition: all .2s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.custom-checkbox:hover input ~ .checkmark { background-color: rgba(255,255,255,.1); }
+.custom-checkbox input:checked ~ .checkmark { background-color: var(--accent); border-color: var(--accent); }
+.checkmark:after {
+    content: "";
+    display: none;
+    width: 5px;
+    height: 10px;
+    border: solid white;
+    border-width: 0 2px 2px 0;
+    transform: rotate(45deg);
+    margin-bottom: 2px;
+}
+.custom-checkbox input:checked ~ .checkmark:after { display: block; }
+.toggle-text { font-weight: 700; font-size: 16px; color: var(--text); }
+
+/* File Upload */
+.media-inputs { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+.file-upload-wrapper { display: flex; align-items: center; gap: 15px; background: rgba(255,255,255,.03); padding: 8px; border-radius: 14px; border: 1px dashed var(--border); }
+.file-input-hidden { display: none; }
+.file-name { font-size: 12px; color: var(--muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 150px; }
+
 .btn-large { padding: 16px 40px; font-size: 16px; }
 .form-actions { margin-top: 50px; text-align: center; }
 @media (max-width: 768px) {

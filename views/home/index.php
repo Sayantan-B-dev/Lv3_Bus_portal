@@ -76,7 +76,7 @@ include dirname(__DIR__) . '/layout/header.php';
                 <div class="sec-title">Popular <span>Routes</span></div>
                 <div class="sec-desc">High-frequency routes across <?= htmlspecialchars($city['city_name'] ?? 'the city') ?></div>
             </div>
-            <a href="<?= APP_URL ?>/routes" class="sec-link">View all routes ↗</a>
+            <a href="<?= APP_URL ?>/routes" class="sec-link">View all routes</a>
         </div>
 
         <div class="chips reveal reveal-d1">
