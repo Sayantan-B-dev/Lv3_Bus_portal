@@ -130,6 +130,10 @@ use App\Middleware\CsrfMiddleware;
                     <label>Occupation</label>
                     <span><?= htmlspecialchars($u['occupation'] ?? 'N/A') ?></span>
                 </div>
+                <div class="card-item full-width">
+                    <label>Address</label>
+                    <span><?= htmlspecialchars($u['address'] ?? 'N/A') ?></span>
+                </div>
                 <!-- <div class="card-item">
                     <label>Location</label>
                     <?php if ($u['latitude']): ?>

@@ -46,12 +46,12 @@
                         <input type="text" name="name" value="<?= htmlspecialchars($user['name']) ?>" required>
                     </div>
                     <div class="input-group">
-                        <label>Username</label>
-                        <input type="text" name="username" value="<?= htmlspecialchars($user['username'] ?? '') ?>">
-                    </div>
-                    <div class="input-group">
                         <label>Phone</label>
                         <input type="text" name="phone" value="<?= htmlspecialchars($user['phone'] ?? '') ?>">
+                    </div>
+                    <div class="input-group">
+                        <label>Address</label>
+                        <textarea name="address" rows="2"><?= htmlspecialchars($user['address'] ?? '') ?></textarea>
                     </div>
                     <div class="input-group">
                         <label>Date of Birth</label>
@@ -68,9 +68,13 @@
                     </div>
                 </div>
 
-                <!-- Bio & Skills -->
+                <!-- Professional Info -->
                 <div class="form-section">
                     <h3>Professional Info</h3>
+                    <div class="input-group">
+                        <label>Username</label>
+                        <input type="text" name="username" value="<?= htmlspecialchars($user['username'] ?? '') ?>">
+                    </div>
                     <div class="input-group">
                         <label>Bio</label>
                         <textarea name="bio" rows="4"><?= htmlspecialchars($user['bio'] ?? '') ?></textarea>
