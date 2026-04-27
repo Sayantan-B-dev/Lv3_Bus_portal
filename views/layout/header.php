@@ -127,21 +127,19 @@ use App\Middleware\CsrfMiddleware;
                     <span><?= htmlspecialchars($u['username'] ?? 'N/A') ?></span>
                 </div>
                 <div class="card-item">
-                    <label>Occupation</label>
-                    <span><?= htmlspecialchars($u['occupation'] ?? 'N/A') ?></span>
+                    <label>Phone</label>
+                    <span><?= htmlspecialchars($u['phone'] ?? 'N/A') ?></span>
                 </div>
-                <div class="card-item full-width">
-                    <label>Address</label>
-                    <span><?= htmlspecialchars($u['address'] ?? 'N/A') ?></span>
-                </div>
-                <!-- <div class="card-item">
+                <div class="card-item">
                     <label>Location</label>
-                    <?php if ($u['latitude']): ?>
+                    <?php if (!empty($u['city'])): ?>
+                        <span><?= htmlspecialchars($u['city']) . ($u['state'] ? ', ' . $u['state'] : '') ?></span>
+                    <?php elseif (!empty($u['latitude'])): ?>
                         <span>Lat: <?= round($u['latitude'], 4) ?>, Lng: <?= round($u['longitude'], 4) ?></span>
                     <?php else: ?>
-                        <span><?= htmlspecialchars(($u['city'] ?? '') . ($u['country'] ? ', ' . $u['country'] : '')) ?: 'N/A' ?></span>
+                        <span>N/A</span>
                     <?php endif; ?>
-                </div> -->
+                </div>
 
                 <?php if ($u['is_student']): ?>
                 <div class="card-item full-width">

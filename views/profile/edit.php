@@ -47,11 +47,33 @@
                     </div>
                     <div class="input-group">
                         <label>Phone</label>
-                        <input type="text" name="phone" value="<?= htmlspecialchars($user['phone'] ?? '') ?>">
+                        <input type="text" name="phone" value="<?= htmlspecialchars($user['phone'] ?? '') ?>" placeholder="+91...">
                     </div>
                     <div class="input-group">
+                        <label>Alternate Phone</label>
+                        <input type="text" name="alternate_phone" value="<?= htmlspecialchars($user['alternate_phone'] ?? '') ?>">
+                    </div>
+                    <div class="input-group full-width">
                         <label>Address</label>
-                        <textarea name="address" rows="2"><?= htmlspecialchars($user['address'] ?? '') ?></textarea>
+                        <textarea name="address" rows="2" placeholder="Street, Building, etc."><?= htmlspecialchars($user['address'] ?? '') ?></textarea>
+                    </div>
+                    <div class="academic-grid full-width">
+                        <div class="input-group">
+                            <label>City</label>
+                            <input type="text" name="city" value="<?= htmlspecialchars($user['city'] ?? '') ?>">
+                        </div>
+                        <div class="input-group">
+                            <label>State</label>
+                            <input type="text" name="state" value="<?= htmlspecialchars($user['state'] ?? '') ?>">
+                        </div>
+                        <div class="input-group">
+                            <label>Country</label>
+                            <input type="text" name="country" value="<?= htmlspecialchars($user['country'] ?? '') ?>">
+                        </div>
+                        <div class="input-group">
+                            <label>Pincode</label>
+                            <input type="text" name="pincode" value="<?= htmlspecialchars($user['pincode'] ?? '') ?>">
+                        </div>
                     </div>
                     <div class="input-group">
                         <label>Date of Birth</label>
@@ -143,6 +165,25 @@
                                     <option value="<?= $i ?>" <?= ($user['semester'] ?? '') == $i ? 'selected' : '' ?>><?= $i ?> Semester</option>
                                 <?php endfor; ?>
                             </select>
+                        </div>
+                        <div class="input-group">
+                            <label>Graduation Year</label>
+                            <input type="number" name="graduation_year" value="<?= htmlspecialchars($user['graduation_year'] ?? '') ?>" placeholder="e.g. 2025">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Emergency Contact -->
+                <div class="form-section full-width">
+                    <h3>Emergency Contact</h3>
+                    <div class="academic-grid">
+                        <div class="input-group">
+                            <label>Contact Name</label>
+                            <input type="text" name="emergency_contact_name" value="<?= htmlspecialchars($user['emergency_contact_name'] ?? '') ?>">
+                        </div>
+                        <div class="input-group">
+                            <label>Contact Phone</label>
+                            <input type="text" name="emergency_contact_phone" value="<?= htmlspecialchars($user['emergency_contact_phone'] ?? '') ?>">
                         </div>
                     </div>
                 </div>

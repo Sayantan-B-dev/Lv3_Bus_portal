@@ -41,7 +41,13 @@
                 <div class="info-list">
                     <div class="info-row"><label>Email</label><span><?= htmlspecialchars($user['email']) ?></span></div>
                     <div class="info-row"><label>Phone</label><span><?= htmlspecialchars($user['phone'] ?? 'N/A') ?></span></div>
+                    <?php if (!empty($user['alternate_phone'])): ?>
+                        <div class="info-row"><label>Alt Phone</label><span><?= htmlspecialchars($user['alternate_phone']) ?></span></div>
+                    <?php endif; ?>
+                    <div class="info-row"><label>DOB</label><span><?= $user['dob'] ? date('d M, Y', strtotime($user['dob'])) : 'N/A' ?></span></div>
+                    <div class="info-row"><label>Gender</label><span><?= htmlspecialchars($user['gender'] ?? 'N/A') ?></span></div>
                     <div class="info-row"><label>Address</label><span><?= htmlspecialchars($user['address'] ?? 'N/A') ?></span></div>
+                    <div class="info-row"><label>Location</label><span><?= htmlspecialchars(($user['city'] ?? '') . ($user['state'] ? ', ' . $user['state'] : '')) ?: 'N/A' ?></span></div>
                     <div class="info-row"><label>Occupation</label><span><?= htmlspecialchars($user['occupation'] ?? 'N/A') ?></span></div>
                 </div>
             </div>
@@ -56,9 +62,19 @@
                     <div class="info-row"><label>Branch</label><span><?= htmlspecialchars($user['branch'] ?? 'N/A') ?></span></div>
                     <div class="info-row"><label>Year</label><span><?= htmlspecialchars($user['year_of_study'] ?? 'N/A') ?></span></div>
                     <div class="info-row"><label>Semester</label><span><?= htmlspecialchars($user['semester'] ?? 'N/A') ?> Semester</span></div>
+                    <div class="info-row"><label>Graduation</label><span><?= htmlspecialchars($user['graduation_year'] ?? 'N/A') ?></span></div>
                 </div>
             </div>
             <?php endif; ?>
+
+            <!-- Emergency Contact -->
+            <div class="glass-card info-card">
+                <h3>Emergency Contact</h3>
+                <div class="info-list">
+                    <div class="info-row"><label>Contact</label><span><?= htmlspecialchars($user['emergency_contact_name'] ?? 'N/A') ?></span></div>
+                    <div class="info-row"><label>Phone</label><span><?= htmlspecialchars($user['emergency_contact_phone'] ?? 'N/A') ?></span></div>
+                </div>
+            </div>
 
             <!-- Row 3: Bio & Links -->
             <div class="glass-card bio-card">
