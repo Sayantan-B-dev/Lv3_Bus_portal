@@ -62,7 +62,7 @@ use App\Middleware\CsrfMiddleware;
             <a href="<?= APP_URL ?>/planner" class="<?= ($view ?? '') == 'planner/index' ? 'act' : '' ?>">Planner</a>
             <a href="<?= APP_URL ?>/cities" class="<?= ($view ?? '') == 'cities/index' ? 'act' : '' ?>">Cities</a>
             <?php if (\App\Core\Session::isLoggedIn() && in_array(\App\Core\Session::getUser()['role'] ?? '', ['admin', 'super_admin'], true)): ?>
-                <a href="<?= APP_URL ?>/admin" class="<?= str_starts_with($view ?? '', 'admin/') ? 'act' : '' ?>">Admin</a>
+                <a href="<?= APP_URL ?>/admin" class="<?= str_starts_with($view ?? '', 'admin/') ? 'act' : '' ?>" target="_blank">Admin</a>
             <?php endif; ?>
         </div>
 
@@ -102,7 +102,7 @@ use App\Middleware\CsrfMiddleware;
                             <a href="<?= APP_URL ?>/profile">View Profile</a>
                             <a href="<?= APP_URL ?>/profile/edit">Edit Profile</a>
                             <?php if (in_array($u['role'] ?? '', ['admin', 'super_admin'], true)): ?>
-                                <a href="<?= APP_URL ?>/admin">Dashboard</a>
+                                <a href="<?= APP_URL ?>/admin" target="_blank">Dashboard</a>
                             <?php endif; ?>
                             <hr>
                             <form action="<?= APP_URL ?>/auth/logout" method="POST">
@@ -113,7 +113,7 @@ use App\Middleware\CsrfMiddleware;
                 </div>
             <?php else: ?>
                 <a href="<?= APP_URL ?>/auth/login" class="btn-g">Sign In</a>
-                <a href="<?= APP_URL ?>/auth/adminLogin" class="btn-o">Admin Panel</a>
+                <a href="<?= APP_URL ?>/auth/adminLogin" class="btn-o" target="_blank">Admin Panel</a>
             <?php endif; ?>
 
             <button class="ham" id="hamBtn" onclick="toggleMob()" aria-label="Menu">

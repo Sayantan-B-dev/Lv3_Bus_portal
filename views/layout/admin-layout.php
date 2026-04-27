@@ -24,6 +24,9 @@ $isCitiesView = strpos(($view ?? ''), 'admin/cities') === 0;
     $cssFile = $baseUrl . '/public/assets/css/admin.css?v=' . filemtime(__DIR__ . '/../../public/assets/css/admin.css');
     ?>
     <link href="<?= $cssFile ?>" rel="stylesheet">
+    
+    <!-- Admin Tab Icon (Favicon) -->
+    <link rel="icon" type="image/svg+xml" href="<?= APP_URL ?>/public/assets/img/admin-favicon.svg">
 </head>
 <body>
     <!-- CURSOR -->
