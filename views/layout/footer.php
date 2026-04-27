@@ -1,15 +1,26 @@
     </main>
 
     <!-- FOOTER -->
-    <footer>
-        <div class="f-logo">DTC · ROUTE PORTAL</div>
-        <div class="f-links">
-            <a href="<?= APP_URL ?>/api">API</a>
-            <a href="<?= APP_URL ?>/planner">Planner</a>
-            <a href="<?= APP_URL ?>/routes">Routes</a>
-            <a href="<?= APP_URL ?>/cities">Cities</a>
+    <footer class="fixed-footer">
+        <div class="footer-container">
+            <div class="f-left">
+                <div class="f-logo-small"><?= strtoupper($city['city_name'] ?? 'CITY') ?> TRANSIT</div>
+                <div class="f-status">
+                    <span class="status-dot"></span> System Live
+                </div>
+            </div>
+            
+            <div class="f-links-compact">
+                <a href="<?= APP_URL ?>/routes">Routes</a>
+                <a href="<?= APP_URL ?>/planner">Planner</a>
+                <a href="<?= APP_URL ?>/cities">Cities</a>
+            </div>
+
+            <div class="f-right">
+                <div class="f-emergency">Support: 1800-BUS-HELP</div>
+                <div class="f-copy-small">© <?= date('Y') ?> · v1.2</div>
+            </div>
         </div>
-        <div class="f-copy">© <?= date('Y') ?> <?= htmlspecialchars($city['city_name'] ?? 'Delhi') ?> Transport System · v1.0</div>
     </footer>
 
     <!-- Scripts -->

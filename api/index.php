@@ -19,12 +19,30 @@ if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
     exit;
 }
 
+// Ensure errors are returned as JSON
+set_exception_handler(function ($e) {
+    http_response_code(500);
+    echo json_encode([
+        'status'  => 'error',
+        'message' => $e->getMessage(),
+        'file'    => $e->getFile(),
+        'line'    => $e->getLine()
+    ]);
+    exit;
+});
+
+set_error_handler(function ($level, $message, $file, $line) {
+    if (error_reporting() & $level) {
+        throw new ErrorException($message, 0, $level, $file, $line);
+    }
+});
+
 use App\Core\Response;
 use App\Models\City;
 use App\Models\Route;
 use App\Models\Stop;
 use App\Services\SearchService;
-use App\Services\DijkstraService;
+use App\Services\PlannerService;
 use App\Middleware\AuthMiddleware;
 use App\Middleware\RateLimitMiddleware;
 
@@ -118,9 +136,13 @@ if ($method === 'POST' && $uri === '/planner') {
 
     if (!$fromStop || !$toStop) Response::error('from_stop_id and to_stop_id required.', 422);
 
-    $result = (new DijkstraService())->findShortestPath($cityId, $fromStop, $toStop);
-    if (!$result) Response::error('No route found between these stops.', 404);
-    Response::json($result);
+    $results = (new \App\Services\PlannerService())->findRoutes($cityId, $fromStop, $toStop);
+    
+    if (empty($results)) {
+        Response::error('No path found between these stops. No direct routes or 1-transfer connections available.', 404);
+    }
+
+    Response::json($results);
 }
 
 // POST /routes (JWT protected)
