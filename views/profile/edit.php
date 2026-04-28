@@ -20,20 +20,27 @@
                     <div class="media-inputs">
                         <div class="input-group">
                             <label>Profile Image</label>
-                            <div class="file-upload-wrapper">
-                                <button type="button" class="btn-g file-btn">Choose Image</button>
-                                <input type="file" name="profile_image" accept="image/*" class="file-input-hidden">
-                                <span class="file-name">No file chosen</span>
+                            <div class="media-preview-wrap">
+                                <img id="profilePreview" src="<?= htmlspecialchars(($user['profile_image'] ?: $user['avatar_url']) ?: APP_URL . '/public/assets/img/default-avatar.png') ?>" alt="Preview">
+                                <div class="file-upload-wrapper">
+                                    <button type="button" class="btn-g file-btn">Choose Image</button>
+                                    <input type="file" name="profile_image" accept="image/*" class="file-input-hidden" data-preview="profilePreview">
+                                    <span class="file-name">No file chosen</span>
+                                </div>
                             </div>
                         </div>
                         <div class="input-group">
                             <label>Cover Image</label>
-                            <div class="file-upload-wrapper">
-                                <button type="button" class="btn-g file-btn">Choose Image</button>
-                                <input type="file" name="cover_image" accept="image/*" class="file-input-hidden">
-                                <span class="file-name">No file chosen</span>
+                            <div class="media-preview-wrap">
+                                <img id="coverPreview" src="<?= htmlspecialchars($user['cover_image'] ?? 'https://images.unsplash.com/photo-1544620347-c4fd4a3d5957?q=80&w=2069') ?>" alt="Preview" class="cover-preview">
+                                <div class="file-upload-wrapper">
+                                    <button type="button" class="btn-g file-btn">Choose Image</button>
+                                    <input type="file" name="cover_image" accept="image/*" class="file-input-hidden" data-preview="coverPreview">
+                                    <span class="file-name">No file chosen</span>
+                                </div>
                             </div>
                         </div>
+
                     </div>
                 </div>
 
@@ -111,18 +118,6 @@
                     </div>
                 </div>
 
-                <!-- Location Picker -->
-                <div class="form-section full-width location-picker-section">
-                    <h3>Set Your Location</h3>
-                    <div class="map-search-wrapper">
-                        <input type="text" id="mapSearchInput" placeholder="Search for your area..." class="map-search-input">
-                        <button type="button" id="mapSearchBtn" class="btn-g search-map-btn">Search</button>
-                    </div>
-                    <div id="userLocationMap" class="stylish-map-container"></div>
-                    <p class="small-text">Drag the marker or click to refine your location</p>
-                    <input type="hidden" name="latitude" id="latInput" value="<?= htmlspecialchars($user['latitude'] ?? '') ?>">
-                    <input type="hidden" name="longitude" id="lngInput" value="<?= htmlspecialchars($user['longitude'] ?? '') ?>">
-                </div>
 
                 <!-- Student Info Toggle -->
                 <div class="form-section full-width student-toggle-wrap">
@@ -208,12 +203,44 @@
                 </div>
             </div>
 
+
+                <!-- Location Picker -->
+                <div class="form-section full-width location-picker-section">
+                    <h3>Set Your Location</h3>
+                    <div class="map-search-wrapper">
+                        <input type="text" id="mapSearchInput" placeholder="Search for your area..." class="map-search-input">
+                        <button type="button" id="mapSearchBtn" class="btn-g search-map-btn">Search</button>
+                    </div>
+                    <div id="userLocationMap" class="stylish-map-container"></div>
+                    <p class="small-text">Drag the marker or click to refine your location</p>
+                    <input type="hidden" name="latitude" id="latInput" value="<?= htmlspecialchars($user['latitude'] ?? '') ?>">
+                    <input type="hidden" name="longitude" id="lngInput" value="<?= htmlspecialchars($user['longitude'] ?? '') ?>">
+                </div>
             <div class="form-actions">
                 <button type="submit" class="btn-o btn-large">Save Changes</button>
             </div>
         </form>
     </div>
 </section>
+
+<!-- Cropper Modal -->
+<div id="cropperModal" class="image-cropper-overlay">
+    <div class="image-cropper-inner">
+
+        <div class="modal-header">
+            <h3>Crop Your Image</h3>
+            <p>Adjust the selection to fit the layout</p>
+        </div>
+        <div class="cropper-container-main">
+            <img id="cropperImage" src="">
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="btn-g" onclick="closeCropper()">Cancel</button>
+            <button type="button" class="btn-o" id="saveCropBtn">Done</button>
+        </div>
+    </div>
+</div>
+
 
 <script>
 document.getElementById('isStudentCheckbox')?.addEventListener('change', function() {
@@ -225,23 +252,36 @@ document.addEventListener('DOMContentLoaded', () => {
     const defaultLat = <?= $user['latitude'] ?: 22.5726 ?>;
     const defaultLng = <?= $user['longitude'] ?: 88.3639 ?>;
     
-    const map = L.map('userLocationMap', { zoomControl: false }).setView([defaultLat, defaultLng], 13);
-    
-    L.tileLayer('https://api.maptiler.com/maps/dataviz-dark/256/{z}/{x}/{y}.png?key=<?= $_ENV['MAPTILER_API_KEY'] ?? 'get_your_key_at_maptiler_com' ?>', {
-        attribution: '<a href="https://www.maptiler.com/copyright/" target="_blank">&copy; MapTiler</a> <a href="https://www.openstreetmap.org/copyright" target="_blank">&copy; OpenStreetMap contributors</a>'
-    }).addTo(map);
+    maptilersdk.config.apiKey = '<?= $_ENV['MAPTILER_API_KEY'] ?? 'get_your_key_at_maptiler_com' ?>';
+    const map = new maptilersdk.Map({
+        container: 'userLocationMap',
+        style: maptilersdk.MapStyle.HYBRID,
+        center: [defaultLng, defaultLat],
+        zoom: 15,
+        pitch: 45,
+        terrain: true,
+        attributionControl: false
+    });
 
-    let marker = L.marker([defaultLat, defaultLng], { draggable: true }).addTo(map);
+    // Custom Pulse Marker
+    const el = document.createElement('div');
+    el.className = 'custom-pulse-marker';
+    el.innerHTML = '<div class="pulse-ring"></div><div class="pulse-dot"></div>';
+
+    const marker = new maptilersdk.Marker({
+        element: el,
+        draggable: true
+    }).setLngLat([defaultLng, defaultLat]).addTo(map);
 
     map.on('click', function(e) {
-        const { lat, lng } = e.latlng;
-        marker.setLatLng([lat, lng]);
+        const { lng, lat } = e.lngLat;
+        marker.setLngLat([lng, lat]);
         document.getElementById('latInput').value = lat;
         document.getElementById('lngInput').value = lng;
     });
 
-    marker.on('dragend', function(e) {
-        const { lat, lng } = marker.getLatLng();
+    marker.on('dragend', function() {
+        const { lng, lat } = marker.getLngLat();
         document.getElementById('latInput').value = lat;
         document.getElementById('lngInput').value = lng;
     });
@@ -262,8 +302,8 @@ document.addEventListener('DOMContentLoaded', () => {
                 const { lat, lon } = data[0];
                 const newLat = parseFloat(lat);
                 const newLon = parseFloat(lon);
-                map.setView([newLat, newLon], 15);
-                marker.setLatLng([newLat, newLon]);
+                map.flyTo({ center: [newLon, newLat], zoom: 16 });
+                marker.setLngLat([newLon, newLat]);
                 document.getElementById('latInput').value = newLat;
                 document.getElementById('lngInput').value = newLon;
             }
@@ -274,15 +314,85 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     };
 
+
     searchBtn.addEventListener('click', performSearch);
     searchInput.addEventListener('keypress', (e) => { if (e.key === 'Enter') { e.preventDefault(); performSearch(); } });
 });
 
-// File input handler
+// Cropper Logic
+let cropper = null;
+let activeInput = null;
+let activePreviewId = null;
+
+const cropperModal = document.getElementById('cropperModal');
+const cropperImage = document.getElementById('cropperImage');
+
+function openCropper(imageSrc, input, previewId) {
+    activeInput = input;
+    activePreviewId = previewId;
+    cropperImage.src = imageSrc;
+    cropperModal.classList.add('active');
+
+    if (cropper) cropper.destroy();
+
+    const aspectRatio = previewId === 'profilePreview' ? 1 : 16 / 9;
+    cropper = new Cropper(cropperImage, {
+        aspectRatio: aspectRatio,
+        viewMode: 2,
+        guides: true,
+        center: true,
+        highlight: false,
+        background: false,
+        autoCropArea: 1,
+        modal: false, // Remove the dimmed overlay around the crop box
+    });
+
+}
+
+function closeCropper() {
+    cropperModal.classList.remove('active');
+    if (cropper) cropper.destroy();
+    cropper = null;
+}
+
+document.getElementById('saveCropBtn').addEventListener('click', () => {
+    if (!cropper) return;
+
+    const canvas = cropper.getCroppedCanvas({
+        width: activePreviewId === 'profilePreview' ? 500 : 1500,
+        height: activePreviewId === 'profilePreview' ? 500 : 844,
+    });
+
+    canvas.toBlob((blob) => {
+        // Update UI Preview
+        const url = URL.createObjectURL(blob);
+        document.getElementById(activePreviewId).src = url;
+
+        // Replace the file in the input
+        const file = new File([blob], activeInput.files[0].name, { type: 'image/jpeg' });
+        const dataTransfer = new DataTransfer();
+        dataTransfer.items.add(file);
+        activeInput.files = dataTransfer.files;
+
+        closeCropper();
+    }, 'image/jpeg', 0.9);
+});
+
+// Updated File input handler
 document.querySelectorAll('.file-input-hidden').forEach(input => {
     input.addEventListener('change', function() {
-        const fileName = this.files[0] ? this.files[0].name : 'No file chosen';
+        const file = this.files[0];
+        if (!file) return;
+
+        const fileName = file.name;
         this.parentElement.querySelector('.file-name').textContent = fileName;
+
+        const previewId = this.getAttribute('data-preview');
+        const reader = new FileReader();
+        reader.onload = (e) => {
+            openCropper(e.target.result, this, previewId);
+        };
+        reader.readAsDataURL(file);
     });
 });
 document.querySelectorAll('.file-btn').forEach(btn => {
@@ -365,22 +475,129 @@ document.querySelectorAll('.file-btn').forEach(btn => {
 .toggle-text { font-weight: 700; font-size: 16px; color: var(--text); }
 
 /* File Upload */
-.media-inputs { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
-.file-upload-wrapper { display: flex; align-items: center; gap: 15px; background: rgba(255,255,255,.03); padding: 8px; border-radius: 14px; border: 1px dashed var(--border); }
+.media-inputs { display: grid; grid-template-columns: 1fr 1fr; gap: 30px; }
+.media-preview-wrap { display: flex; align-items: center; gap: 20px; background: rgba(255,255,255,.02); padding: 15px; border-radius: 20px; border: 1px solid var(--border); }
+.media-preview-wrap img { width: 80px; height: 80px; border-radius: 18px; object-fit: cover; border: 2px solid var(--border); }
+.media-preview-wrap img.cover-preview { width: 140px; aspect-ratio: 16/9; height: auto; }
+.file-upload-wrapper { flex: 1; display: flex; align-items: center; gap: 15px; background: rgba(255,255,255,.03); padding: 8px; border-radius: 14px; border: 1px dashed var(--border); }
 .file-input-hidden { display: none; }
-.file-name { font-size: 12px; color: var(--muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 150px; }
+.file-name { font-size: 11px; color: var(--muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 120px; }
+
 
 .small-text { font-size: 11px; color: var(--muted); margin-top: 5px; }
 
 /* Stylish Map */
 .location-picker-section { background: var(--surface2); padding: 30px; border-radius: 24px; border: 1px solid var(--border); margin-top: 20px; }
-.stylish-map-container { height: 350px; border-radius: 18px; border: 1px solid var(--border); box-shadow: inset 0 0 20px rgba(0,0,0,.3); margin-top: 15px; }
+.stylish-map-container { 
+    height: 350px; 
+    border-radius: 18px; 
+    border: 1px solid var(--border); 
+    box-shadow: 0 20px 50px rgba(0,0,0,.4), inset 0 0 20px rgba(0,0,0,.2); 
+    overflow: hidden;
+    position: relative;
+    margin-top: 15px;
+}
+.stylish-map-container::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    box-shadow: inset 0 0 40px rgba(0,0,0,0.3);
+    z-index: 1000;
+    border-radius: 18px;
+}
+
 .map-search-wrapper { display: flex; gap: 10px; margin-bottom: 5px; }
 .map-search-input { flex: 1; background: rgba(255,255,255,.03); border: 1px solid var(--border); border-radius: 12px; padding: 10px 15px; color: var(--text); font-size: 13px; }
 .search-map-btn { padding: 0 20px; font-size: 12px; border-radius: 10px; }
 
 .btn-large { padding: 16px 40px; font-size: 16px; }
 .form-actions { margin-top: 50px; text-align: center; }
+
+/* Pulse Marker Animation */
+.custom-pulse-marker {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.pulse-dot {
+    width: 10px;
+    height: 10px;
+    background: var(--accent);
+    border-radius: 50%;
+    position: absolute;
+    box-shadow: 0 0 10px var(--accent);
+    border: 2px solid #fff;
+}
+.pulse-ring {
+    width: 30px;
+    height: 30px;
+    border: 3px solid var(--accent);
+    border-radius: 50%;
+    position: absolute;
+    animation: pulsate 1.5s ease-out infinite;
+    opacity: 0;
+}
+@keyframes pulsate {
+    0% { transform: scale(0.1, 0.1); opacity: 0.0; }
+    50% { opacity: 1.0; }
+    100% { transform: scale(1.2, 1.2); opacity: 0.0; }
+}
+
+/* Custom Cropper Modal Overlay */
+.image-cropper-overlay {
+    position: fixed;
+    inset: 0;
+    background: #050508; /* Solid dark background */
+    z-index: 20000;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+}
+
+.image-cropper-overlay.active { display: flex; animation: slideIn .3s var(--ease); }
+.image-cropper-inner {
+    background: var(--surface2);
+    opacity: 1 !important;
+    border: 1px solid var(--border);
+    border-radius: 28px;
+    width: 100%;
+    max-width: 800px;
+    max-height: 90vh;
+    display: flex;
+    flex-direction: column;
+    box-shadow: 0 40px 100px rgba(0,0,0,0.8);
+    overflow: hidden;
+}
+
+
+.modal-header { padding: 25px; border-bottom: 1px solid var(--border); }
+.modal-header h3 { font-family: var(--font-display); font-size: 24px; color: var(--accent); margin-bottom: 5px; }
+.modal-header p { font-size: 13px; color: var(--muted); }
+.cropper-container-main { flex: 1; min-height: 400px; max-height: 60vh; background: #000; position: relative; }
+.cropper-container-main img { max-width: 100%; display: block; }
+.modal-footer { padding: 20px 25px; display: flex; justify-content: flex-end; gap: 15px; border-top: 1px solid var(--border); }
+
+@keyframes slideIn { from { transform: translateY(20px); } to { transform: translateY(0); } }
+
+/* Internal Cropper.js Overrides to prevent ANY opacity reduction */
+.cropper-modal { 
+    opacity: 0 !important; /* This hides the internal dimming layer completely */
+}
+.cropper-view-box {
+    outline: 2px solid var(--accent);
+    outline-color: var(--accent);
+}
+.cropper-face {
+    opacity: 0 !important;
+}
+.cropper-canvas img {
+    opacity: 1 !important;
+}
+
+
+
 @media (max-width: 992px) {
     .edit-form { padding: 30px; border-radius: 24px; }
     .form-grid { grid-template-columns: 1fr; gap: 30px; }

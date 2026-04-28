@@ -10,7 +10,7 @@
         <div class="container profile-nav-container">
             <div class="profile-info-main">
                 <div class="profile-avatar-wrap">
-                    <img src="<?= htmlspecialchars($user['avatar_url'] ?? $user['profile_image'] ?? APP_URL . '/public/assets/img/default-avatar.png') ?>" alt="" class="profile-avatar-lg">
+                    <img src="<?= htmlspecialchars(($user['profile_image'] ?: $user['avatar_url']) ?: APP_URL . '/public/assets/img/default-avatar.png') ?>" alt="" class="profile-avatar-lg">
                     <?php if ($user['is_active']): ?>
                         <div class="status-badge online"></div>
                     <?php endif; ?>
@@ -35,8 +35,11 @@
 
     <div class="container profile-content">
         <div class="profile-grid">
-            <!-- Row 1: Contact & Academic -->
-            <div class="glass-card info-card <?= !$user['is_student'] ? 'full-width' : '' ?>">
+            <?php 
+            $showMapTop = !$user['is_student'] && $user['latitude']; 
+            $showMapWithLinks = $user['is_student'] && $user['latitude'];
+            ?>
+            <div class="glass-card info-card <?= (!$user['is_student'] && !$showMapTop) ? 'full-width' : '' ?>">
                 <h3>Contact Information</h3>
                 <div class="info-list">
                     <div class="info-row"><label>Email</label><span><?= htmlspecialchars($user['email']) ?></span></div>
@@ -64,6 +67,11 @@
                     <div class="info-row"><label>Semester</label><span><?= htmlspecialchars($user['semester'] ?? 'N/A') ?> Semester</span></div>
                     <div class="info-row"><label>Graduation</label><span><?= htmlspecialchars($user['graduation_year'] ?? 'N/A') ?></span></div>
                 </div>
+            </div>
+            <?php elseif ($showMapTop): ?>
+            <div class="glass-card map-card">
+                <h3>Pinned Location</h3>
+                <div id="viewLocationMap" class="view-map-container"></div>
             </div>
             <?php endif; ?>
 
@@ -112,10 +120,18 @@
                     <?php endif; ?>
                 </div>
             </div>
+            
+            <?php if ($showMapWithLinks): ?>
+            <div class="glass-card map-card">
+                <h3>Pinned Location</h3>
+                <div id="viewLocationMap" class="view-map-container"></div>
+            </div>
+            <?php endif; ?>
+
 
 
             <!-- Row 4: Location (Bottom) -->
-            <?php if ($user['latitude']): ?>
+            <?php if ($user['latitude'] && !$showMapTop && !$showMapWithLinks): ?>
             <div class="glass-card map-card full-width">
                 <h3>Pinned Location</h3>
                 <div id="viewLocationMap" class="view-map-container"></div>
@@ -131,14 +147,27 @@ document.addEventListener('DOMContentLoaded', () => {
     <?php if ($user['latitude']): ?>
     const lat = <?= $user['latitude'] ?>;
     const lng = <?= $user['longitude'] ?>;
-    const map = L.map('viewLocationMap', { zoomControl: false, dragging: false, scrollWheelZoom: false }).setView([lat, lng], 14);
-    
-    L.tileLayer('https://api.maptiler.com/maps/dataviz-dark/256/{z}/{x}/{y}.png?key=<?= $_ENV['MAPTILER_API_KEY'] ?? 'get_your_key_at_maptiler_com' ?>', {
-        attribution: '&copy; MapTiler'
-    }).addTo(map);
 
-    L.marker([lat, lng]).addTo(map);
+    maptilersdk.config.apiKey = '<?= $_ENV['MAPTILER_API_KEY'] ?? 'get_your_key_at_maptiler_com' ?>';
+    const map = new maptilersdk.Map({
+        container: 'viewLocationMap',
+        style: maptilersdk.MapStyle.HYBRID,
+        center: [lng, lat],
+        zoom: 16,
+        pitch: 60,
+        bearing: -30,
+        terrain: true,
+        attributionControl: false
+    });
+
+    // Custom Pulse Marker for MapTiler SDK
+    const el = document.createElement('div');
+    el.className = 'custom-pulse-marker';
+    el.innerHTML = '<div class="pulse-ring"></div><div class="pulse-dot"></div>';
+    
+    new maptilersdk.Marker({ element: el }).setLngLat([lng, lat]).addTo(map);
     <?php endif; ?>
+
 });
 </script>
 

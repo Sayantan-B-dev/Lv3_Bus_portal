@@ -20,8 +20,14 @@ use App\Middleware\CsrfMiddleware;
     
     <!-- CSS -->
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin=""/>
+    <script src="https://cdn.maptiler.com/maptiler-sdk-js/v2.0.3/maptiler-sdk.umd.js"></script>
+    <link href="https://cdn.maptiler.com/maptiler-sdk-js/v2.0.3/maptiler-sdk.css" rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.6.1/cropper.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.6.1/cropper.min.js"></script>
     <link href="<?= APP_URL ?>/public/assets/css/main.css" rel="stylesheet">
+
     <link href="<?= APP_URL ?>/public/assets/css/map.css" rel="stylesheet">
+
 
     <script>
         window.APP_URL = "<?= APP_URL ?>";
@@ -85,7 +91,7 @@ use App\Middleware\CsrfMiddleware;
                     
                     <div class="profile-dropdown">
                         <button class="profile-btn" onclick="toggleProfileMenu()">
-                            <img src="<?= htmlspecialchars($u['avatar_url'] ?? $u['profile_image'] ?? APP_URL . '/public/assets/img/default-avatar.png') ?>" alt="Profile" class="nav-avatar">
+                            <img src="<?= htmlspecialchars(($u['profile_image'] ?: $u['avatar_url']) ?: APP_URL . '/public/assets/img/default-avatar.png') ?>" alt="Profile" class="nav-avatar">
                             <span><?= htmlspecialchars($u['name'] ?? 'User') ?></span>
                             <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" stroke-width="2" fill="none"><polyline points="6 9 12 15 18 9"></polyline></svg>
                         </button>
@@ -125,7 +131,7 @@ use App\Middleware\CsrfMiddleware;
         <div class="card-glass"></div>
         <div class="card-content">
             <div class="card-user">
-                <img src="<?= htmlspecialchars($u['avatar_url'] ?? $u['profile_image'] ?? APP_URL . '/public/assets/img/default-avatar.png') ?>" alt="" class="card-avatar">
+                <img src="<?= htmlspecialchars(($u['profile_image'] ?: $u['avatar_url']) ?: APP_URL . '/public/assets/img/default-avatar.png') ?>" alt="" class="card-avatar">
                 <h3><?= htmlspecialchars($u['name']) ?></h3>
                 <span class="card-role"><?= strtoupper($u['role'] ?? 'Viewer') ?></span>
             </div>
