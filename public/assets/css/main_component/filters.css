@@ -1,0 +1,105 @@
+.filter-bar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 28px;
+}
+
+.chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 28px
+}
+
+.filter-chip {
+  padding: 7px 18px;
+  border-radius: 100px;
+  border: 1px solid var(--border);
+  background: transparent;
+  color: var(--muted);
+  font-size: 13px;
+  font-weight: 600;
+  transition: all .2s var(--ease2);
+  position: relative;
+  overflow: hidden;
+  cursor: none;
+  text-decoration: none;
+  display: inline-block;
+}
+
+.chip {
+  padding: 7px 18px;
+  border-radius: 100px;
+  border: 1px solid var(--border);
+  background: transparent;
+  color: var(--muted);
+  font-size: 13px;
+  font-weight: 600;
+  transition: all .2s var(--ease2);
+  position: relative;
+  overflow: hidden;
+  cursor: none;
+  text-decoration: none;
+  display: inline-block;
+}
+
+.chip::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: var(--accent);
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform .3s var(--ease);
+  border-radius: 100px;
+}
+
+.chip span {
+  position: relative;
+  z-index: 1
+}
+
+.chip:hover {
+  color: var(--muted2);
+  border-color: var(--border-hover)
+}
+
+.chip.on {
+  border-color: var(--accent);
+  color: #fff
+}
+
+.chip.on::before {
+  transform: scaleX(1)
+}
+
+.filter-chip::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: var(--accent);
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform .3s var(--ease);
+  border-radius: 100px;
+}
+
+.filter-chip span {
+  position: relative;
+  z-index: 1;
+}
+
+.filter-chip:hover {
+  color: var(--muted2);
+  border-color: var(--border-hover);
+}
+
+.filter-chip.active {
+  border-color: var(--accent);
+  color: #fff;
+}
+
+.filter-chip.active::before {
+  transform: scaleX(1);
+}

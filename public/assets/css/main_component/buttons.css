@@ -1,0 +1,60 @@
+.btn-primary,
+.btn-o {
+  padding: 8px 20px;
+  border-radius: 10px;
+  background: var(--accent);
+  color: #fff;
+  border: none;
+  font-weight: 700;
+  font-size: 13px;
+  letter-spacing: .4px;
+  box-shadow: 0 0 20px var(--accent-dim);
+  transition: all .2s var(--ease);
+  position: relative;
+  overflow: hidden;
+  display: inline-block;
+  cursor: none;
+}
+
+.btn-primary::before,
+.btn-o::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, .2), transparent);
+  transition: left .4s var(--ease);
+}
+
+.btn-primary:hover::before,
+.btn-o:hover::before {
+  left: 100%;
+}
+
+.btn-primary:hover,
+.btn-o:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 28px var(--accent-glow);
+}
+
+.btn-ghost,
+.btn-g {
+  padding: 8px 20px;
+  border-radius: 10px;
+  background: transparent;
+  color: var(--muted2);
+  border: 1px solid var(--border-hover);
+  font-weight: 500;
+  font-size: 13px;
+  transition: all .2s;
+  display: inline-block;
+  cursor: none;
+}
+
+.btn-ghost:hover,
+.btn-g:hover {
+  color: var(--text);
+  border-color: rgba(255, 255, 255, .25);
+}

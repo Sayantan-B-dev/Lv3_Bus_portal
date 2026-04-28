@@ -1,0 +1,132 @@
+.d-flex,
+.flex {
+  display: flex;
+}
+
+.d-none {
+  display: none !important;
+}
+
+.items-center,
+.align-items-center {
+  align-items: center;
+}
+
+.justify-content-center {
+  justify-content: center;
+}
+
+.justify-between,
+.justify-content-between {
+  justify-content: space-between;
+}
+
+.text-muted {
+  color: var(--muted) !important;
+}
+
+.text-primary,
+.text-accent {
+  color: var(--accent) !important;
+}
+
+.text-white {
+  color: #fff !important;
+}
+
+.mb-2 {
+  margin-bottom: 0.5rem;
+}
+
+.mb-4 {
+  margin-bottom: 1rem;
+}
+
+.mt-2 {
+  margin-top: 0.5rem;
+}
+
+.mt-3 {
+  margin-top: 0.75rem;
+}
+
+.mt-5 {
+  margin-top: 1.25rem;
+}
+
+.py-3 {
+  padding-block: 0.8rem;
+}
+
+.py-4 {
+  padding-block: 1rem;
+}
+
+.gap-8 {
+  gap: 8px;
+}
+
+.gap-12 {
+  gap: 12px;
+}
+
+.fw-700,
+.fw-bold {
+  font-weight: 700;
+}
+
+.text-center {
+  text-align: center;
+}
+
+.text-decoration-none {
+  text-decoration: none !important;
+}
+
+.small {
+  font-size: 0.8rem;
+}
+
+.d-inline {
+  display: inline;
+}
+
+.d-inline-block {
+  display: inline-block;
+}
+
+/* Reveal */
+.reveal {
+  opacity: 0;
+  transform: translateY(28px);
+  transition: opacity .7s var(--ease), transform .7s var(--ease)
+}
+
+.reveal.in {
+  opacity: 1;
+  transform: none
+}
+
+.reveal-d1 {
+  transition-delay: .1s
+}
+
+.reveal-d2 {
+  transition-delay: .18s
+}
+
+.reveal-d3 {
+  transition-delay: .26s
+}
+
+.reveal-d4 {
+  transition-delay: .34s
+}
+
+.reveal-d5 {
+  transition-delay: .42s
+}
+
+.reveal-d6 {
+  transition-delay: .5s
+}

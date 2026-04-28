@@ -1,0 +1,39 @@
+.error-shell {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 80px 20px;
+  text-align: center;
+}
+
+.error-content {
+  padding: 48px 20px;
+}
+
+.error-code {
+  font-family: var(--font-display);
+  font-size: clamp(64px, 12vw, 130px);
+  color: var(--accent);
+  line-height: 1;
+}
+
+.error-title {
+  font-family: var(--font-display);
+  margin: 10px 0 18px;
+  color: var(--text);
+}
+
+.error-note {
+  color: var(--muted);
+  margin-bottom: 24px;
+}
+
+.error-home-link {
+  display: inline-flex;
+  border: 1px solid var(--border-hover);
+  border-radius: 12px;
+  padding: 10px 20px;
+  color: var(--accent2);
+  text-decoration: none;
+  font-weight: 700;
+  cursor: none;
+}

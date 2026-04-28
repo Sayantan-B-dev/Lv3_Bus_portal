@@ -1,0 +1,87 @@
+.fixed-footer {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 50px;
+  background: rgba(5, 5, 8, 0.85);
+  backdrop-filter: blur(20px);
+  border-top: 1px solid var(--border);
+  z-index: 1000;
+  padding: 0 clamp(16px, 5vw, 80px);
+  display: flex;
+  align-items: center;
+}
+
+.footer-container {
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.f-left,
+.f-right {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+
+.f-logo-small {
+  font-family: var(--font-display);
+  font-size: 14px;
+  letter-spacing: 1px;
+  color: var(--text);
+}
+
+.f-status {
+  font-size: 10px;
+  text-transform: uppercase;
+  color: var(--muted);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: rgba(255, 255, 255, 0.03);
+  padding: 4px 10px;
+  border-radius: 100px;
+  border: 1px solid var(--border);
+}
+
+.status-dot {
+  width: 6px;
+  height: 6px;
+  background: var(--green);
+  border-radius: 50%;
+  box-shadow: 0 0 8px var(--green);
+}
+
+.f-links-compact {
+  display: flex;
+  gap: 25px;
+}
+
+.f-links-compact a {
+  font-size: 12px;
+  color: var(--muted);
+  font-weight: 600;
+  transition: color 0.2s;
+}
+
+.f-links-compact a:hover {
+  color: var(--accent);
+}
+
+.f-emergency {
+  font-size: 11px;
+  color: var(--accent2);
+  font-weight: 700;
+}
+
+.f-copy-small {
+  font-size: 10px;
+  color: var(--muted);
+}
+
+body {
+  padding-bottom: 60px;
+}

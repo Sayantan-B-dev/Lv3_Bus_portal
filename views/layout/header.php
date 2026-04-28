@@ -126,90 +126,124 @@ use App\Middleware\CsrfMiddleware;
 
     <!-- USER INFO CARD (Glassy Pop-up) -->
     <?php if (\App\Core\Session::isLoggedIn()): $u = \App\Core\Session::getUser(); ?>
-    <div id="userInfoCard" class="user-info-card">
-        <div class="card-close" onclick="toggleUserInfo()">Close</div>
-        <div class="card-glass"></div>
-        <div class="card-content">
-            <div class="card-user">
-                <img src="<?= htmlspecialchars(($u['profile_image'] ?: $u['avatar_url']) ?: APP_URL . '/public/assets/img/default-avatar.png') ?>" alt="" class="card-avatar">
-                <h3><?= htmlspecialchars($u['name']) ?></h3>
-                <span class="card-role"><?= strtoupper($u['role'] ?? 'Viewer') ?></span>
+<div id="userInfoCard" class="user-info-card glass-ui">
+    <div class="card-close glass-ui" onclick="toggleUserInfo()">Close</div>
+
+    <div class="card-content">
+        <div class="card-user">
+            <img src="<?= htmlspecialchars(($u['profile_image'] ?: $u['avatar_url']) ?: APP_URL . '/public/assets/img/default-avatar.png') ?>" alt="" class="card-avatar">
+            <h3><?= htmlspecialchars($u['name']) ?></h3>
+            <span class="card-role"><?= strtoupper($u['role'] ?? 'Viewer') ?></span>
+        </div>
+        
+        <div class="card-grid">
+            <div class="card-item glass-ui">
+                <label>Email</label>
+                <span><?= htmlspecialchars($u['email']) ?></span>
             </div>
-            
-            <div class="card-grid">
-                <div class="card-item">
-                    <label>Email</label>
-                    <span><?= htmlspecialchars($u['email']) ?></span>
+
+            <div class="card-item glass-ui">
+                <label>Username</label>
+                <span><?= htmlspecialchars($u['username'] ?? 'N/A') ?></span>
+            </div>
+
+            <div class="card-item glass-ui">
+                <label>Phone</label>
+                <span><?= htmlspecialchars($u['phone'] ?? 'N/A') ?></span>
+            </div>
+
+            <div class="card-item glass-ui">
+                <label>Location</label>
+                <?php if (!empty($u['city'])): ?>
+                    <span><?= htmlspecialchars($u['city']) . ($u['state'] ? ', ' . $u['state'] : '') ?></span>
+                <?php elseif (!empty($u['latitude'])): ?>
+                    <span>Lat: <?= round($u['latitude'], 4) ?>, Lng: <?= round($u['longitude'], 4) ?></span>
+                <?php else: ?>
+                    <span>N/A</span>
+                <?php endif; ?>
+            </div>
+
+            <?php if ($u['is_student']): ?>
+            <div class="card-item glass-ui full-width">
+                <label>Student Academic Info</label>
+                <div class="card-sub-grid">
+                    <div class="card-item glass-ui">
+                        <label>College</label>
+                        <span><?= htmlspecialchars($u['college_name'] ?? 'N/A') ?></span>
+                    </div>
+
+                    <div class="card-item glass-ui">
+                        <label>Reg No</label>
+                        <span><?= htmlspecialchars($u['college_registration_number'] ?? 'N/A') ?></span>
+                    </div>
+
+                    <div class="card-item glass-ui">
+                        <label>Roll No</label>
+                        <span><?= htmlspecialchars($u['roll_number'] ?? 'N/A') ?></span>
+                    </div>
+
+                    <div class="card-item glass-ui">
+                        <label>Branch</label>
+                        <span><?= htmlspecialchars($u['branch'] ?? 'N/A') ?></span>
+                    </div>
+
+                    <div class="card-item glass-ui">
+                        <label>Year</label>
+                        <span><?= htmlspecialchars($u['year_of_study'] ?? 'N/A') ?></span>
+                    </div>
+
+                    <div class="card-item glass-ui">
+                        <label>Semester</label>
+                        <span><?= htmlspecialchars($u['semester'] ?? 'N/A') ?> Semester</span>
+                    </div>
                 </div>
-                <div class="card-item">
-                    <label>Username</label>
-                    <span><?= htmlspecialchars($u['username'] ?? 'N/A') ?></span>
+            </div>
+            <?php endif; ?>
+
+            <div class="card-item glass-ui full-width">
+                <label>Bio</label>
+                <p class="card-bio"><?= htmlspecialchars($u['bio'] ?? 'No bio provided.') ?></p>
+            </div>
+
+            <?php if (!empty($u['skills'])): ?>
+            <div class="card-item glass-ui full-width">
+                <label>Skills</label>
+                <div class="card-skills">
+                    <?php foreach (explode(',', $u['skills']) as $skill): ?>
+                        <span class="card-skill-tag"><?= trim(htmlspecialchars($skill)) ?></span>
+                    <?php endforeach; ?>
                 </div>
-                <div class="card-item">
-                    <label>Phone</label>
-                    <span><?= htmlspecialchars($u['phone'] ?? 'N/A') ?></span>
-                </div>
-                <div class="card-item">
-                    <label>Location</label>
-                    <?php if (!empty($u['city'])): ?>
-                        <span><?= htmlspecialchars($u['city']) . ($u['state'] ? ', ' . $u['state'] : '') ?></span>
-                    <?php elseif (!empty($u['latitude'])): ?>
-                        <span>Lat: <?= round($u['latitude'], 4) ?>, Lng: <?= round($u['longitude'], 4) ?></span>
-                    <?php else: ?>
-                        <span>N/A</span>
+            </div>
+            <?php endif; ?>
+
+            <div class="card-item glass-ui full-width">
+                <label>Social Links</label>
+                <div class="card-links">
+                    <?php if ($u['linkedin_url']): ?>
+                        <a href="<?= $u['linkedin_url'] ?>" target="_blank" class="glass-ui">LinkedIn</a>
+                    <?php endif; ?>
+
+                    <?php if ($u['github_url']): ?>
+                        <a href="<?= $u['github_url'] ?>" target="_blank" class="glass-ui">GitHub</a>
+                    <?php endif; ?>
+
+                    <?php if ($u['portfolio_url']): ?>
+                        <a href="<?= $u['portfolio_url'] ?>" target="_blank" class="glass-ui">Portfolio</a>
                     <?php endif; ?>
                 </div>
-
-                <?php if ($u['is_student']): ?>
-                <div class="card-item full-width">
-                    <label>Student Academic Info</label>
-                    <div class="card-sub-grid">
-                        <div class="card-item"><label>College</label><span><?= htmlspecialchars($u['college_name'] ?? 'N/A') ?></span></div>
-                        <div class="card-item"><label>Reg No</label><span><?= htmlspecialchars($u['college_registration_number'] ?? 'N/A') ?></span></div>
-                        <div class="card-item"><label>Roll No</label><span><?= htmlspecialchars($u['roll_number'] ?? 'N/A') ?></span></div>
-                        <div class="card-item"><label>Branch</label><span><?= htmlspecialchars($u['branch'] ?? 'N/A') ?></span></div>
-                        <div class="card-item"><label>Year</label><span><?= htmlspecialchars($u['year_of_study'] ?? 'N/A') ?></span></div>
-                        <div class="card-item"><label>Semester</label><span><?= htmlspecialchars($u['semester'] ?? 'N/A') ?> Semester</span></div>
-                    </div>
-                </div>
-                <?php endif; ?>
-
-                <div class="card-item full-width">
-                    <label>Bio</label>
-                    <p class="card-bio"><?= htmlspecialchars($u['bio'] ?? 'No bio provided.') ?></p>
-                </div>
-
-                <?php if (!empty($u['skills'])): ?>
-                <div class="card-item full-width">
-                    <label>Skills</label>
-                    <div class="card-skills">
-                        <?php foreach (explode(',', $u['skills']) as $skill): ?>
-                            <span class="card-skill-tag"><?= trim(htmlspecialchars($skill)) ?></span>
-                        <?php endforeach; ?>
-                    </div>
-                </div>
-                <?php endif; ?>
-
-                <div class="card-item full-width">
-                    <label>Social Links</label>
-                    <div class="card-links">
-                        <?php if ($u['linkedin_url']): ?><a href="<?= $u['linkedin_url'] ?>" target="_blank">LinkedIn</a><?php endif; ?>
-                        <?php if ($u['github_url']): ?><a href="<?= $u['github_url'] ?>" target="_blank">GitHub</a><?php endif; ?>
-                        <?php if ($u['portfolio_url']): ?><a href="<?= $u['portfolio_url'] ?>" target="_blank">Portfolio</a><?php endif; ?>
-                    </div>
-                </div>
-
-                <div class="card-item">
-                    <label>Joined</label>
-                    <span><?= date('M d, Y', strtotime($u['created_at'])) ?></span>
-                </div>
             </div>
-            
-            <div class="card-actions">
-                <a href="<?= APP_URL ?>/profile/edit" class="btn-o">Update Profile</a>
+
+            <div class="card-item glass-ui">
+                <label>Joined</label>
+                <span><?= date('M d, Y', strtotime($u['created_at'])) ?></span>
             </div>
         </div>
+        
+        <div class="card-actions">
+            <a href="<?= APP_URL ?>/profile/edit" class="btn-o">Update Profile</a>
+        </div>
     </div>
+</div>
     <?php endif; ?>
 
     <main>

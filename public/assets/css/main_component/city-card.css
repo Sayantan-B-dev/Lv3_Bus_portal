@@ -1,0 +1,29 @@
+.city-card-shell {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  height: 100%;
+}
+
+.city-region-pill {
+  font-size: 10px;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  padding: 2px 8px;
+  color: var(--muted2);
+}
+
+.city-card-note {
+  margin-bottom: 20px;
+  color: var(--muted);
+  font-size: 0.8rem;
+}
+
+.city-switch-action {
+  width: 100%;
+  justify-content: center;
+}
+
+.city-empty-note {
+  color: var(--muted);
+}
