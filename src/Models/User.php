@@ -22,6 +22,48 @@ class User
         return $stmt->fetch() ?: null;
     }
 
+    public function findByUsername(string $username): ?array
+    {
+        $stmt = $this->db->prepare('SELECT * FROM users WHERE username = ?');
+        $stmt->execute([$username]);
+        return $stmt->fetch() ?: null;
+    }
+
+    /**
+     * Resolve login identifier: exact email match (case-insensitive) or username match (collation-aware).
+     */
+    public function findByEmailOrUsername(string $identifier): ?array
+    {
+        $trimmed = trim($identifier);
+        if ($trimmed === '') {
+            return null;
+        }
+        $emailKey = strtolower($trimmed);
+        $stmt = $this->db->prepare(
+            'SELECT * FROM users WHERE LOWER(email) = ? OR username = ? LIMIT 1'
+        );
+        $stmt->execute([$emailKey, $trimmed]);
+        $row = $stmt->fetch();
+        return $row ?: null;
+    }
+
+    /**
+     * Create a password-based account (google_id NULL). Name defaults to username for NOT NULL name column.
+     */
+    public function createWithPassword(string $email, string $username, string $passwordHash, string $name): ?array
+    {
+        $stmt = $this->db->prepare(
+            'INSERT INTO users (google_id, name, email, username, password_hash, role)
+             VALUES (NULL, ?, ?, ?, ?, ?)'
+        );
+        try {
+            $stmt->execute([$name, $email, $username, $passwordHash, 'viewer']);
+        } catch (\PDOException $e) {
+            return null;
+        }
+        return $this->findById((int)$this->db->lastInsertId());
+    }
+
     public function findById(int $id): ?array
     {
         $stmt = $this->db->prepare('SELECT * FROM users WHERE id = ?');
@@ -61,6 +103,11 @@ class User
     public function updateLastLogin(int $id): void
     {
         $this->db->prepare('UPDATE users SET last_login_at = NOW() WHERE id = ?')->execute([$id]);
+    }
+
+    public function updatePasswordHash(int $id, string $passwordHash): void
+    {
+        $this->db->prepare('UPDATE users SET password_hash = ? WHERE id = ?')->execute([$passwordHash, $id]);
     }
 
     public function updateProfile(int $id, array $data): bool

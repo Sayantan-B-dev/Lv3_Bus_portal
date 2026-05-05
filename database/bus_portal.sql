@@ -4674,7 +4674,8 @@ ALTER TABLE `stops`
 ALTER TABLE `users`
   ADD PRIMARY KEY (`id`),
   ADD UNIQUE KEY `uq_users_email` (`email`),
-  ADD UNIQUE KEY `uq_users_google_id` (`google_id`);
+  ADD UNIQUE KEY `uq_users_google_id` (`google_id`),
+  ADD UNIQUE KEY `uq_users_username` (`username`);
 
 --
 -- AUTO_INCREMENT for dumped tables

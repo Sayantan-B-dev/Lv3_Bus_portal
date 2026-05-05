@@ -12,7 +12,8 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Plus+Jakarta+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,300&display=swap" rel="stylesheet">
-    <link href="<?= APP_URL ?>/public/assets/css/main.css" rel="stylesheet">
+    <link href="<?= APP_URL ?>/public/assets/css/main.css?v=<?= filemtime(BASE_PATH . '/public/assets/css/main.css') ?>" rel="stylesheet">
+    <link href="<?= APP_URL ?>/public/assets/css/main_component/auth.css?v=<?= filemtime(BASE_PATH . '/public/assets/css/main_component/auth.css') ?>" rel="stylesheet">
 </head>
 <body>
     <!-- CURSOR -->

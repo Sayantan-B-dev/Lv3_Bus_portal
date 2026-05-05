@@ -11,15 +11,19 @@ use App\Models\User;
 
 class AuthService
 {
+    private const PASSWORD_MIN_LENGTH = 8;
+
     private string $clientId;
     private string $clientSecret;
     private string $redirectUri;
+    private User $users;
 
     public function __construct()
     {
         $this->clientId     = $_ENV['GOOGLE_CLIENT_ID']     ?? '';
         $this->clientSecret = $_ENV['GOOGLE_CLIENT_SECRET'] ?? '';
         $this->redirectUri  = $_ENV['GOOGLE_REDIRECT_URI']  ?? '';
+        $this->users        = new User();
     }
 
     public function getGoogleAuthUrl(): string
@@ -58,7 +62,86 @@ class AuthService
 
     public function findOrCreateUser(array $googleUser): array
     {
-        return (new User())->findOrCreate($googleUser);
+        return $this->users->findOrCreate($googleUser);
+    }
+
+    /**
+     * @return array{ok:true,user:array}|array{ok:false,error:string}
+     */
+    public function registerLocalUser(string $email, string $username, string $password, ?string $name = null): array
+    {
+        $email = strtolower(trim($email));
+        $username = trim($username);
+        $name = $name !== null ? trim($name) : '';
+
+        if ($email === '' || $username === '' || $password === '') {
+            return ['ok' => false, 'error' => 'Email, username, and password are required.'];
+        }
+        if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+            return ['ok' => false, 'error' => 'Please enter a valid email address.'];
+        }
+        if (!preg_match('/^[a-zA-Z0-9_]{3,50}$/', $username)) {
+            return ['ok' => false, 'error' => 'Username must be 3–50 characters (letters, numbers, underscore only).'];
+        }
+        if (strlen($password) < self::PASSWORD_MIN_LENGTH) {
+            return ['ok' => false, 'error' => 'Password must be at least ' . self::PASSWORD_MIN_LENGTH . ' characters.'];
+        }
+
+        if ($this->users->findByEmail($email)) {
+            return ['ok' => false, 'error' => 'An account with this email already exists. Try signing in with Google or email.'];
+        }
+        if ($this->users->findByUsername($username)) {
+            return ['ok' => false, 'error' => 'This username is already taken.'];
+        }
+
+        $displayName = $name !== '' ? $name : $username;
+        $hash = password_hash($password, PASSWORD_DEFAULT);
+        if ($hash === false) {
+            return ['ok' => false, 'error' => 'Could not process password. Please try again.'];
+        }
+
+        $user = $this->users->createWithPassword($email, $username, $hash, $displayName);
+        if (!$user) {
+            return ['ok' => false, 'error' => 'Registration failed. Please try again.'];
+        }
+
+        $this->users->updateLastLogin((int)$user['id']);
+        $user = $this->users->findById((int)$user['id']);
+
+        return ['ok' => true, 'user' => $user];
+    }
+
+    /**
+     * @return array{ok:true,user:array}|array{ok:false,error:string}
+     */
+    public function loginWithPassword(string $identifier, string $password): array
+    {
+        $identifier = trim($identifier);
+        if ($identifier === '' || $password === '') {
+            return ['ok' => false, 'error' => 'Invalid email or password.'];
+        }
+
+        $user = $this->users->findByEmailOrUsername($identifier);
+        if (!$user || empty($user['password_hash'])) {
+            return ['ok' => false, 'error' => 'Invalid email or password.'];
+        }
+
+        if (!password_verify($password, (string)$user['password_hash'])) {
+            return ['ok' => false, 'error' => 'Invalid email or password.'];
+        }
+
+        if (password_needs_rehash((string)$user['password_hash'], PASSWORD_DEFAULT)) {
+            $newHash = password_hash($password, PASSWORD_DEFAULT);
+            if ($newHash !== false) {
+                $this->users->updatePasswordHash((int)$user['id'], $newHash);
+                $user = $this->users->findById((int)$user['id']);
+            }
+        }
+
+        $this->users->updateLastLogin((int)$user['id']);
+        $user = $this->users->findById((int)$user['id']);
+
+        return ['ok' => true, 'user' => $user];
     }
 
     public function generateJWT(array $user): string

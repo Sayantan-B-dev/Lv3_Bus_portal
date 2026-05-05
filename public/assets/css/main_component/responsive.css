@@ -87,6 +87,10 @@
     border-radius: 20px;
   }
 
+  .auth-form {
+    padding: 14px;
+  }
+
   .auth-wrapper {
     padding: 20px;
   }
