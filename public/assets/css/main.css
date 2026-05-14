@@ -14,7 +14,7 @@
 @import 'main_component/sections.css';
 @import 'main_component/filters.css';
 @import 'main_component/route-cards.css';
-@import 'main_component/route-details.css';
+@import 'main_component/route-details.css?v=2';
 @import 'main_component/map.css';
 @import 'main_component/alerts-tabs.css';
 @import 'main_component/city-card.css';

@@ -24,7 +24,7 @@ use App\Middleware\CsrfMiddleware;
     <link href="https://cdn.maptiler.com/maptiler-sdk-js/v2.0.3/maptiler-sdk.css" rel="stylesheet" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.6.1/cropper.min.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.6.1/cropper.min.js"></script>
-    <link href="<?= APP_URL ?>/public/assets/css/main.css" rel="stylesheet">
+    <link href="<?= APP_URL ?>/public/assets/css/main.css?v=<?= time() ?>" rel="stylesheet">
 
     <link href="<?= APP_URL ?>/public/assets/css/map.css" rel="stylesheet">
 
