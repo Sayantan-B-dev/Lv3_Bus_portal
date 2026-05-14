@@ -1,0 +1,154 @@
+bus-portal
+├── ProjectReport.md
+├── ProjectReport_UCBRP_Final.docx
+├── README.md
+├── api
+│   └── index.php
+├── composer.json
+├── composer.phar
+├── config
+│   └── config.php
+├── database
+│   ├── bus_portal.sql
+│   └── migrations
+├── public
+│   ├── assets
+│   │   ├── css
+│   │   │   ├── admin.css
+│   │   │   ├── main.css
+│   │   │   ├── main_component
+│   │   │   │   ├── alerts-tabs.css
+│   │   │   │   ├── auth.css
+│   │   │   │   ├── buttons.css
+│   │   │   │   ├── city-card.css
+│   │   │   │   ├── cursor.css
+│   │   │   │   ├── error.css
+│   │   │   │   ├── filters.css
+│   │   │   │   ├── footer.css
+│   │   │   │   ├── hero.css
+│   │   │   │   ├── map.css
+│   │   │   │   ├── nav.css
+│   │   │   │   ├── noise.css
+│   │   │   │   ├── reset.css
+│   │   │   │   ├── responsive.css
+│   │   │   │   ├── route-cards.css
+│   │   │   │   ├── route-details.css
+│   │   │   │   ├── search.css
+│   │   │   │   ├── sections.css
+│   │   │   │   ├── stats.css
+│   │   │   │   ├── tags.css
+│   │   │   │   ├── user-actions.css
+│   │   │   │   ├── user-info-card.css
+│   │   │   │   ├── utils.css
+│   │   │   │   └── variables.css
+│   │   │   ├── map.css
+│   │   │   └── profile.css
+│   │   ├── img
+│   │   │   ├── 1.png
+│   │   │   ├── 2.png
+│   │   │   ├── 3.png
+│   │   │   ├── 4.png
+│   │   │   ├── 5.png
+│   │   │   ├── admin-favicon.svg
+│   │   │   └── logo.svg
+│   │   └── js
+│   │       ├── admin.js
+│   │       ├── city-selector.js
+│   │       ├── main.js
+│   │       └── search.js
+│   └── index.php
+├── reference.html
+├── scratch
+│   ├── migrate_users.php
+│   └── test_admin.php
+├── src
+│   ├── Controllers
+│   │   ├── Admin
+│   │   │   ├── AdminCityController.php
+│   │   │   ├── AdminFareController.php
+│   │   │   ├── AdminRouteController.php
+│   │   │   ├── AdminStopController.php
+│   │   │   └── DashboardController.php
+│   │   ├── AuthController.php
+│   │   ├── CityController.php
+│   │   ├── HomeController.php
+│   │   ├── PlannerController.php
+│   │   ├── RouteController.php
+│   │   ├── SearchController.php
+│   │   └── UserController.php
+│   ├── Core
+│   │   ├── Database.php
+│   │   ├── Request.php
+│   │   ├── Response.php
+│   │   ├── Router.php
+│   │   └── Session.php
+│   ├── Helpers
+│   │   ├── Pagination.php
+│   │   ├── Sanitizer.php
+│   │   └── Validator.php
+│   ├── Middleware
+│   │   ├── AdminMiddleware.php
+│   │   ├── AuthMiddleware.php
+│   │   ├── CsrfMiddleware.php
+│   │   └── RateLimitMiddleware.php
+│   ├── Models
+│   │   ├── City.php
+│   │   ├── Fare.php
+│   │   ├── Route.php
+│   │   ├── RouteStop.php
+│   │   ├── Stop.php
+│   │   └── User.php
+│   ├── Services
+│   │   ├── AuthService.php
+│   │   ├── CityResolverService.php
+│   │   ├── CloudinaryService.php
+│   │   ├── GtfsImportService.php
+│   │   ├── MapService.php
+│   │   ├── OverpassService.php
+│   │   ├── PlannerService.php
+│   │   ├── RoutingService.php
+│   │   └── SearchService.php
+│   └── migrations
+│       ├── 20240627_add_user_fields.sql
+│       └── 20240628_add_address_field.sql
+├── tests
+│   ├── AuthTest.php
+│   ├── DijkstraTest.php
+│   └── RouteTest.php
+└── views
+    ├── admin
+    │   ├── cities
+    │   │   └── index.php
+    │   ├── dashboard.php
+    │   ├── fares
+    │   │   └── index.php
+    │   ├── routes
+    │   │   ├── create.php
+    │   │   ├── edit.php
+    │   │   └── index.php
+    │   └── stops
+    │       └── index.php
+    ├── auth
+    │   ├── adminLogin.php
+    │   └── login.php
+    ├── cities
+    │   └── index.php
+    ├── errors
+    │   ├── 404.php
+    │   └── 500.php
+    ├── home
+    │   └── index.php
+    ├── layout
+    │   ├── admin-layout.php
+    │   ├── footer.php
+    │   └── header.php
+    ├── planner
+    │   └── index.php
+    ├── profile
+    │   ├── edit.php
+    │   └── view.php
+    ├── routes
+    │   ├── detail.php
+    │   └── list.php
+    └── search
+        └── results.php
