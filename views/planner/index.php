@@ -6,97 +6,97 @@
 include dirname(__DIR__) . '/layout/header.php';
 ?>
 
-<div class="page">
-    <section class="section">
-        <div class="container">
-            <div class="section-header anim-1" style="flex-direction: column; align-items: flex-start; gap: 8px;">
-                <h1 class="section-title">Journey <span class="text-primary">Planner</span></h1>
-                <p class="section-sub" style="margin-top: 0;">Find the most efficient way to travel between stops in <?= htmlspecialchars($city['city_name']) ?>.</p>
-            </div>
-
-            <div class="planner-wrapper anim-2">
-                <!-- Search Section -->
-                <div class="planner-card">
-                    <div class="card-header">
-                        <i class="fas fa-route"></i>
-                        <span>Plan Your Trip</span>
-                    </div>
-                    <form id="journeyPlannerForm" class="planner-form-grid">
-                        <div class="form-group">
-                            <label>Origin Stop</label>
-                            <div class="custom-dropdown" id="dropdownFrom">
-                                <div class="dropdown-trigger">
-                                    <span class="selected-text">Select Origin...</span>
-                                    <span class="arrow">▼</span>
-                                </div>
-                                <div class="dropdown-menu">
-                                    <div class="dropdown-search">
-                                        <input type="text" placeholder="Search stop...">
-                                    </div>
-                                    <div class="dropdown-options">
-                                        <?php foreach ($stops as $s): ?>
-                                            <div class="dropdown-option" data-value="<?= $s['id'] ?>"><?= htmlspecialchars($s['stop_name']) ?></div>
-                                        <?php endforeach; ?>
-                                    </div>
-                                </div>
-                                <input type="hidden" id="plannerFrom" required>
-                            </div>
-                        </div>
-
-                        <div class="swap-action">
-                            <button type="button" id="swapBtn" class="swap-btn" title="Swap Stops">
-                                <svg viewBox="0 0 24 24" width="20" height="20" stroke="currentColor" stroke-width="2" fill="none"><path d="M7 16V4M7 4L3 8M7 4L11 8M17 8v12M17 20l4-4M17 20l-4-4"/></svg>
-                            </button>
-                        </div>
-
-                        <div class="form-group">
-                            <label>Destination Stop</label>
-                            <div class="custom-dropdown" id="dropdownTo">
-                                <div class="dropdown-trigger">
-                                    <span class="selected-text">Select Destination...</span>
-                                    <span class="arrow">▼</span>
-                                </div>
-                                <div class="dropdown-menu">
-                                    <div class="dropdown-search">
-                                        <input type="text" placeholder="Search stop...">
-                                    </div>
-                                    <div class="dropdown-options">
-                                        <?php foreach ($stops as $s): ?>
-                                            <div class="dropdown-option" data-value="<?= $s['id'] ?>"><?= htmlspecialchars($s['stop_name']) ?></div>
-                                        <?php endforeach; ?>
-                                    </div>
-                                </div>
-                                <input type="hidden" id="plannerTo" required>
-                            </div>
-                        </div>
-
-                        <div class="form-action">
-                            <button type="submit" class="btn-primary-glow">Search Routes</button>
-                        </div>
-                    </form>
-                </div>
-
-                <!-- Results Section -->
-                <div id="resultsWrapper" class="results-container d-none">
-                    <div id="resultStatus" class="result-status-badge"></div>
-                    <div id="resultsList" class="journey-list">
-                        <!-- Journey cards injected here -->
-                    </div>
-                </div>
-
-                <!-- States -->
-                <div id="plannerLoading" class="planner-state d-none">
-                    <div class="loader-ring"></div>
-                    <p>Optimizing your journey...</p>
-                </div>
-
-                <div id="plannerError" class="planner-state error-state d-none">
-                    <div class="error-icon">!</div>
-                    <p id="errorMessage"></p>
-                </div>
+<main class="page">
+    <div class="sec">
+        <div class="sec-head reveal">
+            <div>
+                <div class="sec-title">Journey <span>Planner</span></div>
+                <div class="sec-desc">Find the most efficient way to travel between stops in <?= htmlspecialchars($city['city_name']) ?>.</div>
             </div>
         </div>
-    </section>
+
+        <div class="planner-wrapper anim-2">
+            <!-- Search Section -->
+            <div class="planner-card">
+                <div class="card-header">
+                    <i class="fas fa-route"></i>
+                    <span>Plan Your Trip</span>
+                </div>
+                <form id="journeyPlannerForm" class="planner-form-grid">
+                    <div class="form-group">
+                        <label>Origin Stop</label>
+                        <div class="custom-dropdown" id="dropdownFrom">
+                            <div class="dropdown-trigger">
+                                <span class="selected-text">Select Origin...</span>
+                                <span class="arrow">▼</span>
+                            </div>
+                            <div class="dropdown-menu">
+                                <div class="dropdown-search">
+                                    <input type="text" placeholder="Search stop...">
+                                </div>
+                                <div class="dropdown-options">
+                                    <?php foreach ($stops as $s): ?>
+                                        <div class="dropdown-option" data-value="<?= $s['id'] ?>"><?= htmlspecialchars($s['stop_name']) ?></div>
+                                    <?php endforeach; ?>
+                                </div>
+                            </div>
+                            <input type="hidden" id="plannerFrom" required>
+                        </div>
+                    </div>
+
+                    <div class="swap-action">
+                        <button type="button" id="swapBtn" class="swap-btn" title="Swap Stops">
+                            <svg viewBox="0 0 24 24" width="20" height="20" stroke="currentColor" stroke-width="2" fill="none"><path d="M7 16V4M7 4L3 8M7 4L11 8M17 8v12M17 20l4-4M17 20l-4-4"/></svg>
+                        </button>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Destination Stop</label>
+                        <div class="custom-dropdown" id="dropdownTo">
+                            <div class="dropdown-trigger">
+                                <span class="selected-text">Select Destination...</span>
+                                <span class="arrow">▼</span>
+                            </div>
+                            <div class="dropdown-menu">
+                                <div class="dropdown-search">
+                                    <input type="text" placeholder="Search stop...">
+                                </div>
+                                <div class="dropdown-options">
+                                    <?php foreach ($stops as $s): ?>
+                                        <div class="dropdown-option" data-value="<?= $s['id'] ?>"><?= htmlspecialchars($s['stop_name']) ?></div>
+                                    <?php endforeach; ?>
+                                </div>
+                            </div>
+                            <input type="hidden" id="plannerTo" required>
+                        </div>
+                    </div>
+
+                    <div class="form-action">
+                        <button type="submit" class="btn-primary-glow">Search Routes</button>
+                    </div>
+                </form>
+            </div>
+
+            <!-- Results Section -->
+            <div id="resultsWrapper" class="results-container d-none">
+                <div id="resultStatus" class="result-status-badge"></div>
+                <div id="resultsList" class="journey-list">
+                    <!-- Journey cards injected here -->
+                </div>
+            </div>
+
+            <!-- States -->
+            <div id="plannerLoading" class="planner-state d-none">
+                <div class="loader-ring"></div>
+                <p>Optimizing your journey...</p>
+            </div>
+
+            <div id="plannerError" class="planner-state error-state d-none">
+                <div class="error-icon">!</div>
+                <p id="errorMessage"></p>
+            </div>
+        </div>
+    </div>
 </main>
 
 <style>
