@@ -62,8 +62,8 @@ Follow these steps to get the portal running on your local machine:
 
 ### 2. Clone & Install
 ```bash
-git clone https://github.com/Sayantan-B-dev/Lv3_Bus_portal.git
-cd bus-portal
+git clone https://github.com/Sayantan-B-dev/Lv3_YatraPath.git
+cd yatrapath
 composer install
 ```
 
@@ -79,11 +79,11 @@ cp .env.example .env
 | :--- | :--- | :--- |
 | `APP_NAME` | Name of the application | "Bus Route Portal" |
 | `APP_ENV` | Environment mode | `development` or `production` |
-| `APP_URL` | Base URL of the project | `http://localhost/bus-portal` |
+| `APP_URL` | Base URL of the project | `http://localhost/yatrapath` |
 | `APP_SECRET` | 32-char key for encryption | `random_string_here` |
 | `DB_HOST` | Database server host | `localhost` |
 | `DB_PORT` | Database server port | `3306` |
-| `DB_NAME` | Name of the database | `bus_portal` |
+| `DB_NAME` | Name of the database | `yatrapath` |
 | `DB_USER` | Database username | `root` |
 | `DB_PASS` | Database password | `your_password` |
 | `GOOGLE_CLIENT_ID` | Google OAuth Client ID | `xxx.apps.googleusercontent.com` |
@@ -94,13 +94,13 @@ cp .env.example .env
 | `MAPTILER_API_KEY` | API Key for MapTiler tiles | `your_maptiler_key` |
 
 ### 4. Database Import
-1. Open **phpMyAdmin** and create a database named `bus_portal`.
+1. Open **phpMyAdmin** and create a database named `yatrapath`.
 2. Import the latest master SQL file:
    - `database/master_dump.sql` (Contains full schema + optimized seed data for 10+ Indian cities).
 
 ### 5. Web Server Configuration
 Ensure Apache `mod_rewrite` is enabled. Point your virtual host or DocumentRoot to the root directory. If using XAMPP:
-- Navigate to `http://localhost/bus-portal/`
+- Navigate to `http://localhost/yatrapath/`
 
 ---
 

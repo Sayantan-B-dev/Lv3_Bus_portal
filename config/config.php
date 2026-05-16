@@ -55,7 +55,7 @@ if (session_status() === PHP_SESSION_NONE) {
         'httponly' => true,
         'samesite' => 'Lax',
     ]);
-    session_name('BUSPORTAL_SESS');
+    session_name('YATRAPATH_SESS');
     session_start();
 }
 

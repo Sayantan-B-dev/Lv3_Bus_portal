@@ -9,7 +9,7 @@ class CityResolverService
         $q   = urlencode($cityName . ($countryCode ? ", {$countryCode}" : ''));
         $url = "https://nominatim.openstreetmap.org/search?q={$q}&format=json&limit=1";
         $ch  = curl_init($url);
-        curl_setopt_array($ch, [CURLOPT_RETURNTRANSFER => true, CURLOPT_HTTPHEADER => ['User-Agent: BusPortal/2.0 (contact@busportal.in)']]);
+        curl_setopt_array($ch, [CURLOPT_RETURNTRANSFER => true, CURLOPT_HTTPHEADER => ['User-Agent: YatraPath/2.0 (contact@yatrapath.in)']]);
         $response = curl_exec($ch); curl_close($ch);
         $results  = json_decode($response, true);
         if (empty($results)) return null;

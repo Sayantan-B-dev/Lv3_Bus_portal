@@ -21,8 +21,8 @@ Your live website cannot read the database on your computer. You must export it.
 
 ### 2. Zip Your Project Files
 For some platforms, you need to upload a zipped folder of your files.
-1. Go to your project folder (`c:\xampp\htdocs\bus-portal`).
-2. Select **all the files and folders inside** (do not just zip the `bus-portal` folder itself, zip the contents).
+1. Go to your project folder (`c:\xampp\htdocs\yatrapath`).
+2. Select **all the files and folders inside** (do not just zip the `yatrapath` folder itself, zip the contents).
 3. Right-click -> "Compress to ZIP file" (or use WinRAR/7Zip). Name it `project.zip`.
 
 ---
@@ -91,7 +91,7 @@ Railway is a professional deployment platform. It does **not** have a traditiona
 ### Step 2: Connect to Railway
 1. Go to [railway.app](https://railway.app/) and log in with your GitHub account.
 2. Click **"New Project"** -> **"Deploy from GitHub repo"**.
-3. Select your bus-portal repository.
+3. Select your yatrapath repository.
 4. Railway will automatically detect it is a PHP app and start building it.
 
 ### Step 3: Add Environment Variables
@@ -141,5 +141,5 @@ Aiven provides a completely free, professional-grade MySQL database.
 No matter which platform you choose, always check these after deploying:
 - [ ] Did I import my database tables successfully?
 - [ ] Did I update my database connection file (host, user, pass, dbname)?
-- [ ] If my code uses `http://localhost/bus-portal` for links or images, did I change them to my new live domain name?
+- [ ] If my code uses `http://localhost/yatrapath` for links or images, did I change them to my new live domain name?
 - [ ] Are all my files uploaded in the correct folder (like `htdocs`)?

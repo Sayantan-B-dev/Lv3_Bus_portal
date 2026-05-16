@@ -22,7 +22,7 @@ class RouteController
         $total      = $routeModel->countByCity($cityId, $filters);
         $city       = $cityModel->findById($cityId);
         $cities     = $cityModel->allActive();
-        $pageTitle  = 'All Routes — ' . ($city['city_name'] ?? 'Bus Portal');
+        $pageTitle  = 'All Routes — ' . ($city['city_name'] ?? 'YatraPath');
         $totalPages = (int)ceil($total / $perPage);
 
         Response::view('routes/list', compact('routes', 'city', 'cities', 'type', 'page', 'totalPages', 'total', 'pageTitle'));

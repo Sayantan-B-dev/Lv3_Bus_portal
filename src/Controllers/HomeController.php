@@ -27,7 +27,7 @@ class HomeController
         $stats      = $cityModel->getStats($cityId);
         $globalStats= $cityModel->globalStats();
 
-        $pageTitle  = $city ? $city['city_name'] . ' Bus Routes' : 'Bus Route Portal';
+        $pageTitle  = $city ? $city['city_name'] . ' Bus Routes' : 'YatraPath';
 
         Response::view('home/index', compact('cities', 'city', 'routes', 'stats', 'globalStats', 'pageTitle'));
     }

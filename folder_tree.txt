@@ -1,4 +1,4 @@
-bus-portal
+yatrapath
 ├── ProjectReport.md
 ├── ProjectReport_UCBRP_Final.docx
 ├── README.md
@@ -9,7 +9,7 @@ bus-portal
 ├── config
 │   └── config.php
 ├── database
-│   ├── bus_portal.sql
+│   ├── yatrapath.sql
 │   └── migrations
 ├── public
 │   ├── assets

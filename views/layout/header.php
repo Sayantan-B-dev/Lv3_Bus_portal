@@ -9,9 +9,9 @@ use App\Middleware\CsrfMiddleware;
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="Universal City Bus Route Portal — Real-time routes, stops, and journey planning.">
+    <meta name="description" content="Universal City YatraPath — Real-time routes, stops, and journey planning.">
     <link rel="icon" type="image/svg+xml" href="<?= APP_URL ?>/public/assets/img/logo.svg">
-    <title><?= htmlspecialchars($pageTitle ?? 'Bus Route Portal') ?> — City Route Information Portal</title>
+    <title><?= htmlspecialchars($pageTitle ?? 'YatraPath') ?> — City Route Information Portal</title>
     
     <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">

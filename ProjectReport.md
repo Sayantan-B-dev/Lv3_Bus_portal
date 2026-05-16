@@ -125,13 +125,13 @@ A detailed feasibility study was conducted to ensure the project's viability:
 The UCBRP v3.0 follows a strictly decoupled MVC (Model-View-Controller) architecture, ensuring high maintainability and scalability.
 
 ```text
-bus-portal/
+yatrapath/
 ├── api/                        # REST API Namespace
 │   └── index.php               # Entry point for stateless API requests
 ├── config/                     # Configuration Namespace
 │   └── config.php              # Global constants and DB credentials
 ├── database/                   # Data Persistence Namespace
-│   ├── bus_portal.sql          # Master SQL dump (Schema + Data)
+│   ├── yatrapath.sql          # Master SQL dump (Schema + Data)
 │   └── migrations/             # Incremental schema update scripts
 ├── public/                     # Public Web Root
 │   ├── index.php               # Front Controller (Web entry point)

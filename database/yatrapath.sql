@@ -18,7 +18,7 @@ SET time_zone = "+00:00";
 /*!40101 SET NAMES utf8mb4 */;
 
 --
--- Database: `bus_portal`
+-- Database: `yatrapath`
 --
 
 -- --------------------------------------------------------
@@ -4611,7 +4611,7 @@ CREATE TABLE `users` (
 --
 
 INSERT INTO `users` (`id`, `google_id`, `name`, `email`, `username`, `password_hash`, `phone`, `alternate_phone`, `dob`, `gender`, `address`, `city`, `state`, `country`, `pincode`, `latitude`, `longitude`, `bio`, `profile_image`, `cover_image`, `occupation`, `is_student`, `college_name`, `college_registration_number`, `roll_number`, `branch`, `year_of_study`, `semester`, `graduation_year`, `linkedin_url`, `github_url`, `portfolio_url`, `skills`, `emergency_contact_name`, `emergency_contact_phone`, `last_profile_updated_at`, `avatar_url`, `role`, `is_active`, `last_login_at`, `created_at`, `updated_at`) VALUES
-(12, '110611255409254914450', 'Sayantan Bharati', 'sayantanbharati611@gmail.com', 'Sayantan', NULL, '+918888888888', '01234125125', '1999-07-17', 'Male', 'Barasat', 'kolkata', 'West Bengal', 'India', '743287', 22.9247385, 88.7778889, 'I am Developer', NULL, NULL, 'Student', 1, 'Kingston Polytechnic  College', '12345678', '12345678', 'CST', '2nd', '6', '2026', 'https://github.com/Sayantan-B-dev/Lv3_Bus_portal', 'https://github.com/Sayantan-B-dev/Lv3_Bus_portal', 'https://github.com/Sayantan-B-dev/Lv3_Bus_portal', 'PHP', '', '', '2026-04-27 19:32:10', 'https://lh3.googleusercontent.com/a/ACg8ocKd7sqvrckWGEXRLC5uEYzyRUslU9iihRebj3NxAVbJsxhlFzTC=s96-c', 'admin', 1, '2026-04-28 01:19:02', '2026-04-27 17:41:24', '2026-04-27 19:49:02');
+(12, '110611255409254914450', 'Sayantan Bharati', 'sayantanbharati611@gmail.com', 'Sayantan', NULL, '+918888888888', '01234125125', '1999-07-17', 'Male', 'Barasat', 'kolkata', 'West Bengal', 'India', '743287', 22.9247385, 88.7778889, 'I am Developer', NULL, NULL, 'Student', 1, 'Kingston Polytechnic  College', '12345678', '12345678', 'CST', '2nd', '6', '2026', 'https://github.com/Sayantan-B-dev/Lv3_YatraPath', 'https://github.com/Sayantan-B-dev/Lv3_YatraPath', 'https://github.com/Sayantan-B-dev/Lv3_YatraPath', 'PHP', '', '', '2026-04-27 19:32:10', 'https://lh3.googleusercontent.com/a/ACg8ocKd7sqvrckWGEXRLC5uEYzyRUslU9iihRebj3NxAVbJsxhlFzTC=s96-c', 'admin', 1, '2026-04-28 01:19:02', '2026-04-27 17:41:24', '2026-04-27 19:49:02');
 
 --
 -- Indexes for dumped tables

@@ -21,7 +21,7 @@ class SearchController
             $results = (new SearchService())->search($query, $cityId);
         }
 
-        $pageTitle = 'Search: ' . htmlspecialchars($query) . ' — Bus Portal';
+        $pageTitle = 'Search: ' . htmlspecialchars($query) . ' — YatraPath';
         Response::view('search/results', compact('query', 'results', 'city', 'cities', 'pageTitle'));
     }
 }

@@ -15,7 +15,7 @@ class PlannerController
         $city      = $cityModel->findById($cityId);
         $cities    = $cityModel->allActive();
         $stops     = (new Stop())->allByCity($cityId);
-        $pageTitle = 'Journey Planner — ' . ($city['city_name'] ?? 'Bus Portal');
+        $pageTitle = 'Journey Planner — ' . ($city['city_name'] ?? 'YatraPath');
         Response::view('planner/index', compact('city', 'cities', 'stops', 'pageTitle'));
     }
 

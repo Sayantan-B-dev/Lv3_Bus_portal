@@ -5,7 +5,7 @@ use App\Core\Database;
 
 /**
  * GtfsImportService — parses a GTFS feed (stops.txt, routes.txt, stop_times.txt)
- * and imports the data into the bus_portal database for a given city.
+ * and imports the data into the yatrapath database for a given city.
  *
  * Usage:
  *   $service = new GtfsImportService();
